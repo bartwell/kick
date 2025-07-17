@@ -1,0 +1,18 @@
+CREATE TABLE table1 (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL DEFAULT 'Unknown',
+    age INTEGER,
+    salary REAL,
+    data BLOB
+);
+
+INSERT INTO table1 (name, age, salary, data) VALUES ('Alexandria Catherine Montgomery-Bentley-Smythe-Wilkinson-Johnson', 25, 50000.50, CAST('12345678' AS BLOB));
+INSERT INTO table1 (name, age, salary, data) VALUES ('Bob Smith', 30, 62000.00, CAST('abcdef12' AS BLOB));
+INSERT INTO table1 (name, age, salary, data) VALUES ('Charlie Brown', 28, NULL, NULL);
+INSERT INTO table1 (name, age, salary, data) VALUES ('David Miller', 40, 75000.25, CAST('789abcde' AS BLOB));
+INSERT INTO table1 (name, age, salary, data) VALUES ('Eve Davis', 35, 82000.75, NULL);
+INSERT INTO table1 (name, age, salary, data) VALUES ('Frank Wilson', 45, 95000.00, CAST('456def78' AS BLOB));
+INSERT INTO table1 (name, age, salary, data) VALUES ('Grace Lee', 29, 67000.10, CAST('zxcvbnm' AS BLOB));
+INSERT INTO table1 (name, age, salary, data) VALUES ('Hank Anderson', 50, NULL, NULL);
+INSERT INTO table1 (name, age, salary, data) VALUES ('Ivy Thompson', 22, 45000.90, CAST('654321006543210065432100654321006543210065432100654321006543210065432100' AS BLOB));
+INSERT INTO table1 (name, age, salary, data) VALUES ('Jack Peterson', 38, 78000.40, NULL);
