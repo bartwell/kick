@@ -68,11 +68,15 @@ internal class DefaultRootComponent(
                 ModulesListChild(
                     DefaultModulesListComponent(
                         componentContext = componentContext,
+                        modules = modules,
                         listItemClicked = { description ->
                             modules.firstOrNull { module -> module.description == description }
                                 ?.let { module ->
                                     currentModule = module
                                     nav.pushNew(module.startConfig)
+                                }
+                                ?: run {
+                                    nav.pushNew(StubConfig(description))
                                 }
                         }
                     )

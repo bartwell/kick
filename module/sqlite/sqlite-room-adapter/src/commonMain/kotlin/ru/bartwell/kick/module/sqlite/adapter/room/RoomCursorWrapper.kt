@@ -22,7 +22,7 @@ private fun <T> SQLiteStatement.getNullable(index: Int, block: (Int) -> T): T? {
     @Suppress("SwallowedException", "TooGenericExceptionCaught")
     return try {
         block(index)
-    } catch (e: NullPointerException) {
+    } catch (_: NullPointerException) {
         null
     }
 }

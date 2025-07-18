@@ -8,4 +8,5 @@ internal interface ModulesListComponent : Component {
     val model: Value<ModulesListState>
 
     fun onListItemClicked(module: ModuleDescription)
+    fun onShowAllClicked()
 }

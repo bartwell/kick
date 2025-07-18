@@ -12,22 +12,31 @@ import ru.bartwell.kick.core.persist.RequestEntity
 internal object Logger {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     private val flow = MutableSharedFlow<RequestEntity>(
+        replay = 0,
         extraBufferCapacity = 1_000,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        onBufferOverflow = BufferOverflow.SUSPEND
     )
 
     init {
         scope.launch {
             flow.collect { entry ->
-                DatabaseHolder.database
-                    ?.getRequestDao()
-                    ?.insert(entry)
+                @Suppress("TooGenericExceptionCaught")
+                try {
+                    DatabaseHolder.database
+                        ?.getRequestDao()
+                        ?.insert(entry)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }
 
     fun log(entry: RequestEntity) {
-        flow.tryEmit(entry)
+        scope.launch {
+            flow.emit(entry)
+        }
     }
 }

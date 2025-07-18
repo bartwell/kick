@@ -14,28 +14,37 @@ import ru.bartwell.kick.module.logging.core.persist.LogEntity
 internal object Logger {
 
     private val loggerScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     private val logFlow = MutableSharedFlow<LogEntity>(
+        replay = 0,
         extraBufferCapacity = 1_000,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        onBufferOverflow = BufferOverflow.SUSPEND
     )
 
     init {
         loggerScope.launch {
             logFlow.collect { entry ->
-                DatabaseHolder.database
-                    ?.getLogDao()
-                    ?.insert(entry)
+                @Suppress("TooGenericExceptionCaught")
+                try {
+                    DatabaseHolder.database
+                        ?.getLogDao()
+                        ?.insert(entry)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }
 
     fun log(level: LogLevel, message: String?) {
-        message ?: return
+        if (message.isNullOrBlank()) return
         val entry = LogEntity(
             time = DateUtils.currentTimeMillis(),
             level = level,
             message = message
         )
-        logFlow.tryEmit(entry)
+        loggerScope.launch {
+            logFlow.emit(entry)
+        }
     }
 }

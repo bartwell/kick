@@ -5,6 +5,7 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -78,14 +79,14 @@ class TestDataInitializer(context: PlatformContext) {
     }
 
     private fun makeTestHttpRequest() {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val client = SampleHttpClient()
             client.makeTestRequests()
         }
     }
 
     private fun startTestLogging() {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 Napier.log(priority = NapierLogLevel.entries.random(), message = testLogs.random())
                 delay(1.seconds)
