@@ -7,11 +7,10 @@ import androidx.room.useWriterConnection
 import androidx.sqlite.SQLiteStatement
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import ru.bartwell.kick.adapter.room.RoomCursorWrapper
-import ru.bartwell.kick.core.DatabaseWrapper
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.core.data.ColumnType
-import ru.bartwell.kick.core.mapper.SqlMapper
+import ru.bartwell.kick.module.sqlite.core.DatabaseWrapper
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.data.ColumnType
+import ru.bartwell.kick.module.sqlite.core.mapper.SqlMapper
 
 public class RoomWrapper(internal val database: RoomDatabase) : DatabaseWrapper() {
 

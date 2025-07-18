@@ -13,7 +13,7 @@ import ru.bartwell.kick.core.data.ModuleDescription
 @Suppress("UnusedPrivateProperty", "EmptyFunctionBlock", "unused")
 public class FileExplorerModule : Module {
     override val description: ModuleDescription = ModuleDescription.FILE_EXPLORER
-    override val startConfig: Config = StubConfig
+    override val startConfig: Config = StubConfig(description)
 
     override fun getComponent(
         componentContext: ComponentContext,

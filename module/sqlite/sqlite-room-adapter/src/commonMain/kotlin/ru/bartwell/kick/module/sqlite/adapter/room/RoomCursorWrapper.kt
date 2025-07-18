@@ -1,7 +1,7 @@
-package ru.bartwell.kick.adapter.room
+package ru.bartwell.kick.module.sqlite.adapter.room
 
 import androidx.sqlite.SQLiteStatement
-import ru.bartwell.kick.core.mapper.CursorWrapper
+import ru.bartwell.kick.module.sqlite.core.mapper.CursorWrapper
 
 internal class RoomCursorWrapper(override val value: SQLiteStatement) : CursorWrapper<SQLiteStatement> {
     override fun getString(index: Int): String? = value.getTextOrNull(index)

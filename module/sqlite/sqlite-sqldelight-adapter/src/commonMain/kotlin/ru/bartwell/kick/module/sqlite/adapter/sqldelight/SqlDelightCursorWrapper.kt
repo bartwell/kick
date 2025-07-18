@@ -1,7 +1,7 @@
 package ru.bartwell.kick.module.sqlite.adapter.sqldelight
 
 import app.cash.sqldelight.db.SqlCursor
-import ru.bartwell.kick.core.mapper.CursorWrapper
+import ru.bartwell.kick.module.sqlite.core.mapper.CursorWrapper
 
 internal class SqlDelightCursorWrapper(override val value: SqlCursor) : CursorWrapper<SqlCursor> {
     override fun getString(index: Int): String? = value.getString(index)

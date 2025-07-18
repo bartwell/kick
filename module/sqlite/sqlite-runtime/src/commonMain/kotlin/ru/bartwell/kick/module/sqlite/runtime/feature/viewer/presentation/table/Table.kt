@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.viewer.presentation.table
+package ru.bartwell.kick.module.sqlite.runtime.feature.viewer.presentation.table
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,10 +32,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.core.data.Row
 import ru.bartwell.kick.core.extension.orNull
-import ru.bartwell.kick.feature.viewer.extension.removeBuiltIn
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.data.Row
+import ru.bartwell.kick.module.sqlite.runtime.feature.viewer.extension.removeBuiltIn
 
 private val MAX_CELL_WIDTH = 200.dp
 private val CELL_PADDING = 8.dp

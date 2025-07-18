@@ -57,7 +57,7 @@ internal fun FileExplorerContent(
             },
             navigationIcon = {
                 IconButton(onClick = { component.onBackClick() }) {
-                    Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
+                    Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
                 }
             }
         )

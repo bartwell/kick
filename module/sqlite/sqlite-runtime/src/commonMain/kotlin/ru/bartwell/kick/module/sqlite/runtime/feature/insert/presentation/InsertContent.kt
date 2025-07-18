@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.insert.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.insert.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,10 +33,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.core.data.ColumnType
 import ru.bartwell.kick.core.presentation.ErrorAlert
-import ru.bartwell.kick.feature.insert.data.InsertValueType
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.data.ColumnType
+import ru.bartwell.kick.module.sqlite.runtime.feature.insert.data.InsertValueType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package ru.bartwell.kick.runtime.feature.table.presentation
+package ru.bartwell.kick.runtime.feature.list.presentation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue

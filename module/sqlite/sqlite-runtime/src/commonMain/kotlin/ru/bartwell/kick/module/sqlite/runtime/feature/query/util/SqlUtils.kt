@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.query.util
+package ru.bartwell.kick.module.sqlite.runtime.feature.query.util
 
 public object SqlUtils {
     /**

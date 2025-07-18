@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.update.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.update.presentation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
@@ -7,9 +7,9 @@ import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import ru.bartwell.kick.core.DatabaseWrapper
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.core.mapper.SingleStringSqlMapper
+import ru.bartwell.kick.module.sqlite.core.DatabaseWrapper
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.mapper.SingleStringSqlMapper
 
 internal class DefaultUpdateComponent(
     componentContext: ComponentContext,

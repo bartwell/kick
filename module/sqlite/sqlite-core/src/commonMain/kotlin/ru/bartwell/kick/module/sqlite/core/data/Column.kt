@@ -1,4 +1,4 @@
-package ru.bartwell.kick.core.data
+package ru.bartwell.kick.module.sqlite.core.data
 
 import kotlinx.serialization.Serializable
 

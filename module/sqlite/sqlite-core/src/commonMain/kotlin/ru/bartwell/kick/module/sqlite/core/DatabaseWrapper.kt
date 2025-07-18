@@ -1,11 +1,11 @@
-package ru.bartwell.kick.core
+package ru.bartwell.kick.module.sqlite.core
 
 import kotlinx.coroutines.flow.Flow
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.core.mapper.SqlMapper
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.mapper.SqlMapper
 
 public abstract class DatabaseWrapper {
-    public abstract val type: DatabaseWrapper.Type
+    public abstract val type: Type
     public abstract fun <T> query(sql: String, mapper: SqlMapper<T>): Flow<List<T>>
     public abstract fun <T> querySingle(sql: String, mapper: SqlMapper<T>): Flow<T?>
     public abstract fun updateSingle(table: String, id: Long, column: Column, value: String?): Flow<Unit>

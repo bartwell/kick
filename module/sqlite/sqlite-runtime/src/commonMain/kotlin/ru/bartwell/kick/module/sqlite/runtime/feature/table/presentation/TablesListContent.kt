@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.table.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.table.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

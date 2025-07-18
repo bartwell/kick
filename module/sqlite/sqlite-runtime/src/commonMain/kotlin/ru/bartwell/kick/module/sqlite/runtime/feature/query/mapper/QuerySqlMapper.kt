@@ -1,7 +1,7 @@
-package ru.bartwell.kick.feature.query.mapper
+package ru.bartwell.kick.module.sqlite.runtime.feature.query.mapper
 
-import ru.bartwell.kick.core.mapper.CursorWrapper
-import ru.bartwell.kick.core.mapper.SqlMapper
+import ru.bartwell.kick.module.sqlite.core.mapper.CursorWrapper
+import ru.bartwell.kick.module.sqlite.core.mapper.SqlMapper
 
 /**
  * Hack workaround for dynamic column detection when SqlDelight's SqlCursor lacks columnCount

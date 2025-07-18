@@ -14,13 +14,9 @@ import io.ktor.http.isSecure
 import io.ktor.util.AttributeKey
 import io.ktor.utils.io.charsets.Charsets
 import io.ktor.utils.io.core.toByteArray
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.launch
 import ru.bartwell.kick.core.persist.RequestEntity
 import ru.bartwell.kick.core.util.DateUtils
-import ru.bartwell.kick.module.ktor3.core.util.DatabaseHolder
+import ru.bartwell.kick.module.ktor3.core.util.Logger
 import ru.bartwell.kick.module.ktor3.feature.list.data.HttpMethod as KickHttpMethod
 
 public val KickKtor3Plugin: ClientPlugin<Config> = createClientPlugin(
@@ -73,26 +69,21 @@ public val KickKtor3Plugin: ClientPlugin<Config> = createClientPlugin(
 
         val sizeBytes = response.contentLength() ?: responseBody?.toByteArray()?.size?.toLong()
 
-        CoroutineScope(Dispatchers.IO).launch {
-            DatabaseHolder.database
-                ?.getRequestDao()
-                ?.insert(
-                    RequestEntity(
-                        timestamp = start,
-                        method = method,
-                        url = url,
-                        statusCode = response.status.value,
-                        durationMs = duration,
-                        responseSizeBytes = sizeBytes,
-                        isSecure = secure,
-                        error = null,
-                        requestHeaders = call.attributes.getOrNull(headersKey),
-                        requestBody = call.attributes.getOrNull(bodyKey),
-                        responseHeaders = respHeaders,
-                        responseBody = responseBody
-                    )
-                )
-        }
+        val entity = RequestEntity(
+            timestamp = start,
+            method = method,
+            url = url,
+            statusCode = response.status.value,
+            durationMs = duration,
+            responseSizeBytes = sizeBytes,
+            isSecure = secure,
+            error = null,
+            requestHeaders = call.attributes.getOrNull(headersKey),
+            requestBody = call.attributes.getOrNull(bodyKey),
+            responseHeaders = respHeaders,
+            responseBody = responseBody
+        )
+        Logger.log(entity)
     }
 
     on(Send) { request ->
@@ -117,26 +108,21 @@ public val KickKtor3Plugin: ClientPlugin<Config> = createClientPlugin(
             val body = request.attributes.getOrNull(bodyKey)
             val duration = DateUtils.currentTimeMillis() - start
 
-            CoroutineScope(Dispatchers.IO).launch {
-                DatabaseHolder.database
-                    ?.getRequestDao()
-                    ?.insert(
-                        RequestEntity(
-                            timestamp = start,
-                            method = method,
-                            url = url,
-                            statusCode = null,
-                            durationMs = duration,
-                            responseSizeBytes = null,
-                            isSecure = secure,
-                            error = cause.message,
-                            requestHeaders = hdrs,
-                            requestBody = body,
-                            responseHeaders = null,
-                            responseBody = null
-                        )
-                    )
-            }
+            val entity = RequestEntity(
+                timestamp = start,
+                method = method,
+                url = url,
+                statusCode = null,
+                durationMs = duration,
+                responseSizeBytes = null,
+                isSecure = secure,
+                error = cause.message,
+                requestHeaders = hdrs,
+                requestBody = body,
+                responseHeaders = null,
+                responseBody = null
+            )
+            Logger.log(entity)
             throw cause
         }
     }

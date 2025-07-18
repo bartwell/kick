@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.structure.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.structure.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

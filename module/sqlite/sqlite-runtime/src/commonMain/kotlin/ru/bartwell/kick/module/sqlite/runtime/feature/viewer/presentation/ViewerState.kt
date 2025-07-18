@@ -1,7 +1,7 @@
-package ru.bartwell.kick.feature.viewer.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.viewer.presentation
 
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.core.data.Row
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.data.Row
 
 public data class ViewerState(
     val table: String,

@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.viewer.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.viewer.presentation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
@@ -7,12 +7,12 @@ import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import ru.bartwell.kick.core.DatabaseWrapper
 import ru.bartwell.kick.core.component.Resumable
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.core.mapper.ColumnsSqlMapper
-import ru.bartwell.kick.core.mapper.RowsSqlMapper
-import ru.bartwell.kick.feature.viewer.extension.removeBuiltIn
+import ru.bartwell.kick.module.sqlite.core.DatabaseWrapper
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.mapper.ColumnsSqlMapper
+import ru.bartwell.kick.module.sqlite.core.mapper.RowsSqlMapper
+import ru.bartwell.kick.module.sqlite.runtime.feature.viewer.extension.removeBuiltIn
 
 internal class DefaultViewerComponent(
     componentContext: ComponentContext,

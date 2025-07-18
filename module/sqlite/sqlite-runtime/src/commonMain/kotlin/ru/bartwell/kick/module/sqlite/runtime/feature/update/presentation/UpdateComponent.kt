@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.update.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.update.presentation
 
 import com.arkivanov.decompose.value.Value
 import ru.bartwell.kick.core.component.Component

@@ -1,6 +1,6 @@
-package ru.bartwell.kick.feature.structure.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.structure.presentation
 
-import ru.bartwell.kick.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.data.Column
 
 public data class StructureState(
     val table: String,

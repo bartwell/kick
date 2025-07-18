@@ -1,7 +1,7 @@
-package ru.bartwell.kick.core.mapper
+package ru.bartwell.kick.module.sqlite.core.mapper
 
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.core.data.ColumnType
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.data.ColumnType
 
 public class ColumnsSqlMapper : SqlMapper<Column> {
     @Suppress("MagicNumber")

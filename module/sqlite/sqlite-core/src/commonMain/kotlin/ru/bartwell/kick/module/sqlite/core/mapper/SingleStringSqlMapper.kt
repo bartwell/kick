@@ -1,6 +1,6 @@
-package ru.bartwell.kick.core.mapper
+package ru.bartwell.kick.module.sqlite.core.mapper
 
-import ru.bartwell.kick.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.data.Column
 
 public class SingleStringSqlMapper(private val column: Column) : SqlMapper<String> {
     override fun map(cursor: CursorWrapper<*>): String? {

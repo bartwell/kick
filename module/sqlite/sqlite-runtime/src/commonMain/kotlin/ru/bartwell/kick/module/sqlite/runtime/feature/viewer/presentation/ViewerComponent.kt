@@ -1,8 +1,8 @@
-package ru.bartwell.kick.feature.viewer.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.viewer.presentation
 
 import com.arkivanov.decompose.value.Value
 import ru.bartwell.kick.core.component.Component
-import ru.bartwell.kick.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.data.Column
 
 public interface ViewerComponent : Component {
     public val model: Value<ViewerState>

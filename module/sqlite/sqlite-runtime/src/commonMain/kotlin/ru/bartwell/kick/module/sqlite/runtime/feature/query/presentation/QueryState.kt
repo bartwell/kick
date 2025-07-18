@@ -1,6 +1,6 @@
-package ru.bartwell.kick.feature.query.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.query.presentation
 
-import ru.bartwell.kick.core.data.Row
+import ru.bartwell.kick.module.sqlite.core.data.Row
 
 public data class QueryState(
     val query: String = "",

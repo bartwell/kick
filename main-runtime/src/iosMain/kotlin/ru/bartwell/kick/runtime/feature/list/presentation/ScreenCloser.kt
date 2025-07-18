@@ -1,4 +1,4 @@
-package ru.bartwell.kick.runtime.feature.table.presentation
+package ru.bartwell.kick.runtime.feature.list.presentation
 
 import androidx.compose.runtime.Composable
 import ru.bartwell.kick.runtime.core.util.IosSceneController

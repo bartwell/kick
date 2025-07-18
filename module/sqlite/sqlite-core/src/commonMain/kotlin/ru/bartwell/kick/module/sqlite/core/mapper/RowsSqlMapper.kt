@@ -1,7 +1,7 @@
-package ru.bartwell.kick.core.mapper
+package ru.bartwell.kick.module.sqlite.core.mapper
 
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.core.data.Row
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.data.Row
 
 public class RowsSqlMapper(private val columns: List<Column>) : SqlMapper<Row> {
     public override fun map(cursor: CursorWrapper<*>): Row? {

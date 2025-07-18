@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.insert.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.insert.presentation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
@@ -7,9 +7,9 @@ import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import ru.bartwell.kick.core.DatabaseWrapper
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.feature.insert.data.InsertValueType
+import ru.bartwell.kick.module.sqlite.core.DatabaseWrapper
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.runtime.feature.insert.data.InsertValueType
 
 internal class DefaultInsertComponent(
     componentContext: ComponentContext,

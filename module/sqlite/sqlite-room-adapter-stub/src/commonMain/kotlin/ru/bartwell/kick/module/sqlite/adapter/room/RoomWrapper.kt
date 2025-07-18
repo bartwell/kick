@@ -2,9 +2,9 @@ package ru.bartwell.kick.module.sqlite.adapter.room
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import ru.bartwell.kick.core.DatabaseWrapper
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.core.mapper.SqlMapper
+import ru.bartwell.kick.module.sqlite.core.DatabaseWrapper
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.core.mapper.SqlMapper
 
 @Suppress("UnusedPrivateProperty", "EmptyFunctionBlock", "unused")
 public class RoomWrapper(internal val database: Any) : DatabaseWrapper() {

@@ -4,12 +4,12 @@ import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
-import ru.bartwell.kick.core.DatabaseWrapper
 import ru.bartwell.kick.core.component.Child
 import ru.bartwell.kick.core.component.Config
 import ru.bartwell.kick.core.component.StubConfig
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.ModuleDescription
+import ru.bartwell.kick.module.sqlite.core.DatabaseWrapper
 
 @Suppress("UnusedPrivateProperty", "EmptyFunctionBlock", "unused")
 public class SqliteModule(databaseWrapper: DatabaseWrapper) : Module {
@@ -18,7 +18,7 @@ public class SqliteModule(databaseWrapper: DatabaseWrapper) : Module {
         DatabaseWrapper.Type.SQL_DELIGHT -> ModuleDescription.SQL_DELIGHT
         DatabaseWrapper.Type.ROOM -> ModuleDescription.ROOM
     }
-    override val startConfig: Config = StubConfig
+    override val startConfig: Config = StubConfig(description)
 
     override fun getComponent(
         componentContext: ComponentContext,

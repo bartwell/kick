@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.query.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.query.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,7 +25,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import ru.bartwell.kick.feature.viewer.presentation.table.Table
+import ru.bartwell.kick.module.sqlite.runtime.feature.viewer.presentation.table.Table
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

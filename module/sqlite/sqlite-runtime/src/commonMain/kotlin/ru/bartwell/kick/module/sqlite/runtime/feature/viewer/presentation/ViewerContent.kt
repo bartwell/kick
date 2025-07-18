@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.viewer.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.viewer.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.presentation.ErrorAlert
 import ru.bartwell.kick.core.presentation.ErrorBox
-import ru.bartwell.kick.feature.viewer.presentation.table.Table
+import ru.bartwell.kick.module.sqlite.runtime.feature.viewer.presentation.table.Table
 
 @Composable
 internal fun ViewerContent(

@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.query.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.query.presentation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
@@ -7,9 +7,9 @@ import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import ru.bartwell.kick.core.DatabaseWrapper
-import ru.bartwell.kick.feature.query.mapper.QuerySqlMapper
-import ru.bartwell.kick.feature.query.util.SqlUtils
+import ru.bartwell.kick.module.sqlite.core.DatabaseWrapper
+import ru.bartwell.kick.module.sqlite.runtime.feature.query.mapper.QuerySqlMapper
+import ru.bartwell.kick.module.sqlite.runtime.feature.query.util.SqlUtils
 
 internal class DefaultQueryComponent(
     componentContext: ComponentContext,

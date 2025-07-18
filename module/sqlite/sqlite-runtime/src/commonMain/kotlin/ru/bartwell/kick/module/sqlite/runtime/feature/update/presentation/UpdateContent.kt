@@ -1,4 +1,4 @@
-package ru.bartwell.kick.feature.update.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.update.presentation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,9 +15,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import ru.bartwell.kick.core.data.ColumnType
 import ru.bartwell.kick.core.presentation.CheckboxWithText
 import ru.bartwell.kick.core.presentation.ErrorBox
+import ru.bartwell.kick.module.sqlite.core.data.ColumnType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

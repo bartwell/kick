@@ -20,7 +20,7 @@ public class LoggingModule(
 ) : Module {
 
     override val description: ModuleDescription = ModuleDescription.LOGGING
-    override val startConfig: Config = StubConfig
+    override val startConfig: Config = StubConfig(description)
 
     override fun getComponent(
         componentContext: ComponentContext,

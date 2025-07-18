@@ -1,7 +1,7 @@
-package ru.bartwell.kick.feature.insert.presentation
+package ru.bartwell.kick.module.sqlite.runtime.feature.insert.presentation
 
-import ru.bartwell.kick.core.data.Column
-import ru.bartwell.kick.feature.insert.data.InsertValueType
+import ru.bartwell.kick.module.sqlite.core.data.Column
+import ru.bartwell.kick.module.sqlite.runtime.feature.insert.data.InsertValueType
 
 public data class InsertState(
     val table: String,

@@ -20,7 +20,7 @@ public class Ktor3Module(
 ) : Module {
 
     override val description: ModuleDescription = ModuleDescription.KTOR3
-    override val startConfig: Config = StubConfig
+    override val startConfig: Config = StubConfig(description)
 
     override fun getComponent(
         componentContext: ComponentContext,

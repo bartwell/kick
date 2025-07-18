@@ -17,7 +17,7 @@ public class MultiplatformSettingsModule(
 ) : Module {
 
     override val description: ModuleDescription = ModuleDescription.MULTIPLATFORM_SETTINGS
-    override val startConfig: Config = StubConfig
+    override val startConfig: Config = StubConfig(description)
 
     override fun getComponent(
         componentContext: ComponentContext,

@@ -8,7 +8,9 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import ru.bartwell.kick.core.component.RootComponent
 import ru.bartwell.kick.runtime.core.component.child.ModulesListChild
-import ru.bartwell.kick.runtime.feature.table.presentation.ModulesListContent
+import ru.bartwell.kick.runtime.core.component.child.StubChild
+import ru.bartwell.kick.runtime.feature.list.presentation.ModulesListContent
+import ru.bartwell.kick.runtime.feature.stub.presentation.StubContent
 
 @Composable
 internal fun RootContent(
@@ -23,6 +25,11 @@ internal fun RootContent(
         val child = it.instance
         if (child is ModulesListChild) {
             ModulesListContent(
+                component = child.component,
+                modifier = Modifier.fillMaxSize(),
+            )
+        } else if (child is StubChild) {
+            StubContent(
                 component = child.component,
                 modifier = Modifier.fillMaxSize(),
             )

@@ -21,7 +21,6 @@ public interface RequestDao {
             "requestHeaders LIKE :filter OR " +
             "requestBody LIKE :filter OR " +
             "responseHeaders LIKE :filter OR " +
-            "responseHeaders LIKE :filter OR " +
             "responseBody LIKE :filter " +
             "ORDER BY timestamp DESC"
     )

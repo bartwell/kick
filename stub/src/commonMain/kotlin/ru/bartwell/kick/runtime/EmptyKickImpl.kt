@@ -11,7 +11,7 @@ internal class EmptyKickImpl : Kick {
     override fun launch(context: PlatformContext) {
         println(
             "Kick: It appears you’re attempting to run Kick, but a stub module has been added. " +
-                    "Please ensure that both the `main-core` and `main-runtime` modules are correctly configured"
+                "Please ensure that both the `main-core` and `main-runtime` modules are correctly configured"
         )
     }
 
