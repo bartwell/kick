@@ -1,0 +1,17 @@
+*.iml
+.gradle
+.idea/*
+!.idea/detekt.xml
+.DS_Store
+build
+captures
+.externalNativeBuild
+.cxx
+local.properties
+xcuserdata
+.kotlin
+/sample/desktop/sample.db
+/module/logging/logging/schemas/*
+/module/logging/logging-stub/schemas/*
+/module/network/ktor3/schemas/*
+/sample/shared/schemas/*

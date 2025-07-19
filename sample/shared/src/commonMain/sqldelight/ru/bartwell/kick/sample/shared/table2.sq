@@ -1,0 +1,18 @@
+CREATE TABLE table2 (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL DEFAULT '',
+    quantity INTEGER NOT NULL DEFAULT 0,
+    price REAL NOT NULL DEFAULT 0,
+    image BLOB NOT NULL DEFAULT 1234
+);
+
+INSERT INTO table2 (title, quantity, price, image) VALUES ('Product A', 100, 9.99, CAST('AABBCCDD' AS BLOB));
+INSERT INTO table2 (title, quantity, price, image) VALUES ('Product B', 50, 19.95, CAST('11223344' AS BLOB));
+INSERT INTO table2 (title, quantity, price, image) VALUES ('Product C', 75, 14.50, CAST('DEADBEEF' AS BLOB));
+INSERT INTO table2 (title, quantity, price, image) VALUES ('Product D', 200, 4.99, CAST('CAFEBABE' AS BLOB));
+INSERT INTO table2 (title, quantity, price, image) VALUES ('Product E', 120, 29.95, CAST('FEEDFACE' AS BLOB));
+INSERT INTO table2 (title, quantity, price, image) VALUES ('Product F', 30, 49.99, CAST('BADDCAFE' AS BLOB));
+INSERT INTO table2 (title, quantity, price, image) VALUES ('Product G', 90, 5.50, CAST('FACEFEED' AS BLOB));
+INSERT INTO table2 (title, quantity, price, image) VALUES ('Product H', 60, 12.00, CAST('DEADC0DE' AS BLOB));
+INSERT INTO table2 (title, quantity, price, image) VALUES ('Product I', 15, 99.95, CAST('C0FFEE00' AS BLOB));
+INSERT INTO table2 (title, quantity, price, image) VALUES ('Product J', 80, 7.25, CAST('0BADF00D' AS BLOB));
