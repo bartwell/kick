@@ -61,7 +61,7 @@ if (isRelease) {
 }
 ```
 
-Note: stub modules provide no-op implementations instead of the full implementations so your release build stays lightweight.
+**Note:** stub modules provide no-op implementations instead of the full implementations so your release build stays lightweight.
 
 Because many Android API calls require a Context, you need to wrap it using `PlatformContext`. Here is a sample of initialization:
 
@@ -133,6 +133,7 @@ Napier.base(object : Antilog() {
 ### Multiplatform Settings
 
 Edit values stored with [Multiplatform Settings](https://github.com/russhwolf/multiplatform-settings). Register as many storages as you need and switch between them at runtime.
+**Note:** Multiplatform Settings doesn’t expose metadata about field types, so Kick can only display and edit values as plain text. When type information becomes available, it will be possible to implement type‑specific views — for example, a switch for Boolean or a numeric input for Int, Long, Double, or Float.
 
 ### File Explorer
 
