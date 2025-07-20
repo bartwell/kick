@@ -16,7 +16,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Kick"
 // Core
-include(":stub")
+include(":main-runtime-stub")
 include(":main-core")
 include(":main-runtime")
 // Sample

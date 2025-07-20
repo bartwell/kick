@@ -38,26 +38,50 @@ Kick is initialized once with a platform context and a list of modules. Add ever
 
 ```kotlin
 val isRelease = /* your logic to determine release vs. debug */
-    implementation("ru.bartwell.kick:main-core:1.0.0")
-if (isRelease) {
-    implementation("ru.bartwell.kick:stub:1.0.0")
-    implementation("ru.bartwell.kick:ktor3-stub:1.0.0")
-    implementation("ru.bartwell.kick:sqlite-runtime-stub:1.0.0")
-    implementation("ru.bartwell.kick:sqlite-sqldelight-adapter-stub:1.0.0")
-    implementation("ru.bartwell.kick:sqlite-room-adapter-stub:1.0.0")
-    implementation("ru.bartwell.kick:logging-stub:1.0.0")
-    implementation("ru.bartwell.kick:multiplatform-settings-stub:1.0.0")
-    implementation("ru.bartwell.kick:file-explorer-stub:1.0.0")
-} else {
-    implementation("ru.bartwell.kick:main-runtime:1.0.0")
-    implementation("ru.bartwell.kick:ktor3:1.0.0")
-    implementation("ru.bartwell.kick:sqlite-core:1.0.0")
-    implementation("ru.bartwell.kick:sqlite-runtime:1.0.0")
-    implementation("ru.bartwell.kick:sqlite-sqldelight-adapter:1.0.0")
-    implementation("ru.bartwell.kick:sqlite-room-adapter:1.0.0")
-    implementation("ru.bartwell.kick:logging:1.0.0")
-    implementation("ru.bartwell.kick:multiplatform-settings:1.0.0")
-    implementation("ru.bartwell.kick:file-explorer:1.0.0")
+
+kotlin {
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "shared"
+            isStatic = true
+            export("ru.bartwell.kick:main-core:1.0.0")
+            if (isRelease) {
+                export("ru.bartwell.kick:main-runtime-stub:1.0.0")
+            } else {
+                export("ru.bartwell.kick:main-runtime:1.0.0")
+            }
+        }
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation("ru.bartwell.kick:main-core:1.0.0")
+            if (isRelease) {
+                implementation("ru.bartwell.kick:main-runtime-stub:1.0.0")
+                implementation("ru.bartwell.kick:ktor3-stub:1.0.0")
+                implementation("ru.bartwell.kick:sqlite-runtime-stub:1.0.0")
+                implementation("ru.bartwell.kick:sqlite-sqldelight-adapter-stub:1.0.0")
+                implementation("ru.bartwell.kick:sqlite-room-adapter-stub:1.0.0")
+                implementation("ru.bartwell.kick:logging-stub:1.0.0")
+                implementation("ru.bartwell.kick:multiplatform-settings-stub:1.0.0")
+                implementation("ru.bartwell.kick:file-explorer-stub:1.0.0")
+            } else {
+                implementation("ru.bartwell.kick:main-runtime:1.0.0")
+                implementation("ru.bartwell.kick:ktor3:1.0.0")
+                implementation("ru.bartwell.kick:sqlite-core:1.0.0")
+                implementation("ru.bartwell.kick:sqlite-runtime:1.0.0")
+                implementation("ru.bartwell.kick:sqlite-sqldelight-adapter:1.0.0")
+                implementation("ru.bartwell.kick:sqlite-room-adapter:1.0.0")
+                implementation("ru.bartwell.kick:logging:1.0.0")
+                implementation("ru.bartwell.kick:multiplatform-settings:1.0.0")
+                implementation("ru.bartwell.kick:file-explorer:1.0.0")
+            }
+        }
+    }
 }
 ```
 
@@ -141,7 +165,7 @@ Browse the file system directly within the viewer—handy for quick checks of ge
 
 ### Advanced Module Configuration
 
-You don't need to use all the available modules. Just include the ones you need. Here only logging and network inspection are enabled:
+You don't need to add all the available modules. Just include the ones you need. Here only logging and network inspection are enabled:
 
 ```kotlin
 val isRelease = /* your logic to determine release vs. debug */
