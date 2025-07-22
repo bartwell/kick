@@ -24,8 +24,7 @@ public interface Kick {
             this.instance = impl
         }
 
-        @Suppress("OptionalUnit")
-        public fun launch(context: PlatformContext): Unit {
+        public fun launch(context: PlatformContext) {
             instance?.launch(context)
         }
 
