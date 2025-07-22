@@ -219,6 +219,21 @@ Kick.init(context) {
 }
 ```
 
+On iOS you need to configure your `AppDelegate` or `UISceneDelegate` as follows:
+
+```swift
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        return ShortcutActionHandler.shared.getConfiguration(session: connectingSceneSession)
+    }
+}
+```
+
+
 ## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests with improvements and new modules.

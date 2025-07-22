@@ -2,13 +2,13 @@
 
     <application>
         <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
+            android:name=".module.logging.feature.table.util.KickFileProvider"
+            android:authorities="${applicationId}.kickfileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths"/>
+                android:resource="@xml/kick_file_paths"/>
         </provider>
     </application>
 </manifest>
