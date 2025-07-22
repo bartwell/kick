@@ -1,12 +1,14 @@
 package ru.bartwell.kick.runtime
 
 import ru.bartwell.kick.Kick
+import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.core.data.Theme
 
 internal class EmptyKickImpl : Kick {
 
     override var theme: Theme = Theme.Auto
+    override val modules: List<Module> = emptyList()
 
     override fun launch(context: PlatformContext) {
         println(

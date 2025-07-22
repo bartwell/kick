@@ -11,7 +11,7 @@ import ru.bartwell.kick.runtime.core.util.id
 internal class KickImpl(
     context: PlatformContext,
     isShortcutEnabled: Boolean = true,
-    private var modules: List<Module> = emptyList(),
+    override val modules: List<Module> = emptyList(),
     override var theme: Theme = Theme.Auto,
 ) : Kick {
 

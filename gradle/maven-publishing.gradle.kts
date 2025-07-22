@@ -1,28 +1,25 @@
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
-import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.plugins.signing.Sign
-import org.gradle.plugins.signing.SigningExtension
 
 plugins.withId("maven-publish") {
     val javadocJar = tasks.findByName("javadocJar") as? Jar
-        ?: tasks.create("javadocJar", Jar::class.java) {
+        ?: tasks.register("javadocJar", Jar::class.java) {
             archiveClassifier.set("javadoc")
             from(file("empty-javadoc"))
-        }
+        }.get()
 
     extensions.configure<PublishingExtension>("publishing") {
-        publications.withType(MavenPublication::class.java).configureEach {
+        publications.withType<MavenPublication>().configureEach {
             artifact(javadocJar)
             pom {
-                name.set("Delight SQL Viewer")
+                name.set("Kick")
                 description.set(
-                    "Delight SQL Viewer is a multiplatform library " +
-                            "that integrates database viewing and editing into your application"
+                    "Kick: Kotlin Inspection & Control Kit. " +
+                            "A modular Compose Multiplatform toolkit for unified in-app " +
+                            "inspection and control of logs, network, databases and more."
                 )
-                url.set("https://github.com/bartwell/delight-sql-viewer")
+                url.set("https://github.com/bartwell/kick")
                 licenses {
                     license {
                         name.set("Apache License, Version 2.0")
@@ -30,9 +27,9 @@ plugins.withId("maven-publish") {
                     }
                 }
                 scm {
-                    connection.set("scm:git:git://github.com/bartwell/delight-sql-viewer.git")
-                    developerConnection.set("scm:git:ssh://github.com/bartwell/delight-sql-viewer.git")
-                    url.set("https://github.com/bartwell/delight-sql-viewer")
+                    connection.set("scm:git:git://github.com/bartwell/kick.git")
+                    developerConnection.set("scm:git:ssh://github.com/bartwell/kick.git")
+                    url.set("https://github.com/bartwell/kick")
                 }
                 developers {
                     developer {
@@ -43,37 +40,5 @@ plugins.withId("maven-publish") {
                 }
             }
         }
-
-        repositories {
-            maven {
-                name = "OSSRH"
-                url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-                credentials {
-                    username = findProperty("ossrhUsername") as String?
-                        ?: System.getenv("OSSRH_USERNAME")
-                    password = findProperty("ossrhPassword") as String?
-                        ?: System.getenv("OSSRH_PASSWORD")
-                }
-            }
-        }
     }
-}
-
-plugins.withId("signing") {
-    extensions.configure<SigningExtension>("signing") {
-        useInMemoryPgpKeys(
-            findProperty("signingKeyId") as String? ?: System.getenv("SIGNING_KEY_ID"),
-            findProperty("signingSecretKey") as String? ?: System.getenv("SIGNING_SECRET_KEY"),
-            findProperty("signingPassword") as String? ?: System.getenv("SIGNING_PASSWORD")
-        )
-        val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
-        sign(*publishingExtension.publications.toTypedArray())
-    }
-}
-
-tasks.withType<PublishToMavenLocal>().configureEach {
-    dependsOn(tasks.withType<Sign>())
-}
-tasks.withType<PublishToMavenRepository>().configureEach {
-    dependsOn(tasks.withType<Sign>())
 }

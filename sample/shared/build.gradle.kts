@@ -39,18 +39,9 @@ kotlin {
             isStatic = true
             export(projects.mainCore)
             if (isRelease) {
-                export(projects.stub)
-                export(projects.loggingStub)
-                export(projects.multiplatformSettingsStub)
-                export(projects.fileExplorerStub)
-                export(projects.ktor3Stub)
+                export(projects.mainRuntimeStub)
             } else {
                 export(projects.mainRuntime)
-                export(projects.sqliteRuntime)
-                export(projects.sqliteCore)
-                export(projects.sqliteSqldelightAdapter)
-                export(projects.sqliteRoomAdapter)
-                export(projects.multiplatformSettings)
             }
         }
     }
@@ -61,7 +52,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.mainCore)
             if (isRelease) {
-                api(projects.stub)
+                api(projects.mainRuntimeStub)
                 api(projects.loggingStub)
                 api(projects.multiplatformSettingsStub)
                 api(projects.fileExplorerStub)

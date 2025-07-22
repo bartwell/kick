@@ -21,7 +21,7 @@ internal actual object LaunchUtils {
         }
         val uri = FileProvider.getUriForFile(
             androidContext,
-            "${androidContext.packageName}.fileprovider",
+            "${androidContext.packageName}.kickfileprovider",
             file
         )
         Intent(Intent.ACTION_SEND).apply {

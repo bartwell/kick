@@ -6,22 +6,29 @@ import ru.bartwell.kick.core.data.Theme
 
 public interface Kick {
     public var theme: Theme
+    public val modules: List<Module>
     public fun launch(context: PlatformContext)
     public fun getShortcutId(): String
 
     public companion object Companion {
-        internal lateinit var impl: Kick
+        internal var instance: Kick? = null
         public var theme: Theme
-            get() = impl.theme
-            set(value) { impl.theme = value }
+            get() = instance?.theme ?: Theme.Auto
+            set(value) {
+                instance?.theme = value
+            }
+        public val modules: List<Module>
+            get() = instance?.modules ?: emptyList()
 
         public fun init(impl: Kick) {
-            this.impl = impl
+            this.instance = impl
         }
 
-        @Suppress("OptionalUnit")
-        public fun launch(context: PlatformContext): Unit = impl.launch(context)
-        public fun getShortcutId(): String = impl.getShortcutId()
+        public fun launch(context: PlatformContext) {
+            instance?.launch(context)
+        }
+
+        public fun getShortcutId(): String = instance?.getShortcutId() ?: ""
     }
 
     public class Configuration {
