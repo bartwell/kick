@@ -7,8 +7,8 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.sqldelight)
-    id("maven-publish")
-    id("signing")
+    alias(libs.plugins.publish.plugin)
+    id("publish-convention")
 }
 
 group = "ru.bartwell.kick"
@@ -23,7 +23,6 @@ kotlin {
                 }
             }
         }
-        publishLibraryVariants("release")
     }
 
     listOf(
@@ -88,4 +87,4 @@ android {
 
 sqldelight {}
 
-apply(from = "$rootDir/gradle/maven-publishing.gradle.kts")
+

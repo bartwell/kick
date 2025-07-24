@@ -8,8 +8,8 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.room)
-    id("maven-publish")
-    id("signing")
+    alias(libs.plugins.publish.plugin)
+    id("publish-convention")
 }
 
 group = "ru.bartwell.kick"
@@ -24,7 +24,6 @@ kotlin {
                 }
             }
         }
-        publishLibraryVariants("release")
     }
 
     listOf(
@@ -105,5 +104,3 @@ dependencies {
 room {
     schemaDirectory("$projectDir/schemas")
 }
-
-apply(from = "$rootDir/gradle/maven-publishing.gradle.kts") 

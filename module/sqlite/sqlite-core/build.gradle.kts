@@ -4,8 +4,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
-    id("maven-publish")
-    id("signing")
+    alias(libs.plugins.publish.plugin)
+    id("publish-convention")
 }
 
 group = "ru.bartwell.kick"
@@ -20,7 +20,6 @@ kotlin {
                 }
             }
         }
-        publishLibraryVariants("release")
     }
 
     listOf(
@@ -60,4 +59,4 @@ android {
     }
 }
 
-apply(from = "$rootDir/gradle/maven-publishing.gradle.kts")
+

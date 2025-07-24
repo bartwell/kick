@@ -15,6 +15,9 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Kick"
+
+includeBuild("maven-publishing")
+
 // Core
 include(":main-runtime-stub")
 include(":main-core")
