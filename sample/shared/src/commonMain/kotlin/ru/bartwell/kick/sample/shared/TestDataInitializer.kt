@@ -50,8 +50,6 @@ class TestDataInitializer(context: PlatformContext) {
         "Your next pull request could revolutionize the project’s architecture, as long as you never forget the principles of clean code and friendly tests."
     )
 
-    private const val defaultMaxItems: Int = 5
-
     private val configurationItems: List<ConfigurationItem> = listOf(
         ConfigurationItem(
             name = "featureEnabled",
@@ -59,7 +57,7 @@ class TestDataInitializer(context: PlatformContext) {
         ),
         ConfigurationItem(
             name = "maxItems",
-            default = ValueType.Int(defaultMaxItems),
+            default = ValueType.Int(DEFAULT_MAX_ITEMS),
             editor = Editor.InputNumber(min = 1.0, max = 10.0)
         ),
         ConfigurationItem(
@@ -116,5 +114,9 @@ class TestDataInitializer(context: PlatformContext) {
                 delay(1.seconds)
             }
         }
+    }
+
+    private companion object {
+        const val DEFAULT_MAX_ITEMS: Int = 5
     }
 }
