@@ -19,6 +19,7 @@ import ru.bartwell.kick.module.configuration.feature.presentation.ConfigurationC
 import ru.bartwell.kick.module.configuration.feature.presentation.DefaultConfigurationComponent
 import ru.bartwell.kick.module.configuration.internal.ConfigHolder
 import com.russhwolf.settings.Settings
+import com.russhwolf.settings.*
 
 public class ConfigurationModule(
     private val items: List<ConfigurationItem>,

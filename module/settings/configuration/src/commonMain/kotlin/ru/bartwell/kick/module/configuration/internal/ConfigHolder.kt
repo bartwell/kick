@@ -1,6 +1,7 @@
 package ru.bartwell.kick.module.configuration.internal
 
 import com.russhwolf.settings.Settings
+import com.russhwolf.settings.*
 import ru.bartwell.kick.module.configuration.data.ConfigurationItem
 import ru.bartwell.kick.module.configuration.data.ValueType
 

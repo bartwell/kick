@@ -1,6 +1,7 @@
 package ru.bartwell.kick.sample.shared.setting
 
 import com.russhwolf.settings.Settings
+import com.russhwolf.settings.*
 import ru.bartwell.kick.core.data.PlatformContext
 
 @Suppress("MagicNumber")
