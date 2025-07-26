@@ -10,6 +10,7 @@ public fun Kick.Companion.config(name: String): ValueType? =
 public fun Kick.Companion.configOrDefault(name: String): ValueType =
     ConfigHolder.getValueOrDefault(name)
 
+@Suppress("TooManyFunctions")
 public object ConfigurationAccessor {
     public fun getBooleanOrNull(name: String): Boolean? =
         (Kick.config(name) as? ValueType.Bool)?.value

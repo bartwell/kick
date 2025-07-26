@@ -9,6 +9,7 @@ public fun Kick.Companion.config(name: String): ValueType? = null
 @Suppress("UnusedPrivateProperty", "unused")
 public fun Kick.Companion.configOrDefault(name: String): ValueType = ValueType.Str("")
 
+@Suppress("TooManyFunctions")
 public object ConfigurationAccessor {
     public fun getBooleanOrNull(name: String): Boolean? = null
     public fun getBooleanOrDefault(name: String): Boolean = false

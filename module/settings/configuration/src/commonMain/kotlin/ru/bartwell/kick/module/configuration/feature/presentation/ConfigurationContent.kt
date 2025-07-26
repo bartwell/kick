@@ -18,6 +18,7 @@ import ru.bartwell.kick.module.configuration.data.ValueType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@Suppress("LongMethod")
 internal fun ConfigurationContent(
     component: ConfigurationComponent,
     modifier: Modifier = Modifier,
