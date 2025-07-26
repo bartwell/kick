@@ -5,4 +5,3 @@ public data class ConfigurationItem(
     val default: ValueType,
     val editor: Editor? = null,
 )
-

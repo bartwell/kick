@@ -11,15 +11,15 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.module.configuration.ConfigurationModule
+import ru.bartwell.kick.module.configuration.data.ConfigurationItem
+import ru.bartwell.kick.module.configuration.data.Editor
+import ru.bartwell.kick.module.configuration.data.ValueType
 import ru.bartwell.kick.module.explorer.FileExplorerModule
 import ru.bartwell.kick.module.ktor3.Ktor3Module
 import ru.bartwell.kick.module.logging.LoggingModule
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.log
-import ru.bartwell.kick.module.configuration.ConfigurationModule
-import ru.bartwell.kick.module.configuration.data.ConfigurationItem
-import ru.bartwell.kick.module.configuration.data.Editor
-import ru.bartwell.kick.module.configuration.data.ValueType
 import ru.bartwell.kick.module.multiplatformsettings.MultiplatformSettingsModule
 import ru.bartwell.kick.module.sqlite.adapter.room.RoomWrapper
 import ru.bartwell.kick.module.sqlite.adapter.sqldelight.SqlDelightWrapper
@@ -50,6 +50,8 @@ class TestDataInitializer(context: PlatformContext) {
         "Your next pull request could revolutionize the project’s architecture, as long as you never forget the principles of clean code and friendly tests."
     )
 
+    private const val defaultMaxItems: Int = 5
+
     private val configurationItems: List<ConfigurationItem> = listOf(
         ConfigurationItem(
             name = "featureEnabled",
@@ -57,7 +59,7 @@ class TestDataInitializer(context: PlatformContext) {
         ),
         ConfigurationItem(
             name = "maxItems",
-            default = ValueType.Int(5),
+            default = ValueType.Int(defaultMaxItems),
             editor = Editor.InputNumber(min = 1.0, max = 10.0)
         ),
         ConfigurationItem(

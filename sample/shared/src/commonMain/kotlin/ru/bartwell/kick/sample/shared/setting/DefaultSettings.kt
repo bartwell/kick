@@ -1,7 +1,6 @@
 package ru.bartwell.kick.sample.shared.setting
 
 import com.russhwolf.settings.Settings
-import com.russhwolf.settings.*
 
 @Suppress("MagicNumber")
 class DefaultSettings {

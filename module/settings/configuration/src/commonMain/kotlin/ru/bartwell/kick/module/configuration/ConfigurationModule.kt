@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
+import com.russhwolf.settings.Settings
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import ru.bartwell.kick.core.component.Child
 import ru.bartwell.kick.core.component.Config
@@ -18,8 +19,6 @@ import ru.bartwell.kick.module.configuration.data.ValueType
 import ru.bartwell.kick.module.configuration.feature.presentation.ConfigurationContent
 import ru.bartwell.kick.module.configuration.feature.presentation.DefaultConfigurationComponent
 import ru.bartwell.kick.module.configuration.internal.ConfigHolder
-import com.russhwolf.settings.Settings
-import com.russhwolf.settings.*
 
 public class ConfigurationModule(
     private val items: List<ConfigurationItem>,
