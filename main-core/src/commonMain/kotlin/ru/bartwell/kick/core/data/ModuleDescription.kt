@@ -5,6 +5,7 @@ public enum class ModuleDescription(public val title: String) {
     ROOM(title = "Room"),
     LOGGING(title = "Logging"),
     KTOR3(title = "Ktor3"),
+    CONFIGURATION(title = "Configuration"),
     MULTIPLATFORM_SETTINGS(title = "Settings"),
     FILE_EXPLORER(title = "File Explorer")
 }
