@@ -16,6 +16,10 @@ import ru.bartwell.kick.module.ktor3.Ktor3Module
 import ru.bartwell.kick.module.logging.LoggingModule
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.log
+import ru.bartwell.kick.module.configuration.ConfigurationModule
+import ru.bartwell.kick.module.configuration.data.ConfigurationItem
+import ru.bartwell.kick.module.configuration.data.Editor
+import ru.bartwell.kick.module.configuration.data.ValueType
 import ru.bartwell.kick.module.multiplatformsettings.MultiplatformSettingsModule
 import ru.bartwell.kick.module.sqlite.adapter.room.RoomWrapper
 import ru.bartwell.kick.module.sqlite.adapter.sqldelight.SqlDelightWrapper
@@ -46,6 +50,23 @@ class TestDataInitializer(context: PlatformContext) {
         "Your next pull request could revolutionize the project’s architecture, as long as you never forget the principles of clean code and friendly tests."
     )
 
+    private val configurationItems: List<ConfigurationItem> = listOf(
+        ConfigurationItem(
+            name = "featureEnabled",
+            default = ValueType.Bool(true)
+        ),
+        ConfigurationItem(
+            name = "maxItems",
+            default = ValueType.Int(5),
+            editor = Editor.InputNumber(min = 1.0, max = 10.0)
+        ),
+        ConfigurationItem(
+            name = "endpoint",
+            default = ValueType.Str("https://example.com"),
+            editor = Editor.InputString(singleLine = true)
+        )
+    )
+
     init {
         val sqlDelightDriver = DriverFactory().createDriver(context)
         val roomDatabase = AppDatabase.create(DatabaseBuilder().createBuilder(context))
@@ -73,6 +94,7 @@ class TestDataInitializer(context: PlatformContext) {
             module(Ktor3Module(context))
             module(MultiplatformSettingsModule(listOf("Default" to defaultSettings, "Custom" to customSettings)))
             module(FileExplorerModule())
+            module(ConfigurationModule(configurationItems))
         }
         startTestLogging()
         makeTestHttpRequest()

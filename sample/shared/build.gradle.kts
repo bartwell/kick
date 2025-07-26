@@ -56,6 +56,7 @@ kotlin {
                 api(projects.loggingStub)
                 api(projects.multiplatformSettingsStub)
                 api(projects.fileExplorerStub)
+                api(projects.configurationStub)
                 api(projects.ktor3Stub)
                 api(projects.sqliteRuntimeStub)
                 api(projects.sqliteSqldelightAdapterStub)
@@ -70,6 +71,7 @@ kotlin {
                 api(projects.ktor3)
                 api(projects.multiplatformSettings)
                 api(projects.fileExplorer)
+                api(projects.configuration)
             }
             implementation(compose.runtime)
             implementation(compose.foundation)
