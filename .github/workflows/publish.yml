@@ -32,7 +32,7 @@ jobs:
           cat version.properties
 
       - name: Publish to Maven Central
-        run: ./gradlew publish
+        run: ./gradlew publishToMavenCentral --no-configuration-cache
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}

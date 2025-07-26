@@ -17,7 +17,7 @@ decompose-essenty = "2.5.0"
 detekt = "1.23.8"
 detekt-rules-compose = "1.4.0"
 ktor = "3.2.2"
-publish-plugin = "2.0.0"
+publish-plugin = "0.34.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -60,4 +60,4 @@ kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versio
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 room = { id = "androidx.room", version.ref = "room" }
-publish-plugin = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "publish-plugin" }
+publish-plugin = { id = "com.vanniktech.maven.publish", version.ref = "publish-plugin" }
