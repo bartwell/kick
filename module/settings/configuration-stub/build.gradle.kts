@@ -85,4 +85,3 @@ android {
     }
 }
 
-apply(from = "$rootDir/gradle/maven-publishing.gradle.kts") 
