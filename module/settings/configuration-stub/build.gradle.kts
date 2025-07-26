@@ -49,6 +49,7 @@ kotlin {
             implementation(libs.decompose.extensions.compose)
             implementation(libs.decompose.essenty.lifecycle.coroutines)
             implementation(libs.settings)
+            implementation(libs.settings.noArg)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
