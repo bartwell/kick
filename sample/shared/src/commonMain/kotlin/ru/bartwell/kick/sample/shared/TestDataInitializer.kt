@@ -50,23 +50,6 @@ class TestDataInitializer(context: PlatformContext) {
         "Your next pull request could revolutionize the project’s architecture, as long as you never forget the principles of clean code and friendly tests."
     )
 
-    private val configurationItems: List<ConfigurationItem> = listOf(
-        ConfigurationItem(
-            name = "featureEnabled",
-            default = ValueType.Bool(true)
-        ),
-        ConfigurationItem(
-            name = "maxItems",
-            default = ValueType.Int(DEFAULT_MAX_ITEMS),
-            editor = Editor.InputNumber(min = 1.0, max = 10.0)
-        ),
-        ConfigurationItem(
-            name = "endpoint",
-            default = ValueType.Str("https://example.com"),
-            editor = Editor.InputString(singleLine = true)
-        )
-    )
-
     init {
         val sqlDelightDriver = DriverFactory().createDriver(context)
         val roomDatabase = AppDatabase.create(DatabaseBuilder().createBuilder(context))
@@ -94,7 +77,7 @@ class TestDataInitializer(context: PlatformContext) {
             module(Ktor3Module(context))
             module(MultiplatformSettingsModule(listOf("Default" to defaultSettings, "Custom" to customSettings)))
             module(FileExplorerModule())
-            module(ConfigurationModule(configurationItems))
+            module(ConfigurationModule(createConfigurationItems()))
         }
         startTestLogging()
         makeTestHttpRequest()
@@ -115,6 +98,34 @@ class TestDataInitializer(context: PlatformContext) {
             }
         }
     }
+
+    private fun createConfigurationItems() = listOf(
+        ConfigurationItem(
+            name = "featureEnabled",
+            default = ValueType.Boolean(true),
+        ),
+        ConfigurationItem(
+            name = "maxItems",
+            default = ValueType.Int(DEFAULT_MAX_ITEMS),
+            editor = Editor.InputNumber(min = 1.0, max = 10.0),
+        ),
+        ConfigurationItem(
+            name = "endpoint",
+            default = ValueType.String("https://example.com"),
+            editor = Editor.InputString(singleLine = true),
+        ),
+        ConfigurationItem(
+            name = "list",
+            default = ValueType.String("Item 2"),
+            editor = Editor.List(
+                listOf(
+                    ValueType.String("Item 1"),
+                    ValueType.String("Item 2"),
+                    ValueType.String("Item 3"),
+                )
+            ),
+        ),
+    )
 
     private companion object {
         const val DEFAULT_MAX_ITEMS: Int = 5
