@@ -88,6 +88,7 @@ internal fun FileExplorerContent(
                 )
             }
         }
+
     }
 }
 
@@ -134,6 +135,8 @@ private fun ColumnScope.EntriesList(
                 modifier = Modifier.clickable {
                     if (entry.isDirectory) {
                         component.onDirectoryClick(entry.name)
+                    } else {
+                        component.onFileClick(entry.name)
                     }
                 },
                 headlineContent = { Text(entry.name) },

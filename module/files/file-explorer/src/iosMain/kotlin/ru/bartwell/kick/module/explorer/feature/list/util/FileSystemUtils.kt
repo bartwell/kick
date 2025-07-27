@@ -4,9 +4,11 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSApplicationSupportDirectory
 import platform.Foundation.NSCachesDirectory
 import platform.Foundation.NSDate
+import platform.Foundation.NSFileManager
 import platform.Foundation.NSDirectoryEnumerationSkipsHiddenFiles
 import platform.Foundation.NSDocumentDirectory
-import platform.Foundation.NSFileManager
+import platform.Foundation.NSString
+import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSNumber
 import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSTemporaryDirectory
@@ -105,4 +107,18 @@ internal actual object FileSystemUtils {
         NSURL.fileURLWithPath(path)
             .URLByDeletingLastPathComponent
             ?.path
+
+    actual fun readFileText(path: String): String =
+        NSString.stringWithContentsOfFile(path, NSUTF8StringEncoding, null) ?: ""
+
+    actual fun exportFile(context: PlatformContext, path: String): String? {
+        val docsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, true)
+            .firstOrNull() as? String ?: return null
+        val destPath = "$docsDir/${path.substringAfterLast('/')}"
+        return if (NSFileManager.defaultManager.copyItemAtPath(path, destPath, null)) {
+            destPath
+        } else {
+            null
+        }
+    }
 }

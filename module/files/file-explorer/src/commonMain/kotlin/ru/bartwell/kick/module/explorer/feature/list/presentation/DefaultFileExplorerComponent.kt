@@ -8,7 +8,9 @@ import ru.bartwell.kick.module.explorer.feature.list.util.FileSystemUtils
 
 internal class DefaultFileExplorerComponent(
     componentContext: ComponentContext,
-    private val onFinished: () -> Unit
+    private val onFinished: () -> Unit,
+    private val onViewFile: (String) -> Unit,
+    private val onShowOptions: (String) -> Unit,
 ) : FileExplorerComponent, ComponentContext by componentContext {
 
     private val _model = MutableValue(FileExplorerState())
@@ -39,6 +41,19 @@ internal class DefaultFileExplorerComponent(
             "$current/$name"
         }
         loadDirectory(path)
+    }
+
+    private fun buildFilePath(name: String): String {
+        val current = model.value.currentPath
+        return if (current.endsWith("/")) {
+            current + name
+        } else {
+            "$current/$name"
+        }
+    }
+
+    override fun onFileClick(name: String) {
+        onShowOptions(buildFilePath(name))
     }
 
     override fun onKnownFolderClick(path: String) {

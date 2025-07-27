@@ -5,6 +5,7 @@ import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.core.data.get
 import ru.bartwell.kick.module.explorer.feature.list.data.FileEntry
 import java.io.File
+import java.io.IOException
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 internal actual object FileSystemUtils {
@@ -38,5 +39,20 @@ internal actual object FileSystemUtils {
 
     actual fun getParentPath(path: String): String? {
         return File(path).parent
+    }
+
+    actual fun readFileText(path: String): String = File(path).readText()
+
+    actual fun exportFile(context: PlatformContext, path: String): String? {
+        val src = File(path)
+        val destDir = context.get().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+            ?: context.get().filesDir
+        val dest = File(destDir, src.name)
+        return try {
+            src.copyTo(dest, overwrite = true)
+            dest.absolutePath
+        } catch (_: IOException) {
+            null
+        }
     }
 }

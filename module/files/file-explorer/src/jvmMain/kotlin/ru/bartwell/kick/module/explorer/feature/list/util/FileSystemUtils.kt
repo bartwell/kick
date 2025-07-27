@@ -3,6 +3,7 @@ package ru.bartwell.kick.module.explorer.feature.list.util
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.explorer.feature.list.data.FileEntry
 import java.io.File
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -59,5 +60,18 @@ internal actual object FileSystemUtils {
 
     actual fun getParentPath(path: String): String? {
         return File(path).parent
+    }
+
+    actual fun readFileText(path: String): String = File(path).readText()
+
+    actual fun exportFile(context: PlatformContext, path: String): String? {
+        val src = File(path)
+        val dest = Paths.get(System.getProperty("user.home"), "Downloads", src.name).toFile()
+        return try {
+            src.copyTo(dest, overwrite = true)
+            dest.absolutePath
+        } catch (_: IOException) {
+            null
+        }
     }
 }

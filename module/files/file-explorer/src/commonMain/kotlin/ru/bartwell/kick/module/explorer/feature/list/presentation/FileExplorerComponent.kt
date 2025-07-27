@@ -9,6 +9,7 @@ internal interface FileExplorerComponent : Component {
     fun init(context: PlatformContext)
     fun onUpClick()
     fun onDirectoryClick(name: String)
+    fun onFileClick(name: String)
     fun onKnownFolderClick(path: String)
     fun onBackClick()
 }
