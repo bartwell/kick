@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.data.Theme
 import ru.bartwell.kick.core.data.platformContext
+import ru.bartwell.kick.module.configuration.configuration
 
 @Composable
 fun App() {
@@ -39,6 +40,7 @@ fun App() {
 
     LaunchedEffect(selectedTheme) {
         Kick.theme = selectedTheme.toLibraryTheme()
+        println("Configuration test: featureEnabled=" + Kick.configuration.getBoolean("featureEnabled"))
     }
 
     MaterialTheme(colorScheme = selectedTheme.getColorScheme()) {
@@ -55,7 +57,7 @@ fun App() {
                     Spacer(modifier = Modifier.height(32.dp))
                     Button(
                         onClick = { Kick.launch(context) },
-                        content = { Text(text = "Launch viewer") }
+                        content = { Text(text = "Launch viewer") },
                     )
                 }
             }

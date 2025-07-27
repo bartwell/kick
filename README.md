@@ -17,6 +17,7 @@ Less complexity, faster development, total visibility. That's Kick.
     - [SQLite](#sqlite)
     - [Logging](#logging)
     - [Multiplatform Settings](#multiplatform-settings)
+    - [Configuration](#configuration)
     - [File Explorer](#file-explorer)
 - [Advanced Module Configuration](#advanced-module-configuration)
 - [Shortcuts](#shortcuts)
@@ -158,6 +159,53 @@ Napier.base(object : Antilog() {
 
 Edit values stored with [Multiplatform Settings](https://github.com/russhwolf/multiplatform-settings). Register as many storages as you need and switch between them at runtime.
 **Note:** Multiplatform Settings doesn’t expose metadata about field types, so Kick can only display and edit values as plain text. When type information becomes available, it will be possible to implement type‑specific views — for example, a switch for Boolean or a numeric input for Int, Long, Double, or Float.
+
+### Configuration
+
+Create configuration options, such as an endpoint URL or debug flags, available during app runtime.
+Provide a list of `ConfigurationItem` objects to `ConfigurationModule`. Each item defines its default `ValueType` and can optionally include an editor UI:
+
+```
+ConfigurationModule(
+    context = context,
+    items = listOf(
+        ConfigurationItem(
+            name = "featureEnabled",
+            default = ValueType.Boolean(true),
+        ),
+        ConfigurationItem(
+            name = "maxItems",
+            default = ValueType.Int(DEFAULT_MAX_ITEMS),
+            editor = Editor.InputNumber(min = 1.0, max = 10.0),
+        ),
+        ConfigurationItem(
+            name = "endpoint",
+            default = ValueType.String("https://example.com"),
+            editor = Editor.InputString(singleLine = true),
+        ),
+        ConfigurationItem(
+            name = "list",
+            default = ValueType.String("Item 2"),
+            editor = Editor.List(
+                listOf(
+                    ValueType.String("Item 1"),
+                    ValueType.String("Item 2"),
+                    ValueType.String("Item 3"),
+                )
+            ),
+        ),
+    )
+)
+```
+
+Access these values anywhere using the convenient `Kick.configuration.get*()` methods:
+
+```
+Kick.configuration.getBoolean("featureEnabled")
+Kick.configuration.getInt("maxItems")
+Kick.configuration.getString("endpoint")
+Kick.configuration.getString("list")
+```
 
 ### File Explorer
 

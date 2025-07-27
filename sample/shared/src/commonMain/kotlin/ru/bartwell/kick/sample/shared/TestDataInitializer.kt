@@ -11,6 +11,10 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.module.configuration.ConfigurationModule
+import ru.bartwell.kick.module.configuration.data.ConfigurationItem
+import ru.bartwell.kick.module.configuration.data.Editor
+import ru.bartwell.kick.module.configuration.data.ValueType
 import ru.bartwell.kick.module.explorer.FileExplorerModule
 import ru.bartwell.kick.module.ktor3.Ktor3Module
 import ru.bartwell.kick.module.logging.LoggingModule
@@ -73,6 +77,7 @@ class TestDataInitializer(context: PlatformContext) {
             module(Ktor3Module(context))
             module(MultiplatformSettingsModule(listOf("Default" to defaultSettings, "Custom" to customSettings)))
             module(FileExplorerModule())
+            module(ConfigurationModule(context, createConfigurationItems()))
         }
         startTestLogging()
         makeTestHttpRequest()
@@ -92,5 +97,37 @@ class TestDataInitializer(context: PlatformContext) {
                 delay(1.seconds)
             }
         }
+    }
+
+    private fun createConfigurationItems() = listOf(
+        ConfigurationItem(
+            name = "featureEnabled",
+            default = ValueType.Boolean(true),
+        ),
+        ConfigurationItem(
+            name = "maxItems",
+            default = ValueType.Int(DEFAULT_MAX_ITEMS),
+            editor = Editor.InputNumber(min = 1.0, max = 10.0),
+        ),
+        ConfigurationItem(
+            name = "endpoint",
+            default = ValueType.String("https://example.com"),
+            editor = Editor.InputString(singleLine = true),
+        ),
+        ConfigurationItem(
+            name = "list",
+            default = ValueType.String("Item 2"),
+            editor = Editor.List(
+                listOf(
+                    ValueType.String("Item 1"),
+                    ValueType.String("Item 2"),
+                    ValueType.String("Item 3"),
+                )
+            ),
+        ),
+    )
+
+    private companion object {
+        const val DEFAULT_MAX_ITEMS: Int = 5
     }
 }

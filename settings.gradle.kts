@@ -60,6 +60,11 @@ include(":multiplatform-settings")
 project(":multiplatform-settings").projectDir = file("module/settings/multiplatform-settings")
 include(":multiplatform-settings-stub")
 project(":multiplatform-settings-stub").projectDir = file("module/settings/multiplatform-settings-stub")
+// Configuration
+include(":configuration")
+project(":configuration").projectDir = file("module/settings/configuration")
+include(":configuration-stub")
+project(":configuration-stub").projectDir = file("module/settings/configuration-stub")
 // File Explorer
 include(":file-explorer")
 project(":file-explorer").projectDir = file("module/files/file-explorer")
