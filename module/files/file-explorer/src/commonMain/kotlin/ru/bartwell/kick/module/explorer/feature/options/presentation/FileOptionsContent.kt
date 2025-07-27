@@ -31,7 +31,7 @@ internal fun FileOptionsContent(component: FileOptionsComponent) {
                 headlineContent = { Text("Download") }
             )
             ListItem(
-                modifier = Modifier.clickable(component::onViewAsText),
+                modifier = Modifier.clickable(onClick = component::onViewAsText),
                 headlineContent = { Text("View as text") }
             )
         }
