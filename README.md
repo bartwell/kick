@@ -167,34 +167,35 @@ Provide a list of `ConfigurationItem` objects to `ConfigurationModule`. Each ite
 
 ```
 ConfigurationModule(
-            context, items = listOf(
-                ConfigurationItem(
-                    name = "featureEnabled",
-                    default = ValueType.Boolean(true),
-                ),
-                ConfigurationItem(
-                    name = "maxItems",
-                    default = ValueType.Int(DEFAULT_MAX_ITEMS),
-                    editor = Editor.InputNumber(min = 1.0, max = 10.0),
-                ),
-                ConfigurationItem(
-                    name = "endpoint",
-                    default = ValueType.String("https://example.com"),
-                    editor = Editor.InputString(singleLine = true),
-                ),
-                ConfigurationItem(
-                    name = "list",
-                    default = ValueType.String("Item 2"),
-                    editor = Editor.List(
-                        listOf(
-                            ValueType.String("Item 1"),
-                            ValueType.String("Item 2"),
-                            ValueType.String("Item 3"),
-                        )
-                    ),
-                ),
-            )
-        )
+    context = context,
+    items = listOf(
+        ConfigurationItem(
+            name = "featureEnabled",
+            default = ValueType.Boolean(true),
+        ),
+        ConfigurationItem(
+            name = "maxItems",
+            default = ValueType.Int(DEFAULT_MAX_ITEMS),
+            editor = Editor.InputNumber(min = 1.0, max = 10.0),
+        ),
+        ConfigurationItem(
+            name = "endpoint",
+            default = ValueType.String("https://example.com"),
+            editor = Editor.InputString(singleLine = true),
+        ),
+        ConfigurationItem(
+            name = "list",
+            default = ValueType.String("Item 2"),
+            editor = Editor.List(
+                listOf(
+                    ValueType.String("Item 1"),
+                    ValueType.String("Item 2"),
+                    ValueType.String("Item 3"),
+                )
+            ),
+        ),
+    )
+)
 ```
 
 Access these values anywhere using the convenient `Kick.configuration.get*()` methods:
