@@ -11,6 +11,7 @@ import ru.bartwell.kick.core.component.Child
 import ru.bartwell.kick.core.component.Config
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.ModuleDescription
+import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.configuration.core.component.child.ConfigurationChild
 import ru.bartwell.kick.module.configuration.core.component.config.ConfigurationConfig
 import ru.bartwell.kick.module.configuration.core.persists.ConfigurationSettings
@@ -19,6 +20,7 @@ import ru.bartwell.kick.module.configuration.feature.presentation.ConfigurationC
 import ru.bartwell.kick.module.configuration.feature.presentation.DefaultConfigurationComponent
 
 public class ConfigurationModule(
+    context: PlatformContext,
     private val items: List<ConfigurationItem>,
 ) : Module {
 
@@ -26,7 +28,7 @@ public class ConfigurationModule(
     override val startConfig: Config = ConfigurationConfig
 
     init {
-        ConfigurationSettings(items)
+        ConfigurationSettings(context = context, configuration = items)
     }
 
     override fun getComponent(

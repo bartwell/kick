@@ -77,7 +77,7 @@ class TestDataInitializer(context: PlatformContext) {
             module(Ktor3Module(context))
             module(MultiplatformSettingsModule(listOf("Default" to defaultSettings, "Custom" to customSettings)))
             module(FileExplorerModule())
-            module(ConfigurationModule(createConfigurationItems()))
+            module(ConfigurationModule(context, createConfigurationItems()))
         }
         startTestLogging()
         makeTestHttpRequest()

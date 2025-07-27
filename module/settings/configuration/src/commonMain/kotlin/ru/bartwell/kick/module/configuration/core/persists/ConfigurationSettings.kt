@@ -1,14 +1,16 @@
 package ru.bartwell.kick.module.configuration.core.persists
 
 import com.russhwolf.settings.Settings
+import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.configuration.data.ConfigurationItem
 import ru.bartwell.kick.module.configuration.data.ValueType
 
 internal object ConfigurationSettings {
-    private val settings = Settings()
+    private lateinit var settings: Settings
     private var defaults = emptyMap<String, ValueType>()
 
-    operator fun invoke(configuration: List<ConfigurationItem>) {
+    operator fun invoke(context: PlatformContext, configuration: List<ConfigurationItem>) {
+        settings = PlatformSettingsFactory.create(context = context, name = "kick_configuration_prefs")
         defaults = configuration.associate { it.name to it.default }
     }
 
