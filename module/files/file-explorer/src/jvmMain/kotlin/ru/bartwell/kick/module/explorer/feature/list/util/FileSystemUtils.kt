@@ -2,10 +2,13 @@ package ru.bartwell.kick.module.explorer.feature.list.util
 
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.explorer.feature.list.data.FileEntry
+import ru.bartwell.kick.module.explorer.feature.list.data.Result
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import javax.swing.JFileChooser
+import javax.swing.SwingUtilities
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 internal actual object FileSystemUtils {
@@ -59,5 +62,31 @@ internal actual object FileSystemUtils {
 
     actual fun getParentPath(path: String): String? {
         return File(path).parent
+    }
+
+    actual fun readText(path: String): Result = Result.Success(File(path).readText())
+
+    actual fun exportFile(context: PlatformContext, path: String): Result {
+        val showDialog: () -> Result = {
+            val chooser = JFileChooser().apply {
+                dialogTitle = "Save file"
+                selectedFile = File(File(path).name)
+            }
+            if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                val dest = chooser.selectedFile
+                File(path).copyTo(dest, overwrite = true)
+                Result.Success(dest.absolutePath)
+            } else {
+                Result.Error("Cancelled")
+            }
+        }
+
+        return if (SwingUtilities.isEventDispatchThread()) {
+            showDialog()
+        } else {
+            var result: Result = Result.Error("Unknown error")
+            SwingUtilities.invokeAndWait { result = showDialog() }
+            result
+        }
     }
 }
