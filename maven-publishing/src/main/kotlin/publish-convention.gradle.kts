@@ -44,3 +44,13 @@ configure<MavenPublishBaseExtension> {
         }
     }
 }
+
+configure<SigningExtension> {
+    val signingKey: String? = System.getenv("SIGNING_SECRET_KEY")
+    val signingPassword: String? = System.getenv("SIGNING_PASSWORD")
+    if (!signingKey.isNullOrBlank() && !signingPassword.isNullOrBlank()) {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+    } else {
+        logger.warn("SIGNING_SECRET_KEY/SIGNING_PASSWORD is empty")
+    }
+}
