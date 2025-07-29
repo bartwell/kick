@@ -26,15 +26,6 @@ internal class DefaultFileExplorerComponent(
         _model.value = model.value.copy(currentPath = path, entries = entries, canGoUp = canGoUp)
     }
 
-    private fun fullPath(name: String): String {
-        val current = model.value.currentPath
-        return if (current.endsWith("/")) {
-            current + name
-        } else {
-            "$current/$name"
-        }
-    }
-
     override fun onUpClick() {
         val parent = FileSystemUtils.getParentPath(model.value.currentPath)
         if (parent != null) {
@@ -43,12 +34,7 @@ internal class DefaultFileExplorerComponent(
     }
 
     override fun onDirectoryClick(name: String) {
-        val current = model.value.currentPath
-        val path = if (current.endsWith("/")) {
-            current + name
-        } else {
-            "$current/$name"
-        }
+        val path = model.value.currentPath.appendToPath(name)
         loadDirectory(path)
     }
 
@@ -63,13 +49,13 @@ internal class DefaultFileExplorerComponent(
     override fun onViewAsTextClick() {
         val fileName = model.value.selectedFileName ?: return
         _model.value = model.value.copy(selectedFileName = null)
-        onFileOpen(fullPath(fileName))
+        onFileOpen(model.value.currentPath.appendToPath(fileName))
     }
 
     override fun onDownloadClick(context: PlatformContext) {
         val fileName = model.value.selectedFileName ?: return
         _model.value = model.value.copy(selectedFileName = null)
-        val path = fullPath(fileName)
+        val path = model.value.currentPath.appendToPath(fileName)
         val result = FileSystemUtils.exportFile(context, path)
         when (result) {
             is Result.Success -> _model.value = model.value.copy(exportedFilePath = result.data)
@@ -91,5 +77,13 @@ internal class DefaultFileExplorerComponent(
 
     override fun onBackClick() {
         onFinished()
+    }
+}
+
+private fun String.appendToPath(name: String): String {
+    return if (endsWith("/") || endsWith("\\")) {
+        this + name
+    } else {
+        "$this/$name"
     }
 }
