@@ -4,6 +4,7 @@ import android.os.Environment
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.core.data.get
 import ru.bartwell.kick.module.explorer.feature.list.data.FileEntry
+import ru.bartwell.kick.module.explorer.feature.list.data.Result
 import java.io.File
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
@@ -38,5 +39,19 @@ internal actual object FileSystemUtils {
 
     actual fun getParentPath(path: String): String? {
         return File(path).parent
+    }
+
+    actual fun readText(path: String): Result = Result.Success(File(path).readText())
+
+    actual fun exportFile(context: PlatformContext, path: String): Result {
+        val destinationDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val destination = File(destinationDir, File(path).name)
+        @Suppress("TooGenericExceptionCaught")
+        return try {
+            File(path).copyTo(destination, overwrite = true)
+            Result.Success(destination.absolutePath)
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Unknown error")
+        }
     }
 }

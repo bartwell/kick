@@ -19,23 +19,31 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.data.platformContext
+import ru.bartwell.kick.core.presentation.ErrorAlert
 import ru.bartwell.kick.module.explorer.feature.list.util.FileSystemUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,8 +54,13 @@ internal fun FileExplorerContent(
 ) {
     val state by component.model.subscribeAsState()
     val context = platformContext()
-    LaunchedEffect(Unit) {
-        component.init(context)
+
+    var launched by rememberSaveable { mutableStateOf(false) }
+    if (!launched) {
+        LaunchedEffect(Unit) {
+            component.init(context)
+            launched = true
+        }
     }
 
     Column(modifier = modifier) {
@@ -87,6 +100,20 @@ internal fun FileExplorerContent(
                     overflow = TextOverflow.Visible,
                 )
             }
+        }
+
+        OptionsSheet(
+            selectedFileName = state.selectedFileName,
+            onFileActionDismiss = component::onFileActionDismiss,
+            onDownloadClick = { component.onDownloadClick(context) },
+            onViewAsTextClick = component::onViewAsTextClick,
+        )
+
+        state.exportedFilePath?.let { exportedFilePath ->
+            SuccessAlert(path = exportedFilePath, onExportAlertDismiss = component::onExportAlertDismiss)
+        }
+        state.error?.let { error ->
+            ErrorAlert(message = error, onDismiss = component::onErrorAlertDismiss)
         }
     }
 }
@@ -134,6 +161,8 @@ private fun ColumnScope.EntriesList(
                 modifier = Modifier.clickable {
                     if (entry.isDirectory) {
                         component.onDirectoryClick(entry.name)
+                    } else {
+                        component.onFileClick(entry.name)
                     }
                 },
                 headlineContent = { Text(entry.name) },
@@ -151,4 +180,47 @@ private fun ColumnScope.EntriesList(
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun OptionsSheet(
+    selectedFileName: String?,
+    onFileActionDismiss: () -> Unit,
+    onDownloadClick: () -> Unit,
+    onViewAsTextClick: () -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    if (selectedFileName != null) {
+        ModalBottomSheet(
+            onDismissRequest = onFileActionDismiss,
+            sheetState = sheetState
+        ) {
+            ListItem(
+                modifier = Modifier.clickable(onClick = onDownloadClick),
+                headlineContent = { Text(text = "Download") }
+            )
+            ListItem(
+                modifier = Modifier.clickable(onClick = onViewAsTextClick),
+                headlineContent = { Text(text = "View as text") }
+            )
+        }
+    }
+}
+
+@Composable
+private fun SuccessAlert(
+    path: String,
+    onExportAlertDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onExportAlertDismiss,
+        confirmButton = {
+            TextButton(onClick = onExportAlertDismiss) {
+                Text("OK")
+            }
+        },
+        title = { Text(text = "File exported") },
+        text = { Text(text = path) }
+    )
 }

@@ -1,11 +1,23 @@
 package ru.bartwell.kick.module.explorer.feature.list.util
 
+import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ObjCObjectVar
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.get
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.reinterpret
+import kotlinx.cinterop.value
 import platform.Foundation.NSApplicationSupportDirectory
 import platform.Foundation.NSCachesDirectory
+import platform.Foundation.NSData
+import platform.Foundation.NSDataReadingMappedIfSafe
 import platform.Foundation.NSDate
 import platform.Foundation.NSDirectoryEnumerationSkipsHiddenFiles
 import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSNumber
 import platform.Foundation.NSSearchPathForDirectoriesInDomains
@@ -17,9 +29,11 @@ import platform.Foundation.NSURLIsDirectoryKey
 import platform.Foundation.NSURLNameKey
 import platform.Foundation.NSUserDomainMask
 import platform.Foundation.allObjects
+import platform.Foundation.dataWithContentsOfFile
 import platform.Foundation.timeIntervalSince1970
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.explorer.feature.list.data.FileEntry
+import ru.bartwell.kick.module.explorer.feature.list.data.Result
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 internal actual object FileSystemUtils {
@@ -105,4 +119,52 @@ internal actual object FileSystemUtils {
         NSURL.fileURLWithPath(path)
             .URLByDeletingLastPathComponent
             ?.path
+
+    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+    actual fun readText(path: String): Result = memScoped {
+        val errorVar = alloc<ObjCObjectVar<NSError?>>()
+
+        val data = NSData.dataWithContentsOfFile(
+            path = path,
+            options = NSDataReadingMappedIfSafe,
+            error = errorVar.ptr
+        )
+
+        errorVar.value?.let { err ->
+            return@memScoped Result.Error("Can't read file '$path': ${err.localizedDescription}")
+        }
+
+        val result = data?.let {
+            val length = data.length.toInt()
+            val ptr = data.bytes!!.reinterpret<ByteVar>()
+            val byteArray = ByteArray(length) { i -> ptr[i] }
+            byteArray.decodeToString()
+        } ?: ""
+
+        Result.Success(result)
+    }
+
+    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+    actual fun exportFile(context: PlatformContext, path: String): Result = memScoped {
+        val dirs = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, true)
+        val targetDir = dirs.firstOrNull() as? String
+            ?: run {
+                return@memScoped Result.Error("Can't locate Documents directory")
+            }
+        val fileName = NSURL.fileURLWithPath(path).lastPathComponent ?: run {
+            return@memScoped Result.Error("Can't extract file name from '$path'")
+        }
+        val destPath = "$targetDir/$fileName"
+        val errorVar = alloc<ObjCObjectVar<NSError?>>()
+        val success = NSFileManager.defaultManager.copyItemAtPath(
+            path,
+            toPath = destPath,
+            error = errorVar.ptr
+        )
+        if (!success) {
+            val message = errorVar.value?.localizedDescription ?: "Unknown error"
+            return@memScoped Result.Error("Can't copy file '$path' to '$destPath': $message")
+        }
+        Result.Success(destPath)
+    }
 }
