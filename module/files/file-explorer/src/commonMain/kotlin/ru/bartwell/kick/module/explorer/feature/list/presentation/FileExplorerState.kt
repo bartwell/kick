@@ -11,5 +11,7 @@ internal data class FileExplorerState(
     val error: String? = null,
 ) {
     val folderName: String
-        get() = currentPath.substringAfterLast('/', currentPath)
+        get() = currentPath
+            .replace('\\', '/')
+            .substringAfterLast('/', currentPath)
 }
