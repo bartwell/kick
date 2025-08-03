@@ -109,6 +109,10 @@ Kick.init(context) {
 
 ### Ktor3
 
+<a href="content/screenshots/ktor.jpg" target="_blank" rel="noopener noreferrer">
+  <img src="content/screenshots/ktor.jpg" alt="" height="120">
+</a>
+
 Monitor HTTP traffic performed with Ktor3. Just install the provided plugin:
 
 ```kotlin
@@ -118,6 +122,10 @@ val client = HttpClient(getEngineFactory()) {
 ```
 
 ### SQLite
+
+<a href="content/screenshots/sqlite.jpg" target="_blank" rel="noopener noreferrer">
+  <img src="content/screenshots/sqlite.jpg" alt="" height="120">
+</a>
 
 View and edit SQLite databases. Use one of the provided adapters (or both if you are really using Room and SqlDelight in one application) for your favorite library.
 
@@ -130,6 +138,10 @@ module(SqliteModule(RoomWrapper(roomDatabase)))
 ```
 
 ### Logging
+
+<a href="content/screenshots/logging.jpg" target="_blank" rel="noopener noreferrer">
+  <img src="content/screenshots/logging.jpg" alt="" height="120">
+</a>
 
 Gather and review log messages right from the viewer. Add logs with a simple call:
 
@@ -157,10 +169,18 @@ Napier.base(object : Antilog() {
 
 ### Multiplatform Settings
 
+<a href="content/screenshots/settings.jpg" target="_blank" rel="noopener noreferrer">
+  <img src="content/screenshots/settings.jpg" alt="" height="120">
+</a>
+
 Edit values stored with [Multiplatform Settings](https://github.com/russhwolf/multiplatform-settings). Register as many storages as you need and switch between them at runtime.
 **Note:** Multiplatform Settings doesn’t expose metadata about field types, so Kick can only display and edit values as plain text. When type information becomes available, it will be possible to implement type‑specific views — for example, a switch for Boolean or a numeric input for Int, Long, Double, or Float.
 
 ### Configuration
+
+<a href="content/screenshots/configuration.jpg" target="_blank" rel="noopener noreferrer">
+  <img src="content/screenshots/configuration.jpg" alt="" height="120">
+</a>
 
 Create configuration options, such as an endpoint URL or debug flags, available during app runtime.
 Provide a list of `ConfigurationItem` objects to `ConfigurationModule`. Each item defines its default `ValueType` and can optionally include an editor UI:
@@ -208,6 +228,10 @@ Kick.configuration.getString("list")
 ```
 
 ### File Explorer
+
+<a href="content/screenshots/files.jpg" target="_blank" rel="noopener noreferrer">
+  <img src="content/screenshots/files.jpg" alt="" height="120">
+</a>
 
 Browse the file system directly within the viewer—handy for quick checks of generated files or cached data.
 
