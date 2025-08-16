@@ -18,6 +18,7 @@ import ru.bartwell.kick.core.component.Resumable
 import ru.bartwell.kick.core.component.RootComponent
 import ru.bartwell.kick.core.component.StubConfig
 import ru.bartwell.kick.core.data.Module
+import ru.bartwell.kick.core.data.StartScreen
 import ru.bartwell.kick.runtime.core.component.child.ModulesListChild
 import ru.bartwell.kick.runtime.core.component.child.StubChild
 import ru.bartwell.kick.runtime.core.component.config.ModulesListConfig
@@ -27,10 +28,13 @@ import ru.bartwell.kick.runtime.feature.stub.presentation.DefaultStubComponent
 internal class DefaultRootComponent(
     componentContext: ComponentContext,
     private val modules: List<Module>,
+    private val startScreen: StartScreen? = null,
 ) : RootComponent, ComponentContext by componentContext {
 
     private val nav = StackNavigation<Config>()
-    override var currentModule: Module? = null
+    override var currentModule: Module? = startScreen?.moduleDescription?.let { desc ->
+        modules.firstOrNull { module -> module.description == desc }
+    }
 
     private val configModule = SerializersModule {
         polymorphic(Config::class) {
@@ -45,7 +49,7 @@ internal class DefaultRootComponent(
     override val stack: Value<ChildStack<*, Child<*>>> = childStack(
         source = nav,
         serializer = polymorphicSerializer(configModule),
-        initialConfiguration = ModulesListConfig,
+        initialConfiguration = startScreen?.config ?: ModulesListConfig,
         handleBackButton = true,
         childFactory = ::child,
     )

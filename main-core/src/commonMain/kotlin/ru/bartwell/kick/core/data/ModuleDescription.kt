@@ -7,5 +7,6 @@ public enum class ModuleDescription(public val title: String) {
     KTOR3(title = "Ktor3"),
     CONFIGURATION(title = "Configuration"),
     MULTIPLATFORM_SETTINGS(title = "Settings"),
-    FILE_EXPLORER(title = "File Explorer")
+    FILE_EXPLORER(title = "File Explorer"),
+    LAYOUT(title = "Layout")
 }

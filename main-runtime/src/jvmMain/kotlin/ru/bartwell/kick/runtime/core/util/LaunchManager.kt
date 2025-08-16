@@ -7,6 +7,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.core.data.StartScreen
 import ru.bartwell.kick.runtime.App
 import ru.bartwell.kick.runtime.core.component.DefaultRootComponent
 import java.awt.Dimension
@@ -19,10 +20,18 @@ internal val LocalComposeWindow = staticCompositionLocalOf<ComposeWindow?> { nul
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 internal actual object LaunchManager {
-    actual fun launch(context: PlatformContext, modules: List<Module>) {
+    actual fun launch(
+        context: PlatformContext,
+        modules: List<Module>,
+        startScreen: StartScreen?,
+    ) {
         val lifecycle = LifecycleRegistry()
         val componentContext = DefaultComponentContext(lifecycle)
-        val rootComponent = DefaultRootComponent(componentContext = componentContext, modules = modules)
+        val rootComponent = DefaultRootComponent(
+            componentContext = componentContext,
+            modules = modules,
+            startScreen = startScreen,
+        )
 
         val window = ComposeWindow().apply {
             title = "Viewer"

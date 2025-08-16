@@ -2,12 +2,13 @@ package ru.bartwell.kick
 
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.core.data.StartScreen
 import ru.bartwell.kick.core.data.Theme
 
 public interface Kick {
     public var theme: Theme
     public val modules: List<Module>
-    public fun launch(context: PlatformContext)
+    public fun launch(context: PlatformContext, startScreen: StartScreen? = null)
     public fun getShortcutId(): String
 
     public companion object Companion {
@@ -24,8 +25,8 @@ public interface Kick {
             this.instance = impl
         }
 
-        public fun launch(context: PlatformContext) {
-            instance?.launch(context)
+        public fun launch(context: PlatformContext, startScreen: StartScreen? = null) {
+            instance?.launch(context, startScreen)
         }
 
         public fun getShortcutId(): String = instance?.getShortcutId() ?: ""

@@ -17,6 +17,7 @@ import ru.bartwell.kick.module.configuration.data.Editor
 import ru.bartwell.kick.module.configuration.data.ValueType
 import ru.bartwell.kick.module.explorer.FileExplorerModule
 import ru.bartwell.kick.module.ktor3.Ktor3Module
+import ru.bartwell.kick.module.layout.LayoutModule
 import ru.bartwell.kick.module.logging.LoggingModule
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.log
@@ -77,6 +78,7 @@ class TestDataInitializer(context: PlatformContext) {
             module(Ktor3Module(context))
             module(MultiplatformSettingsModule(listOf("Default" to defaultSettings, "Custom" to customSettings)))
             module(FileExplorerModule())
+            module(LayoutModule(context))
             module(ConfigurationModule(context, createConfigurationItems()))
         }
         startTestLogging()

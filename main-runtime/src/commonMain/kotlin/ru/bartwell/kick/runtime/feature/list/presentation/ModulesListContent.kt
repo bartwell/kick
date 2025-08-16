@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import ru.bartwell.kick.core.presentation.LocalAppUiEnvironment
 import ru.bartwell.kick.runtime.feature.list.data.ModuleInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,13 +32,12 @@ internal fun ModulesListContent(
     modifier: Modifier = Modifier,
 ) {
     val state by component.model.subscribeAsState()
-    val screenCloser = screenCloser()
 
     Column(modifier = modifier) {
         TopAppBar(
             title = { Text("Modules") },
             navigationIcon = {
-                IconButton(onClick = screenCloser) {
+                IconButton(onClick = LocalAppUiEnvironment.current.screenCloser) {
                     Icon(imageVector = Icons.Outlined.Close, contentDescription = "Close")
                 }
             },

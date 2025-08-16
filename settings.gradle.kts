@@ -70,3 +70,8 @@ include(":file-explorer")
 project(":file-explorer").projectDir = file("module/files/file-explorer")
 include(":file-explorer-stub")
 project(":file-explorer-stub").projectDir = file("module/files/file-explorer-stub")
+// Layout
+include(":layout")
+project(":layout").projectDir = file("module/ui/layout")
+include(":layout-stub")
+project(":layout-stub").projectDir = file("module/ui/layout-stub")
