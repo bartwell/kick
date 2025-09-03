@@ -78,6 +78,7 @@ private fun Item(module: ModuleInfo, onClick: () -> Unit) {
     ListItem(
         modifier = Modifier.clickable(onClick = onClick),
         headlineContent = { Text(module.moduleDescription.title) },
+        supportingContent = { Text(module.moduleDescription.description) },
         colors = ListItemDefaults.colors(containerColor = backgroundColor),
     )
 }
