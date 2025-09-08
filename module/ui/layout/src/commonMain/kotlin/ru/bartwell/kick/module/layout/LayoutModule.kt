@@ -36,7 +36,6 @@ public class LayoutModule(private val context: PlatformContext) : Module {
     override val description: ModuleDescription = ModuleDescription.LAYOUT
     override val startConfig: Config = LayoutConfig
 
-    // ⬇️ Один общий репозиторий на модуль
     private val repository: LayoutRepository = DefaultLayoutRepository()
 
     private val triggerController = LayoutTriggerController(context) {
@@ -71,7 +70,7 @@ public class LayoutModule(private val context: PlatformContext) : Module {
             LayoutHierarchyConfig -> LayoutHierarchyChild(
                 DefaultLayoutHierarchyComponent(
                     componentContext = componentContext,
-                    repository = repository, // ⬅️ общий
+                    repository = repository,
                     onNodeSelectedCallback = { id -> nav.pushNew(LayoutPropertiesConfig(id)) },
                 )
             )
@@ -79,7 +78,7 @@ public class LayoutModule(private val context: PlatformContext) : Module {
                 DefaultLayoutPropertiesComponent(
                     componentContext = componentContext,
                     nodeId = config.nodeId,
-                    repository = repository, // ⬅️ общий
+                    repository = repository,
                     onFinished = { nav.pop() },
                 )
             )

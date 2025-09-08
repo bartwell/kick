@@ -18,13 +18,13 @@ private class ShakeListener(private val onShake: () -> Unit) : SensorEventListen
         val z = event.values.getOrNull(2) ?: 0f
         val accel = sqrt(x * x + y * y + z * z)
         val now = System.currentTimeMillis()
-        if (accel > 12 && now - lastTime > 500) {
+        if (accel > SHAKE_ACCEL_THRESHOLD && now - lastTime > SHAKE_INTERVAL_MS) {
             lastTime = now
             onShake()
         }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
 }
 
 public actual class LayoutTriggerController actual constructor(
@@ -49,3 +49,6 @@ public actual class LayoutTriggerController actual constructor(
         sensorManager = null
     }
 }
+
+private const val SHAKE_ACCEL_THRESHOLD = 12
+private const val SHAKE_INTERVAL_MS = 500

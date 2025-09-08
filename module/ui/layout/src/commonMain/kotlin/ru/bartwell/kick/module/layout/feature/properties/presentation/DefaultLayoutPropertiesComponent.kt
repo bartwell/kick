@@ -26,10 +26,7 @@ internal class DefaultLayoutPropertiesComponent(
 
     private fun load() {
         coroutineScope().launch {
-            // 1-я попытка: использовать текущие карты интроспектора
             var props = repository.propertiesOf(nodeId)
-
-            // Если пусто — восстановимся: захватим иерархию заново и повторим запрос.
             if (props.isEmpty()) {
                 repository.captureHierarchy()
                 props = repository.propertiesOf(nodeId)

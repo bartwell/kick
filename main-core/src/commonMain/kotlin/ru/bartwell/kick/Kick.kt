@@ -8,7 +8,8 @@ import ru.bartwell.kick.core.data.Theme
 public interface Kick {
     public var theme: Theme
     public val modules: List<Module>
-    public fun launch(context: PlatformContext, startScreen: StartScreen? = null)
+    public fun launch(context: PlatformContext)
+    public fun launch(context: PlatformContext, startScreen: StartScreen?)
     public fun getShortcutId(): String
 
     public companion object Companion {

@@ -22,12 +22,13 @@ internal class KickImpl(
         }
     }
 
-    @Suppress("OptionalUnit")
-    override fun launch(
-        context: PlatformContext,
-        startScreen: StartScreen?,
-    ): Unit =
+    override fun launch(context: PlatformContext) {
+        LaunchManager.launch(context, modules, null)
+    }
+
+    override fun launch(context: PlatformContext, startScreen: StartScreen?) {
         LaunchManager.launch(context, modules, startScreen)
+    }
 
     override fun getShortcutId(): String = ShortcutManager.id
 }

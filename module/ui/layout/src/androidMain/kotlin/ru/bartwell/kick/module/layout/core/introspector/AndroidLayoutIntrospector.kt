@@ -1,76 +1,282 @@
 package ru.bartwell.kick.module.layout.core.introspector
 
 import android.content.res.Resources
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
+import android.widget.CompoundButton
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.RatingBar
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.compose.ui.platform.ViewRootForTest
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsConfiguration
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.getOrNull
 import ru.bartwell.kick.module.layout.core.data.LayoutNodeId
 import ru.bartwell.kick.module.layout.core.data.LayoutNodeSnapshot
 import ru.bartwell.kick.module.layout.core.data.LayoutProperty
 import ru.bartwell.kick.module.layout.core.data.LayoutRect
+import androidx.core.view.isVisible
 
 private class AndroidLayoutIntrospector : LayoutIntrospector {
+
     private val views = mutableMapOf<String, View>()
     private val semantics = mutableMapOf<String, SemanticsNode>()
+    private val processedSemanticsOwners = mutableSetOf<Int>()
 
     override suspend fun captureHierarchy(): LayoutNodeSnapshot? {
         return runCatching {
             val root = decorView() ?: return null
             views.clear()
             semantics.clear()
+            processedSemanticsOwners.clear()
             buildSnapshot(root)
         }.getOrNull()
     }
 
     override suspend fun propertiesOf(id: LayoutNodeId): List<LayoutProperty> {
-        views[id.raw]?.let { view ->
-            val properties = mutableListOf<LayoutProperty>()
-            properties += LayoutProperty("class", view.javaClass.name)
-            view.id.takeIf { it != View.NO_ID }?.let {
-                properties += LayoutProperty("id", safeResourceName(view.resources, it))
-            }
-            val location = IntArray(2)
-            view.getLocationOnScreen(location)
-            properties += LayoutProperty("bounds", "${location[0]},${location[1]},${view.width},${view.height}")
-            properties += LayoutProperty(
-                "visibility",
-                when (view.visibility) {
-                    View.VISIBLE -> "VISIBLE"
-                    View.INVISIBLE -> "INVISIBLE"
-                    else -> "GONE"
-                }
-            )
-            properties += LayoutProperty("enabled", view.isEnabled.toString())
-            properties += LayoutProperty("clickable", view.isClickable.toString())
-            view.contentDescription?.let { properties += LayoutProperty("contentDescription", it.toString()) }
-            view.tag?.let { properties += LayoutProperty("tag", it.toString()) }
-            properties += LayoutProperty("alpha", view.alpha.toString())
-            properties += LayoutProperty("elevation", view.elevation.toString())
-            return properties
+        return views[id.raw]?.let { view -> viewProperties(view) }
+            ?: semantics[id.raw]?.let { node -> semanticsProperties(node) }
+            ?: emptyList()
+    }
+
+    private fun viewProperties(view: View): List<LayoutProperty> {
+        val p = mutableListOf<LayoutProperty>()
+        p += LayoutProperty("classFqn", view.javaClass.name)
+        p += LayoutProperty("class", view.javaClass.simpleName.ifBlank { view.javaClass.name.substringAfterLast('.') })
+        view.id.takeIf { it != View.NO_ID }?.let {
+            p += LayoutProperty("id", safeResourceName(view.resources, it))
         }
 
-        semantics[id.raw]?.let { node ->
-            val props = mutableListOf<LayoutProperty>()
-            node.config.getOrNull(SemanticsProperties.TestTag)?.let {
-                props += LayoutProperty("testTag", it)
-            }
-            node.config.getOrNull(SemanticsProperties.ContentDescription)?.let {
-                props += LayoutProperty("contentDescription", it.joinToString())
-            }
-            node.config.getOrNull(SemanticsProperties.Text)?.let { list ->
-                props += LayoutProperty("text", list.joinToString { it.text })
-            }
-            val clickable = node.config.contains(SemanticsActions.OnClick)
-            props += LayoutProperty("clickable", clickable.toString())
+        val loc = IntArray(2).also { view.getLocationOnScreen(it) }
+        p += LayoutProperty("bounds", "${loc[0]},${loc[1]},${view.width},${view.height}".replace("]", ""))
 
-            return props
+        p += LayoutProperty(
+            "visibility",
+            when (view.visibility) {
+                View.VISIBLE -> "VISIBLE"
+                View.INVISIBLE -> "INVISIBLE"
+                else -> "GONE"
+            }
+        )
+        p += LayoutProperty("enabled", view.isEnabled.toString())
+        p += LayoutProperty("focusable", view.isFocusable.toString())
+        p += LayoutProperty("focused", view.isFocused.toString())
+        p += LayoutProperty("selected", view.isSelected.toString())
+        p += LayoutProperty("pressed", view.isPressed.toString())
+        p += LayoutProperty("clickable", view.isClickable.toString())
+        p += LayoutProperty("longClickable", view.isLongClickable.toString())
+        p += LayoutProperty("alpha", view.alpha.toString())
+        p += LayoutProperty("elevation", view.elevation.toString())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            p += LayoutProperty("translationZ", view.translationZ.toString())
+        }
+        p += LayoutProperty("translationX", view.translationX.toString())
+        p += LayoutProperty("translationY", view.translationY.toString())
+        p += LayoutProperty("rotation", view.rotation.toString())
+        p += LayoutProperty("rotationX", view.rotationX.toString())
+        p += LayoutProperty("rotationY", view.rotationY.toString())
+        p += LayoutProperty("scaleX", view.scaleX.toString())
+        p += LayoutProperty("scaleY", view.scaleY.toString())
+        p += LayoutProperty("pivotX", view.pivotX.toString())
+        p += LayoutProperty("pivotY", view.pivotY.toString())
+        p += LayoutProperty("padding", "${view.paddingLeft},${view.paddingTop},${view.paddingRight},${view.paddingBottom}")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            p += LayoutProperty("isAccessibilityHeading", view.isAccessibilityHeading.toString())
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            p += LayoutProperty("accessibilityPaneTitle", view.accessibilityPaneTitle?.toString() ?: "null")
+            p += LayoutProperty("isScreenReaderFocusable", view.isScreenReaderFocusable.toString())
+        }
+        p += LayoutProperty(
+            "importantForAccessibility", when (view.importantForAccessibility) {
+                View.IMPORTANT_FOR_ACCESSIBILITY_AUTO -> "AUTO"
+                View.IMPORTANT_FOR_ACCESSIBILITY_YES -> "YES"
+                View.IMPORTANT_FOR_ACCESSIBILITY_NO -> "NO"
+                View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS -> "NO_HIDE_DESCENDANTS"
+                else -> view.importantForAccessibility.toString()
+            }
+        )
+        p += LayoutProperty("labelFor", view.labelFor.takeIf { it != View.NO_ID }?.let { safeResourceName(view.resources, it) } ?: "none")
+        p += LayoutProperty(
+            "accessibilityLiveRegion", when (view.accessibilityLiveRegion) {
+                View.ACCESSIBILITY_LIVE_REGION_NONE -> "NONE"
+                View.ACCESSIBILITY_LIVE_REGION_POLITE -> "POLITE"
+                View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE -> "ASSERTIVE"
+                else -> view.accessibilityLiveRegion.toString()
+            }
+        )
+
+        (view.layoutParams)?.let { lp ->
+            p += LayoutProperty("layout.width", sizeSpecToString(lp.width))
+            p += LayoutProperty("layout.height", sizeSpecToString(lp.height))
+            if (lp is MarginLayoutParams) {
+                p += LayoutProperty("layout.margins", "${lp.leftMargin},${lp.topMargin},${lp.rightMargin},${lp.bottomMargin}")
+            }
         }
 
-        return emptyList()
+        view.background?.let { p += LayoutProperty("background", it.javaClass.simpleName) }
+        view.foreground?.let { p += LayoutProperty("foreground", it.javaClass.simpleName) }
+
+        p += LayoutProperty("canScrollHorizontally", view.canScrollHorizontally(1).or(view.canScrollHorizontally(-1)).toString())
+        p += LayoutProperty("canScrollVertically", view.canScrollVertically(1).or(view.canScrollVertically(-1)).toString())
+
+        view.contentDescription?.let { p += LayoutProperty("contentDescription", it.toString()) }
+        view.tag?.let { p += LayoutProperty("tag", it.toString()) }
+
+        when (view) {
+            is TextView -> {
+                p += LayoutProperty("text", view.text?.toString() ?: "")
+                view.hint?.let { p += LayoutProperty("hint", it.toString()) }
+                p += LayoutProperty("text.length", view.text?.length?.toString() ?: "0")
+                p += LayoutProperty("ellipsize", view.ellipsize?.name ?: "none")
+                p += LayoutProperty("lines", view.lineCount.toString())
+                p += LayoutProperty("maxLines", if (view.maxLines == Integer.MAX_VALUE) "unlimited" else view.maxLines.toString())
+                p += LayoutProperty("minLines", view.minLines.toString())
+                p += LayoutProperty("inputType", view.inputType.toString())
+            }
+
+            is CompoundButton -> {
+                p += LayoutProperty("checked", view.isChecked.toString())
+            }
+
+            is ProgressBar -> {
+                p += LayoutProperty("progress", view.progress.toString())
+                p += LayoutProperty("min", if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) view.min.toString() else "0")
+                p += LayoutProperty("max", view.max.toString())
+            }
+
+            is ImageView -> {
+                p += LayoutProperty("scaleType", view.scaleType?.name ?: "null")
+            }
+
+            is RatingBar -> {
+                p += LayoutProperty("rating", view.rating.toString())
+                p += LayoutProperty("numStars", view.numStars.toString())
+                p += LayoutProperty("stepSize", view.stepSize.toString())
+            }
+
+            is SeekBar -> {
+                p += LayoutProperty("progress", view.progress.toString())
+                p += LayoutProperty("max", view.max.toString())
+            }
+        }
+
+        return p
+    }
+
+    private fun sizeSpecToString(v: Int): String = when (v) {
+        ViewGroup.LayoutParams.MATCH_PARENT -> "match_parent"
+        ViewGroup.LayoutParams.WRAP_CONTENT -> "wrap_content"
+        else -> v.toString()
+    }
+
+    private fun semanticsProperties(node: SemanticsNode): List<LayoutProperty> {
+        val cfg = node.config
+        val props = mutableListOf<LayoutProperty>()
+
+        cfg.getOrNull(SemanticsProperties.TestTag)?.let { props += LayoutProperty("testTag", it) }
+        cfg.getOrNull(SemanticsProperties.ContentDescription)?.let { props += LayoutProperty("contentDescription", it.joinToString()) }
+        cfg.getOrNull(SemanticsProperties.Text)?.let { list -> props += LayoutProperty("text", list.joinToString { it.text }) }
+        cfg.getOrNull(SemanticsProperties.Role)?.let { props += LayoutProperty("role", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.StateDescription)?.let { props += LayoutProperty("stateDescription", it) }
+        cfg.getOrNull(SemanticsProperties.Selected)?.let { props += LayoutProperty("selected", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.ToggleableState)?.let { props += LayoutProperty("toggleableState", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.Password)?.let { props += LayoutProperty("password", it.toString()) }
+
+        (cfg.getAnyOrNull("Heading") ?: cfg.getAnyOrNull("AccessibilityHeading"))?.let { props += LayoutProperty("heading", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.PaneTitle)?.let { props += LayoutProperty("paneTitle", it) }
+        cfg.getOrNull(SemanticsProperties.Focused)?.let { props += LayoutProperty("focused", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.IsEditable)?.let { props += LayoutProperty("isEditable", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.ImeAction)?.let { props += LayoutProperty("imeAction", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.Error)?.let { props += LayoutProperty("error", it) }
+        cfg.getOrNull(SemanticsProperties.LiveRegion)?.let { props += LayoutProperty("liveRegion", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.ContentType)?.let { props += LayoutProperty("contentType", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.ContentDataType)?.let { props += LayoutProperty("contentDataType", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.TraversalIndex)?.let { props += LayoutProperty("traversalIndex", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.CollectionInfo)?.let { props += LayoutProperty("collectionInfo", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.CollectionItemInfo)?.let { props += LayoutProperty("collectionItemInfo", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.HorizontalScrollAxisRange)?.let { props += LayoutProperty("hScrollRange", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.VerticalScrollAxisRange)?.let { props += LayoutProperty("vScrollRange", it.toString()) }
+        if (cfg.getAnyOrNull("Disabled") != null) props += LayoutProperty("enabled", "false")
+        if (cfg.getAnyOrNull("HideFromAccessibility") != null) props += LayoutProperty("hideFromAccessibility", "true")
+        cfg.getOrNull(SemanticsProperties.IsTraversalGroup)?.let { props += LayoutProperty("isTraversalGroup", it.toString()) }
+        @Suppress("DEPRECATION")
+        cfg.getOrNull(SemanticsProperties.IsContainer)?.let { props += LayoutProperty("isContainer(deprecated)", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.TextSubstitution)?.let { props += LayoutProperty("textSubstitution", it.toString()) }
+        cfg.getOrNull(SemanticsProperties.IsShowingTextSubstitution)?.let { props += LayoutProperty("isShowingTextSubstitution", it.toString()) }
+        if (cfg.getAnyOrNull("IndexForKey") != null) props += LayoutProperty("indexForKey", "present")
+        cfg.getOrNull(SemanticsProperties.MaxTextLength)?.let { props += LayoutProperty("maxTextLength", it.toString()) }
+        if (cfg.getAnyOrNull("IsDialog") != null) props += LayoutProperty("isDialog", "true")
+        if (cfg.getAnyOrNull("IsPopup") != null) props += LayoutProperty("isPopup", "true")
+
+        val r = node.boundsInRoot
+        props += LayoutProperty("boundsInRoot", "${r.left.toInt()},${r.top.toInt()},${r.width.toInt()},${r.height.toInt()}")
+
+        val actions = mutableListOf<String>()
+        fun addAction(name: String, label: String = name) {
+            if (cfg.hasActionByName(name)) actions += label
+        }
+        addAction("OnClick", "onClick")
+        addAction("OnLongClick", "onLongClick")
+        addAction("ScrollBy", "scrollBy")
+        addAction("ScrollByOffset", "scrollByOffset")
+        addAction("ScrollToIndex", "scrollToIndex")
+        addAction("SetText", "setText")
+        addAction("SetSelection", "setSelection")
+        addAction("SetTextSubstitution", "setTextSubstitution")
+        addAction("ShowTextSubstitution", "showTextSubstitution")
+        addAction("ClearTextSubstitution", "clearTextSubstitution")
+        addAction("OnAutofillText", "onAutofillText")
+        addAction("SetProgress", "setProgress")
+        addAction("InsertTextAtCursor", "insertTextAtCursor")
+        addAction("OnImeAction", "onImeAction")
+        addAction("CopyText", "copyText")
+        addAction("CutText", "cutText")
+        addAction("PasteText", "pasteText")
+        addAction("Expand", "expand")
+        addAction("Collapse", "collapse")
+        addAction("Dismiss", "dismiss")
+        addAction("RequestFocus", "requestFocus")
+        addAction("PageUp", "pageUp")
+        addAction("PageDown", "pageDown")
+        addAction("PageLeft", "pageLeft")
+        addAction("PageRight", "pageRight")
+        addAction("GetTextLayoutResult", "getTextLayoutResult")
+        addAction("GetScrollViewportLength", "getScrollViewportLength")
+        if (actions.isNotEmpty()) props += LayoutProperty("actions", actions.joinToString())
+
+        cfg.getOrNull(SemanticsActions.CustomActions)?.let { list ->
+            if (list.isNotEmpty()) props += LayoutProperty("customActions", list.joinToString { it.label })
+        }
+
+        return props
+    }
+
+    private fun SemanticsConfiguration.getAnyOrNull(fieldName: String): Any? {
+        return runCatching {
+            val f = SemanticsProperties::class.java.getDeclaredField(fieldName)
+
+            @Suppress("UNCHECKED_CAST")
+            val key = f.get(null) as SemanticsPropertyKey<Any?>
+            this.getOrNull(key)
+        }.getOrNull()
+    }
+
+    private fun SemanticsConfiguration.hasActionByName(fieldName: String): Boolean {
+        return runCatching {
+            val f = SemanticsActions::class.java.getDeclaredField(fieldName)
+
+            @Suppress("UNCHECKED_CAST")
+            val key = f.get(null) as SemanticsPropertyKey<Any?>
+            this.getOrNull(key) != null
+        }.getOrDefault(false)
     }
 
     private fun buildSnapshot(view: View): LayoutNodeSnapshot {
@@ -78,11 +284,9 @@ private class AndroidLayoutIntrospector : LayoutIntrospector {
         views[id.raw] = view
 
         val typeName = view.javaClass.name
-        val resName = view.id.takeIf { it != View.NO_ID }?.let { safeResourceName(view.resources, it) }
-        val displayName = resName?.let { "$typeName($it)" } ?: typeName
+        val displayName = view.javaClass.simpleName.ifBlank { typeName.substringAfterLast('.') }
 
-        val location = IntArray(2)
-        view.getLocationOnScreen(location)
+        val location = IntArray(2).also { view.getLocationOnScreen(it) }
         val rect = LayoutRect(location[0], location[1], view.width, view.height)
 
         val viewChildren = (view as? ViewGroup)?.let { group ->
@@ -96,7 +300,7 @@ private class AndroidLayoutIntrospector : LayoutIntrospector {
             typeName = typeName,
             displayName = displayName,
             bounds = rect,
-            isVisible = (view.visibility == View.VISIBLE),
+            isVisible = view.isVisible,
             testTag = view.tag?.toString(),
             children = viewChildren + semanticChildren
         )
@@ -106,9 +310,10 @@ private class AndroidLayoutIntrospector : LayoutIntrospector {
         if (view is ViewRootForTest) {
             return try {
                 val owner = view.semanticsOwner
-                val rootNode = runCatching { owner.unmergedRootSemanticsNode }
-                    .getOrElse { owner.rootSemanticsNode }
-                listOf(buildSemanticsSnapshot(rootNode))
+                val ownerId = System.identityHashCode(owner)
+                if (!processedSemanticsOwners.add(ownerId)) return emptyList()
+
+                owner.rootSemanticsNode.children.mapNotNull { buildSemanticsSnapshotOrNull(it) }
             } catch (_: Throwable) {
                 emptyList()
             }
@@ -116,36 +321,65 @@ private class AndroidLayoutIntrospector : LayoutIntrospector {
         return emptyList()
     }
 
-    private fun buildSemanticsSnapshot(node: SemanticsNode): LayoutNodeSnapshot {
-        val id = LayoutNodeId("s${node.id}")
-        semantics[id.raw] = node
+    private fun buildSemanticsSnapshotOrNull(node: SemanticsNode): LayoutNodeSnapshot? {
+        val n = skipWrapperSemantics(node)
 
-        val testTag = node.config.getOrNull(SemanticsProperties.TestTag)
-        val contentDesc = node.config.getOrNull(SemanticsProperties.ContentDescription)?.joinToString()
-        val text = node.config.getOrNull(SemanticsProperties.Text)?.joinToString { it.text }
-        val display = testTag ?: contentDesc ?: text ?: "ComposeNode"
+        val role = n.config.getOrNull(SemanticsProperties.Role)
+        val roleLabel = role?.toString()
+        val text = extractTextLabel(n)
 
-        val r = node.boundsInRoot
-        val layoutRect = LayoutRect(
-            r.left.toInt(),
-            r.top.toInt(),
-            r.width.toInt(),
-            r.height.toInt()
-        )
-
-        val children = node.children.map { childNode ->
-            buildSemanticsSnapshot(childNode)
+        val display = when {
+            roleLabel != null && !text.isNullOrBlank() -> "$roleLabel ($text)"
+            roleLabel != null -> roleLabel
+            !text.isNullOrBlank() -> text
+            else -> "Compose"
         }
+
+        val children = n.children.mapNotNull { buildSemanticsSnapshotOrNull(it) }
+        if (display == "Compose" && children.isEmpty()) return null
+
+        val r = n.boundsInRoot
+        val rect = LayoutRect(r.left.toInt(), r.top.toInt(), r.width.toInt(), r.height.toInt())
+
+        val id = LayoutNodeId("s${n.id}")
+        semantics[id.raw] = n
 
         return LayoutNodeSnapshot(
             id = id,
-            typeName = "Semantics",
+            typeName = "Compose",
             displayName = display,
-            bounds = layoutRect,
+            bounds = rect,
             isVisible = null,
-            testTag = testTag,
+            testTag = n.config.getOrNull(SemanticsProperties.TestTag),
             children = children
         )
+    }
+
+    private tailrec fun skipWrapperSemantics(node: SemanticsNode): SemanticsNode {
+        val cfg = node.config
+        val hasLabel =
+            cfg.getOrNull(SemanticsProperties.TestTag) != null ||
+                    cfg.getOrNull(SemanticsProperties.ContentDescription) != null ||
+                    cfg.getOrNull(SemanticsProperties.Text) != null ||
+                    cfg.getOrNull(SemanticsProperties.Role) != null
+
+        return if (!hasLabel && node.children.size == 1) skipWrapperSemantics(node.children.first()) else node
+    }
+
+    private fun extractTextLabel(node: SemanticsNode): String? {
+        node.config.getOrNull(SemanticsProperties.Text)?.let { list ->
+            val s = list.joinToString { it.text }.trim()
+            if (s.isNotEmpty()) return s
+        }
+        node.config.getOrNull(SemanticsProperties.ContentDescription)?.let {
+            val s = it.joinToString().trim()
+            if (s.isNotEmpty()) return s
+        }
+        for (child in node.children) {
+            val s = extractTextLabel(child)
+            if (!s.isNullOrBlank()) return s
+        }
+        return null
     }
 
     private fun decorView(): View? {
@@ -159,12 +393,8 @@ private class AndroidLayoutIntrospector : LayoutIntrospector {
                 is Array<*> -> raw.filterIsInstance<View>()
                 else -> emptyList()
             }
-            if (list.isEmpty()) {
-                null
-            } else {
-                val idx = if (list.size > 1) list.lastIndex - 1 else list.lastIndex
-                list.getOrNull(idx)
-            }
+            if (list.isEmpty()) null
+            else list.lastOrNull()
         } catch (_: Throwable) {
             null
         }

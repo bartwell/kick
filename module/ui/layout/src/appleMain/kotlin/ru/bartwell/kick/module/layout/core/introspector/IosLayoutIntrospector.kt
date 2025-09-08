@@ -11,7 +11,6 @@ import ru.bartwell.kick.module.layout.core.data.LayoutNodeSnapshot
 import ru.bartwell.kick.module.layout.core.data.LayoutProperty
 import ru.bartwell.kick.module.layout.core.data.LayoutRect
 
-// Compose semantics are not currently available on iOS, so only UIKit views are captured.
 @OptIn(ExperimentalForeignApi::class)
 private class IosLayoutIntrospector : LayoutIntrospector {
     private val views = mutableMapOf<String, UIView>()
@@ -31,7 +30,10 @@ private class IosLayoutIntrospector : LayoutIntrospector {
         props += LayoutProperty("class", NSStringFromClass(object_getClass(view)!!))
         val rect = view.frame
         rect.useContents {
-            props += LayoutProperty("bounds", "${origin.x.toInt()},${origin.y.toInt()},${size.width.toInt()},${size.height.toInt()}")
+            props += LayoutProperty(
+                "bounds",
+                "${origin.x.toInt()},${origin.y.toInt()},${size.width.toInt()},${size.height.toInt()}"
+            )
         }
         props += LayoutProperty("isHidden", view.hidden.toString())
         props += LayoutProperty("isUserInteractionEnabled", view.userInteractionEnabled.toString())
