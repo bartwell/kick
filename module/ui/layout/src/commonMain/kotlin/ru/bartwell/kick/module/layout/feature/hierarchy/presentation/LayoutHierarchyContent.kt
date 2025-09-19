@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.data.platformContext
 import ru.bartwell.kick.core.presentation.LocalAppUiEnvironment
+import ru.bartwell.kick.core.data.platformContext
+import ru.bartwell.kick.module.layout.core.extension.copyToClipboard
 import ru.bartwell.kick.module.layout.core.data.LayoutNodeId
 import ru.bartwell.kick.module.layout.core.data.LayoutNodeSnapshot
 import ru.bartwell.kick.module.layout.core.extension.copyToClipboard
