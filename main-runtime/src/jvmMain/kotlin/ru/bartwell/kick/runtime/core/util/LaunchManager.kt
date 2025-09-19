@@ -43,7 +43,6 @@ internal actual object LaunchManager {
             preferredSize = Dimension(WINDOW_WIDTH, WINDOW_HEIGHT)
             setLocationRelativeTo(null)
 
-            // Добавляем слушатель для отслеживания закрытия окна
             addWindowListener(object : WindowAdapter() {
                 override fun windowClosed(e: WindowEvent?) {
                     WindowStateManager.getInstance()?.setWindowClosed()
@@ -57,7 +56,6 @@ internal actual object LaunchManager {
             }
         }
 
-        // Устанавливаем состояние окна как открытое
         WindowStateManager.getInstance()?.setWindowOpen()
 
         window.pack()
