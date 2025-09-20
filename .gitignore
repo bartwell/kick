@@ -15,3 +15,4 @@ xcuserdata
 /module/logging/logging-stub/schemas/*
 /module/network/ktor3/schemas/*
 /sample/shared/schemas/*
+/.gradle-home/*
