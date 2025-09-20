@@ -7,9 +7,13 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.core.data.StartScreen
+import ru.bartwell.kick.core.util.WindowStateManager
 import ru.bartwell.kick.runtime.App
 import ru.bartwell.kick.runtime.core.component.DefaultRootComponent
 import java.awt.Dimension
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 
 private const val WINDOW_WIDTH = 800
 private const val WINDOW_HEIGHT = 600
@@ -19,10 +23,18 @@ internal val LocalComposeWindow = staticCompositionLocalOf<ComposeWindow?> { nul
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 internal actual object LaunchManager {
-    actual fun launch(context: PlatformContext, modules: List<Module>) {
+    actual fun launch(
+        context: PlatformContext,
+        modules: List<Module>,
+        startScreen: StartScreen?,
+    ) {
         val lifecycle = LifecycleRegistry()
         val componentContext = DefaultComponentContext(lifecycle)
-        val rootComponent = DefaultRootComponent(componentContext = componentContext, modules = modules)
+        val rootComponent = DefaultRootComponent(
+            componentContext = componentContext,
+            modules = modules,
+            startScreen = startScreen,
+        )
 
         val window = ComposeWindow().apply {
             title = "Viewer"
@@ -30,12 +42,24 @@ internal actual object LaunchManager {
             minimumSize = Dimension(MIN_WINDOW_SIZE, MIN_WINDOW_SIZE)
             preferredSize = Dimension(WINDOW_WIDTH, WINDOW_HEIGHT)
             setLocationRelativeTo(null)
+
+            // Добавляем слушатель для отслеживания закрытия окна
+            addWindowListener(object : WindowAdapter() {
+                override fun windowClosed(e: WindowEvent?) {
+                    WindowStateManager.getInstance()?.setWindowClosed()
+                }
+            })
+
             setContent {
                 CompositionLocalProvider(LocalComposeWindow provides window) {
                     App(rootComponent)
                 }
             }
         }
+
+        // Устанавливаем состояние окна как открытое
+        WindowStateManager.getInstance()?.setWindowOpen()
+
         window.pack()
         window.isVisible = true
     }

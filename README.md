@@ -19,6 +19,7 @@ Less complexity, faster development, total visibility. That's Kick.
     - [Multiplatform Settings](#multiplatform-settings)
     - [Configuration](#configuration)
     - [File Explorer](#file-explorer)
+    - [Layout](#layout)
 - [Advanced Module Configuration](#advanced-module-configuration)
 - [Shortcuts](#shortcuts)
 - [Launching Kick](#launching-kick)
@@ -70,6 +71,7 @@ kotlin {
                 implementation("ru.bartwell.kick:logging-stub:1.0.0")
                 implementation("ru.bartwell.kick:multiplatform-settings-stub:1.0.0")
                 implementation("ru.bartwell.kick:file-explorer-stub:1.0.0")
+                implementation("ru.bartwell.kick:layout-stub:1.0.0")
             } else {
                 implementation("ru.bartwell.kick:main-runtime:1.0.0")
                 implementation("ru.bartwell.kick:ktor3:1.0.0")
@@ -80,6 +82,7 @@ kotlin {
                 implementation("ru.bartwell.kick:logging:1.0.0")
                 implementation("ru.bartwell.kick:multiplatform-settings:1.0.0")
                 implementation("ru.bartwell.kick:file-explorer:1.0.0")
+                implementation("ru.bartwell.kick:layout:1.0.0")
             }
         }
     }
@@ -102,6 +105,7 @@ Kick.init(context) {
     module(Ktor3Module(context))
     module(MultiplatformSettingsModule(listOf("MySettings1" to settings1, "MySettings2" to settings2)))
     module(FileExplorerModule())
+    module(LayoutModule(context))
 }
 ```
 
@@ -234,6 +238,18 @@ Kick.configuration.getString("list")
 </a>
 
 Browse the file system directly within the viewer—handy for quick checks of generated files or cached data.
+
+### Layout (Beta)
+
+Inspect the current UI hierarchy and examine properties like bounds, visibility and Compose `testTag` values.
+
+Trigger it by shaking on Android and iOS or pressing ⌘⌥⇧K on macOS / Ctrl+Alt+Shift+K on Windows and Linux. Triggers work only while the module is enabled.
+
+```kotlin
+Kick.init(context) {
+    module(LayoutModule(context))
+}
+```
 
 ### Advanced Module Configuration
 

@@ -10,6 +10,8 @@ import platform.UIKit.UINavigationController
 import platform.UIKit.UITabBarController
 import platform.UIKit.UIViewController
 import ru.bartwell.kick.core.data.Module
+import ru.bartwell.kick.core.data.StartScreen
+import ru.bartwell.kick.core.util.WindowStateManager
 import ru.bartwell.kick.runtime.App
 import ru.bartwell.kick.runtime.core.component.DefaultRootComponent
 import kotlin.experimental.ExperimentalNativeApi
@@ -22,13 +24,22 @@ internal object IosSceneController {
     private val viewerViewControllerInstance: UIViewController?
         get() = _viewerViewControllerInstance?.get()
 
-    fun present(modules: List<Module>) {
+    fun present(
+        modules: List<Module>,
+        startScreen: StartScreen?,
+    ) {
         if (viewerViewControllerInstance != null) {
             return
         }
+
+        WindowStateManager.getInstance()?.setWindowOpen()
         val lifecycle = LifecycleRegistry()
         val componentContext = DefaultComponentContext(lifecycle)
-        val rootComponent = DefaultRootComponent(componentContext, modules)
+        val rootComponent = DefaultRootComponent(
+            componentContext = componentContext,
+            modules = modules,
+            startScreen = startScreen,
+        )
         val uiViewController = ComposeUIViewController(configure = { enforceStrictPlistSanityCheck = false }) {
             App(rootComponent)
         }
@@ -58,5 +69,7 @@ internal object IosSceneController {
     fun dismiss() {
         viewerViewControllerInstance?.dismissViewControllerAnimated(true, completion = null)
         _viewerViewControllerInstance = null
+
+        WindowStateManager.getInstance()?.setWindowClosed()
     }
 }

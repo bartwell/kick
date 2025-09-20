@@ -3,9 +3,12 @@ package ru.bartwell.kick.runtime
 import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.core.data.StartScreen
 import ru.bartwell.kick.core.data.Theme
+import ru.bartwell.kick.core.util.WindowStateManager
 import ru.bartwell.kick.runtime.core.util.LaunchManager
 import ru.bartwell.kick.runtime.core.util.ShortcutManager
+import ru.bartwell.kick.runtime.core.util.WindowStateManagerImpl
 import ru.bartwell.kick.runtime.core.util.id
 
 internal class KickImpl(
@@ -16,14 +19,20 @@ internal class KickImpl(
 ) : Kick {
 
     init {
+        WindowStateManager.init(WindowStateManagerImpl())
+
         if (isShortcutEnabled) {
             ShortcutManager.setup(context)
         }
     }
 
-    @Suppress("OptionalUnit")
-    override fun launch(context: PlatformContext): Unit =
-        LaunchManager.launch(context, modules)
+    override fun launch(context: PlatformContext) {
+        LaunchManager.launch(context, modules, null)
+    }
+
+    override fun launch(context: PlatformContext, startScreen: StartScreen?) {
+        LaunchManager.launch(context, modules, startScreen)
+    }
 
     override fun getShortcutId(): String = ShortcutManager.id
 }

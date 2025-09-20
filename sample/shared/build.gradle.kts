@@ -56,6 +56,7 @@ kotlin {
                 api(projects.loggingStub)
                 api(projects.multiplatformSettingsStub)
                 api(projects.fileExplorerStub)
+                api(projects.layoutStub)
                 api(projects.configurationStub)
                 api(projects.ktor3Stub)
                 api(projects.sqliteRuntimeStub)
@@ -71,6 +72,7 @@ kotlin {
                 api(projects.ktor3)
                 api(projects.multiplatformSettings)
                 api(projects.fileExplorer)
+                api(projects.layout)
                 api(projects.configuration)
             }
             implementation(compose.runtime)
