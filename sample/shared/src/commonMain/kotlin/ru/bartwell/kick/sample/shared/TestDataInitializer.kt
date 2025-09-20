@@ -32,6 +32,10 @@ import ru.bartwell.kick.sample.shared.database.sqldelight.DriverFactory
 import ru.bartwell.kick.sample.shared.network.SampleHttpClient
 import ru.bartwell.kick.sample.shared.setting.CustomSettings
 import ru.bartwell.kick.sample.shared.setting.DefaultSettings
+import ru.bartwell.kick.module.overlay.overlay
+import ru.bartwell.kick.core.util.DateUtils
+import ru.bartwell.kick.module.configuration.configuration
+import ru.bartwell.kick.module.overlay.OverlayModule
 import kotlin.time.Duration.Companion.seconds
 import io.github.aakira.napier.LogLevel as NapierLogLevel
 
@@ -80,9 +84,11 @@ class TestDataInitializer(context: PlatformContext) {
             module(FileExplorerModule())
             module(LayoutModule(context))
             module(ConfigurationModule(context, createConfigurationItems()))
+            module(OverlayModule(context))
         }
         startTestLogging()
         makeTestHttpRequest()
+        startOverlayUpdater()
     }
 
     private fun makeTestHttpRequest() {
@@ -96,6 +102,19 @@ class TestDataInitializer(context: PlatformContext) {
         CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 Napier.log(priority = NapierLogLevel.entries.random(), message = testLogs.random())
+                delay(1.seconds)
+            }
+        }
+    }
+
+    private fun startOverlayUpdater() {
+        CoroutineScope(Dispatchers.IO).launch {
+            var counter = 0L
+            while (isActive) {
+                Kick.overlay.set("counter", counter)
+                Kick.overlay.set("config", Kick.configuration.getBoolean("featureEnabled"))
+                Kick.overlay.set("timestamp", DateUtils.currentTimeMillis())
+                counter++
                 delay(1.seconds)
             }
         }

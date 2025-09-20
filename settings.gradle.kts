@@ -75,3 +75,8 @@ include(":layout")
 project(":layout").projectDir = file("module/ui/layout")
 include(":layout-stub")
 project(":layout-stub").projectDir = file("module/ui/layout-stub")
+// Overlay
+include(":overlay")
+project(":overlay").projectDir = file("module/logging/overlay")
+include(":overlay-stub")
+project(":overlay-stub").projectDir = file("module/logging/overlay-stub")

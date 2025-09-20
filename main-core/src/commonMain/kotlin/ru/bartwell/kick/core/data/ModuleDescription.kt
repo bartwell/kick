@@ -8,5 +8,6 @@ public enum class ModuleDescription(public val title: String) {
     CONFIGURATION(title = "Configuration"),
     MULTIPLATFORM_SETTINGS(title = "Settings"),
     FILE_EXPLORER(title = "File Explorer"),
-    LAYOUT(title = "Layout")
+    LAYOUT(title = "Layout"),
+    OVERLAY(title = "Overlay"),
 }
