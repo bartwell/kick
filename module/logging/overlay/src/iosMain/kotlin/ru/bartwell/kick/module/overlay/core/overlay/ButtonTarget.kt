@@ -5,6 +5,9 @@ import platform.UIKit.UIButton
 import platform.darwin.NSObject
 
 internal class ButtonTarget(private val action: () -> Unit) : NSObject() {
+    @Suppress("UnusedParameter")
     @ObjCAction
-    fun invoke(sender: UIButton?): Unit = action()
+    fun invoke(sender: UIButton?) {
+        action()
+    }
 }

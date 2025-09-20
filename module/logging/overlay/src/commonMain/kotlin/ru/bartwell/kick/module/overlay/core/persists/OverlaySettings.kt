@@ -17,4 +17,3 @@ internal object OverlaySettings {
         settings.putBoolean(KEY_ENABLED, value)
     }
 }
-

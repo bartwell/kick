@@ -12,10 +12,11 @@ import platform.UIKit.UIWindowScene
 
 @OptIn(ExperimentalForeignApi::class)
 internal class PassThroughWindow : UIWindow {
-    constructor(frame: CValue<CGRect>) : super(frame)
-    constructor(windowScene: UIWindowScene) : super(windowScene = windowScene)
 
     var panel: UIView? = null
+
+    constructor(frame: CValue<CGRect>) : super(frame)
+    constructor(windowScene: UIWindowScene) : super(windowScene = windowScene)
 
     override fun pointInside(point: CValue<CGPoint>, withEvent: UIEvent?): Boolean {
         val p = panel ?: return false

@@ -30,4 +30,3 @@ internal class DefaultOverlayComponent(
         onEnabledChangeCallback(enabled)
     }
 }
-

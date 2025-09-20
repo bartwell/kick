@@ -61,4 +61,3 @@ public class OverlayModule(private val context: PlatformContext) : Module {
         builder.subclass(OverlayConfig::class, OverlayConfig.serializer())
     }
 }
-

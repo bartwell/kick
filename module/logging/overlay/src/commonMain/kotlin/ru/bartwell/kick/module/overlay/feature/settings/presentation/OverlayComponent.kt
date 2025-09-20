@@ -15,4 +15,3 @@ internal interface OverlayComponent : Component {
 internal data class OverlayState(
     val enabled: Boolean = false,
 )
-

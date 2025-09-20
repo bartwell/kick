@@ -11,7 +11,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.core.util.DateUtils
 import ru.bartwell.kick.module.configuration.ConfigurationModule
+import ru.bartwell.kick.module.configuration.configuration
 import ru.bartwell.kick.module.configuration.data.ConfigurationItem
 import ru.bartwell.kick.module.configuration.data.Editor
 import ru.bartwell.kick.module.configuration.data.ValueType
@@ -22,6 +24,8 @@ import ru.bartwell.kick.module.logging.LoggingModule
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.log
 import ru.bartwell.kick.module.multiplatformsettings.MultiplatformSettingsModule
+import ru.bartwell.kick.module.overlay.OverlayModule
+import ru.bartwell.kick.module.overlay.overlay
 import ru.bartwell.kick.module.sqlite.adapter.room.RoomWrapper
 import ru.bartwell.kick.module.sqlite.adapter.sqldelight.SqlDelightWrapper
 import ru.bartwell.kick.module.sqlite.runtime.SqliteModule
@@ -32,10 +36,6 @@ import ru.bartwell.kick.sample.shared.database.sqldelight.DriverFactory
 import ru.bartwell.kick.sample.shared.network.SampleHttpClient
 import ru.bartwell.kick.sample.shared.setting.CustomSettings
 import ru.bartwell.kick.sample.shared.setting.DefaultSettings
-import ru.bartwell.kick.module.overlay.overlay
-import ru.bartwell.kick.core.util.DateUtils
-import ru.bartwell.kick.module.configuration.configuration
-import ru.bartwell.kick.module.overlay.OverlayModule
 import kotlin.time.Duration.Companion.seconds
 import io.github.aakira.napier.LogLevel as NapierLogLevel
 

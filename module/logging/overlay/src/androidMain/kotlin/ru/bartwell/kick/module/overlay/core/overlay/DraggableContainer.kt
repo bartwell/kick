@@ -25,7 +25,7 @@ internal class DraggableContainer(
         val t = dragTarget ?: return false
 
         val hit = ev.x >= t.x && ev.x <= t.x + t.width &&
-                ev.y >= t.y && ev.y <= t.y + t.height
+            ev.y >= t.y && ev.y <= t.y + t.height
         if (!hit) return false
 
         when (ev.actionMasked) {

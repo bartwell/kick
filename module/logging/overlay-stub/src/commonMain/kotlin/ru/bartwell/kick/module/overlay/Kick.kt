@@ -5,7 +5,7 @@ import ru.bartwell.kick.Kick
 public val Kick.Companion.overlay: OverlayAccessor
     get() = OverlayAccessor
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "UnusedParameter", "EmptyFunctionBlock")
 public object OverlayAccessor {
     public fun clear() {}
     public fun set(key: String, value: Long) {}
@@ -17,4 +17,3 @@ public object OverlayAccessor {
     public fun show() {}
     public fun hide() {}
 }
-

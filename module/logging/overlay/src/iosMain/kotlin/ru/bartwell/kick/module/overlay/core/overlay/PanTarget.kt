@@ -12,7 +12,7 @@ internal class PanTarget(
     private val onDelta: (dx: Double, dy: Double) -> Unit
 ) : NSObject() {
     @ObjCAction
-    fun onPan(gr: UIPanGestureRecognizer): Unit {
+    fun onPan(gr: UIPanGestureRecognizer) {
         val v = gr.view ?: return
         val container = v.superview ?: return
         val t = gr.translationInView(container)

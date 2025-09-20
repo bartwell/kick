@@ -6,4 +6,3 @@ import ru.bartwell.kick.core.data.PlatformContext
 internal expect object PlatformSettingsFactory {
     fun create(context: PlatformContext, name: String): Settings
 }
-

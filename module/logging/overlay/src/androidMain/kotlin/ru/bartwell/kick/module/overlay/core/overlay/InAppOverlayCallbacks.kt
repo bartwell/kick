@@ -44,7 +44,10 @@ internal class InAppOverlayCallbacks : Application.ActivityLifecycleCallbacks {
     override fun onActivityDestroyed(activity: Activity) = detach(activity)
 
     fun attach(activity: Activity) {
-        overlays[activity]?.let { it.isVisible = true; return }
+        overlays[activity]?.let {
+            it.isVisible = true
+            return
+        }
 
         (activity.window?.decorView as? ViewGroup)?.let { root ->
             val tag = "KickOverlayInApp"
@@ -88,7 +91,6 @@ internal class InAppOverlayCallbacks : Application.ActivityLifecycleCallbacks {
             overlays[activity] = container
         }
     }
-
 
     fun detach(activity: Activity) {
         val root = activity.window?.decorView as? ViewGroup ?: return

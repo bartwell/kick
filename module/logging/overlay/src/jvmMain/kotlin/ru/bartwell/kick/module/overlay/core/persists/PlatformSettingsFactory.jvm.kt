@@ -12,4 +12,3 @@ internal actual object PlatformSettingsFactory {
         return PreferencesSettings(node)
     }
 }
-

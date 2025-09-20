@@ -1,15 +1,6 @@
 package ru.bartwell.kick.module.overlay.core.overlay
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.IntSize
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.overlay.core.persists.OverlaySettings
 import java.awt.AWTEvent
@@ -24,21 +15,17 @@ import java.awt.event.AWTEventListener
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
 import javax.swing.JWindow
-import javax.swing.SwingUtilities
-import kotlin.math.max
-import kotlin.math.roundToInt
 
+private const val INITIAL_WINDOW_X = 50
+private const val INITIAL_WINDOW_Y = 200
+
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 public actual object KickOverlay {
     private var window: JWindow? = null
     private var awtListener: AWTEventListener? = null
 
-    private const val MIN_W_DIP = 180
-    private const val MIN_H_DIP = 60
-    private const val HYSTERESIS_DIP = 2
-
-    public actual fun init(context: PlatformContext) {
-
-    }
+    @Suppress("EmptyFunctionBlock")
+    public actual fun init(context: PlatformContext) {}
 
     public actual fun show(context: PlatformContext) {
         window?.let {
@@ -49,14 +36,14 @@ public actual object KickOverlay {
         OverlaySettings.setEnabled(true)
 
         EventQueue.invokeLater {
-            val w = JWindow().apply {
+            val window = JWindow().apply {
                 isAlwaysOnTop = true
                 background = Color(0, 0, 0, 0)
                 layout = BorderLayout()
             }
 
-            (w.rootPane as JComponent).isOpaque = false
-            (w.contentPane as JComponent).apply {
+            (window.rootPane as JComponent).isOpaque = false
+            (window.contentPane as JComponent).apply {
                 isOpaque = false
                 background = Color(0, 0, 0, 0)
             }
@@ -66,7 +53,7 @@ public actual object KickOverlay {
                 background = Color(0, 0, 0, 0)
             }
 
-            val tx = w.graphicsConfiguration?.defaultTransform
+            val tx = window.graphicsConfiguration?.defaultTransform
             val scaleX = tx?.scaleX ?: 1.0
             val scaleY = tx?.scaleY ?: 1.0
 
@@ -77,16 +64,16 @@ public actual object KickOverlay {
                 if (ev !is MouseEvent) return@AWTEventListener
                 when (ev.id) {
                     MouseEvent.MOUSE_PRESSED -> {
-                        val b = Rectangle(w.x, w.y, w.width, w.height)
+                        val b = Rectangle(window.x, window.y, window.width, window.height)
                         if (b.contains(ev.xOnScreen, ev.yOnScreen)) {
                             dragging = true
-                            pressOffsetX = ev.xOnScreen - w.x
-                            pressOffsetY = ev.yOnScreen - w.y
-                            w.toFront()
+                            pressOffsetX = ev.xOnScreen - window.x
+                            pressOffsetY = ev.yOnScreen - window.y
+                            window.toFront()
                         }
                     }
                     MouseEvent.MOUSE_DRAGGED -> if (dragging) {
-                        w.setLocation(ev.xOnScreen - pressOffsetX, ev.yOnScreen - pressOffsetY)
+                        window.setLocation(ev.xOnScreen - pressOffsetX, ev.yOnScreen - pressOffsetY)
                     }
                     MouseEvent.MOUSE_RELEASED -> if (dragging) {
                         dragging = false
@@ -98,61 +85,22 @@ public actual object KickOverlay {
             awtListener = listener
 
             panel.setContent {
-                MaterialTheme {
-                    var actualPx by remember { mutableStateOf(IntSize(360, 220)) }
-                    var desiredPx by remember { mutableStateOf(IntSize(360, 220)) }
-
-                    AutosizeMeasure(onDesiredSize = { desiredPx = it }) {
-                        OverlayWindow(onCloseClick = { onCloseClicked() })
-                    }
-
-                    androidx.compose.foundation.layout.Box(
-                        Modifier.onSizeChanged { actualPx = it }
-                    )
-
-                    LaunchedEffect(desiredPx, actualPx) {
-                        SwingUtilities.invokeLater {
-                            val dipWDesired = max(1, (desiredPx.width / scaleX).roundToInt())
-                            val dipHDesired = max(1, (desiredPx.height / scaleY).roundToInt())
-
-                            val contentDipW = max(1, (actualPx.width / scaleX).roundToInt())
-                            val contentDipH = max(1, (actualPx.height / scaleY).roundToInt())
-                            val contentDip = Dimension(contentDipW, contentDipH)
-
-                            val targetW = max(MIN_W_DIP, dipWDesired)
-                            val targetH = max(MIN_H_DIP, dipHDesired)
-                            val target = Dimension(targetW, targetH)
-
-                            val curW = w.width
-                            val curH = w.height
-                            val needResize =
-                                kotlin.math.abs(target.width - curW) >= HYSTERESIS_DIP ||
-                                        kotlin.math.abs(target.height - curH) >= HYSTERESIS_DIP
-
-                            if (needResize) {
-                                panel.preferredSize = target
-                                panel.minimumSize = target
-                                panel.maximumSize = target
-                                w.pack()
-                                if (w.size != target) w.size = target
-                            }
-
-                            val shapeDip = Dimension(
-                                kotlin.math.min(w.width, contentDip.width),
-                                kotlin.math.min(w.height, contentDip.height)
-                            )
-                            applyTransparentShape(w, shapeDip)
-                        }
-                    }
-                }
+                Overlay(
+                    window = window,
+                    panel = panel,
+                    scaleX = scaleX,
+                    scaleY = scaleY,
+                    onReady = { applyTransparentShape(window, it) },
+                    onCloseClick = ::onCloseClick,
+                )
             }
 
-            w.contentPane.add(panel, BorderLayout.CENTER)
-            w.pack()
-            w.location = Point(50, 200)
-            w.isVisible = true
-            applyTransparentShape(w)
-            window = w
+            window.contentPane.add(panel, BorderLayout.CENTER)
+            window.pack()
+            window.location = Point(INITIAL_WINDOW_X, INITIAL_WINDOW_Y)
+            window.isVisible = true
+            applyTransparentShape(window)
+            KickOverlay.window = window
         }
     }
 
@@ -169,7 +117,7 @@ public actual object KickOverlay {
         }
     }
 
-    private fun onCloseClicked() = hide()
+    private fun onCloseClick() = hide()
 
     private fun applyTransparentShape(
         w: JWindow,

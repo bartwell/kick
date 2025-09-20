@@ -33,7 +33,3 @@ public actual object KickOverlay {
         callbacks.detachFromAll()
     }
 }
-
-
-
-

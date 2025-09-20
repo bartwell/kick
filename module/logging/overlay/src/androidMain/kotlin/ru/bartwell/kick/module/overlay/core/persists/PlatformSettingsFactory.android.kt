@@ -11,4 +11,3 @@ internal actual object PlatformSettingsFactory {
         return SharedPreferencesSettings.Factory(context.get()).create(name)
     }
 }
-

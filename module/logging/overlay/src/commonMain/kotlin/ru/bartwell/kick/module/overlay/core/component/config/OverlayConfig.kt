@@ -7,4 +7,3 @@ import ru.bartwell.kick.core.component.Config
 @Serializable
 @SerialName("OverlayConfig")
 internal data object OverlayConfig : Config
-

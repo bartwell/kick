@@ -11,7 +11,8 @@ import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.ModuleDescription
 import ru.bartwell.kick.core.data.PlatformContext
 
-public class OverlayModule(private val context: PlatformContext) : Module {
+@Suppress("UnusedPrivateProperty", "EmptyFunctionBlock")
+public class OverlayModule(context: PlatformContext) : Module {
     override val description: ModuleDescription = ModuleDescription.OVERLAY
     override val startConfig: Config = StubConfig(description)
 
@@ -26,4 +27,3 @@ public class OverlayModule(private val context: PlatformContext) : Module {
 
     override fun registerSubclasses(builder: PolymorphicModuleBuilder<Config>) {}
 }
-
