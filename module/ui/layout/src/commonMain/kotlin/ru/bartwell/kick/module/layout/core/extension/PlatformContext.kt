@@ -1,4 +1,4 @@
-package ru.bartwell.kick.module.layout.feature.properties.extension
+package ru.bartwell.kick.module.layout.core.extension
 
 import ru.bartwell.kick.core.data.PlatformContext
 

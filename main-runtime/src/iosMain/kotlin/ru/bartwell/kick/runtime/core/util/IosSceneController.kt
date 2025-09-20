@@ -11,6 +11,7 @@ import platform.UIKit.UITabBarController
 import platform.UIKit.UIViewController
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.StartScreen
+import ru.bartwell.kick.core.util.WindowStateManager
 import ru.bartwell.kick.runtime.App
 import ru.bartwell.kick.runtime.core.component.DefaultRootComponent
 import kotlin.experimental.ExperimentalNativeApi
@@ -30,6 +31,8 @@ internal object IosSceneController {
         if (viewerViewControllerInstance != null) {
             return
         }
+
+        WindowStateManager.getInstance()?.setWindowOpen()
         val lifecycle = LifecycleRegistry()
         val componentContext = DefaultComponentContext(lifecycle)
         val rootComponent = DefaultRootComponent(
@@ -66,5 +69,7 @@ internal object IosSceneController {
     fun dismiss() {
         viewerViewControllerInstance?.dismissViewControllerAnimated(true, completion = null)
         _viewerViewControllerInstance = null
+
+        WindowStateManager.getInstance()?.setWindowClosed()
     }
 }

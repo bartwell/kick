@@ -17,7 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.data.platformContext
-import ru.bartwell.kick.module.layout.feature.properties.extension.copyToClipboard
+import ru.bartwell.kick.module.layout.core.extension.copyToClipboard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

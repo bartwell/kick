@@ -5,8 +5,10 @@ import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.core.data.StartScreen
 import ru.bartwell.kick.core.data.Theme
+import ru.bartwell.kick.core.util.WindowStateManager
 import ru.bartwell.kick.runtime.core.util.LaunchManager
 import ru.bartwell.kick.runtime.core.util.ShortcutManager
+import ru.bartwell.kick.runtime.core.util.WindowStateManagerImpl
 import ru.bartwell.kick.runtime.core.util.id
 
 internal class KickImpl(
@@ -17,6 +19,8 @@ internal class KickImpl(
 ) : Kick {
 
     init {
+        WindowStateManager.init(WindowStateManagerImpl())
+
         if (isShortcutEnabled) {
             ShortcutManager.setup(context)
         }

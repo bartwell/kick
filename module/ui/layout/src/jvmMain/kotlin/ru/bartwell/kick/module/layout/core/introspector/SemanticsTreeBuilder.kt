@@ -58,7 +58,7 @@ internal class SemanticsTreeBuilder(
         val id = registry.register(n)
         return LayoutNodeSnapshot(
             id = id,
-            typeName =  COMPOSE_NODE_TYPE,
+            typeName = COMPOSE_NODE_TYPE,
             displayName = display,
             bounds = rect,
             isVisible = null,

@@ -5,22 +5,59 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.SystemClock
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.core.data.get
 import kotlin.math.sqrt
 
-private class ShakeListener(private val onShake: () -> Unit) : SensorEventListener {
-    private var lastTime: Long = 0L
+private const val LINEAR_ACCEL_THRESHOLD = 13f
+private const val MIN_SHAKE_COUNT = 2
+private const val SHAKE_WINDOW_MS = 600
+private const val SHAKE_COOLDOWN_MS = 900
+private const val GRAVITY_SIZE = 3
+private const val ALPHA = 0.8f
+
+private class ShakeListener(
+    private val useLinearSensor: Boolean,
+    private val onShake: () -> Unit,
+    private val canTrigger: () -> Boolean
+) : SensorEventListener {
+
+    private val gravity = FloatArray(GRAVITY_SIZE)
+    private val window = ArrayDeque<Long>()
+    private var lastEmitAt = 0L
 
     override fun onSensorChanged(event: SensorEvent) {
-        val x = event.values.getOrNull(0) ?: 0f
-        val y = event.values.getOrNull(1) ?: 0f
-        val z = event.values.getOrNull(2) ?: 0f
-        val accel = sqrt(x * x + y * y + z * z)
-        val now = System.currentTimeMillis()
-        if (accel > SHAKE_ACCEL_THRESHOLD && now - lastTime > SHAKE_INTERVAL_MS) {
-            lastTime = now
-            onShake()
+        val now = SystemClock.elapsedRealtime()
+
+        val (ax, ay, az) = if (useLinearSensor) {
+            Triple(event.values[0], event.values[1], event.values[2])
+        } else {
+            gravity[0] = ALPHA * gravity[0] + (1 - ALPHA) * event.values[0]
+            gravity[1] = ALPHA * gravity[1] + (1 - ALPHA) * event.values[1]
+            gravity[2] = ALPHA * gravity[2] + (1 - ALPHA) * event.values[2]
+            Triple(
+                event.values[0] - gravity[0],
+                event.values[1] - gravity[1],
+                event.values[2] - gravity[2],
+            )
+        }
+
+        val linearMag = sqrt(ax * ax + ay * ay + az * az)
+
+        if (linearMag < LINEAR_ACCEL_THRESHOLD) return
+
+        window.addLast(now)
+        while (window.isNotEmpty() && now - window.first() > SHAKE_WINDOW_MS) {
+            window.removeFirst()
+        }
+
+        if (window.size >= MIN_SHAKE_COUNT && now - lastEmitAt > SHAKE_COOLDOWN_MS) {
+            lastEmitAt = now
+            window.clear()
+            if (canTrigger()) {
+                onShake()
+            }
         }
     }
 
@@ -30,25 +67,34 @@ private class ShakeListener(private val onShake: () -> Unit) : SensorEventListen
 public actual class LayoutTriggerController actual constructor(
     context: PlatformContext,
     private val onTrigger: () -> Unit,
-) {
+) : BaseLayoutTriggerController(context, onTrigger) {
     private val ctx: Context = context.get()
     private var sensorManager: SensorManager? = null
-    private val listener = ShakeListener { onTrigger() }
+    private var registeredSensor: Sensor? = null
+    private var listener: SensorEventListener? = null
 
     public actual fun start(enabled: Boolean) {
         if (!enabled || sensorManager != null) return
+
         sensorManager = ctx.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
-        val accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        if (accelerometer != null) {
-            sensorManager?.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_UI)
-        }
+        val sm = sensorManager ?: return
+
+        val linear = sm.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+        val accel = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        val sensor = linear ?: accel ?: return
+
+        val useLinear = sensor.type == Sensor.TYPE_LINEAR_ACCELERATION
+        val l = ShakeListener(useLinear, triggerCallback) { canTrigger() }
+        listener = l
+        registeredSensor = sensor
+
+        sm.registerListener(l, sensor, SensorManager.SENSOR_DELAY_GAME)
     }
 
     public actual fun stop() {
         sensorManager?.unregisterListener(listener)
+        listener = null
+        registeredSensor = null
         sensorManager = null
     }
 }
-
-private const val SHAKE_ACCEL_THRESHOLD = 12
-private const val SHAKE_INTERVAL_MS = 500

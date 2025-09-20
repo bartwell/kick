@@ -24,13 +24,15 @@ import java.awt.Container
 
 internal class SwingSnapshotBuilder(
     private val registry: NodeRegistry,
-    private val collectors: List<PropertyCollector> = defaultCollectors
 ) {
     fun build(root: Component, semanticsForHost: (Component) -> List<LayoutNodeSnapshot>): LayoutNodeSnapshot {
         return buildNode(root, semanticsForHost)
     }
 
-    private fun buildNode(component: Component, semanticsForHost: (Component) -> List<LayoutNodeSnapshot>): LayoutNodeSnapshot {
+    private fun buildNode(
+        component: Component,
+        semanticsForHost: (Component) -> List<LayoutNodeSnapshot>,
+    ): LayoutNodeSnapshot {
         val id = registry.register(component)
         val typeShort = component.javaClass.shortName()
         val loc = component.safeLocationOnScreen()

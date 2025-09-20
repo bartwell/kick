@@ -9,15 +9,15 @@ import java.awt.event.KeyEvent
 public actual class LayoutTriggerController actual constructor(
     @Suppress("UNUSED_PARAMETER") context: PlatformContext,
     private val onTrigger: () -> Unit,
-) {
+) : BaseLayoutTriggerController(context, onTrigger) {
     private var listener: AWTEventListener? = null
 
     public actual fun start(enabled: Boolean) {
         if (!enabled) return
         val l = AWTEventListener { event ->
             val e = event as? KeyEvent ?: return@AWTEventListener
-            if (e.id == KeyEvent.KEY_PRESSED && checkShortcut(e)) {
-                onTrigger()
+            if (e.id == KeyEvent.KEY_PRESSED && checkShortcut(e) && canTrigger()) {
+                triggerCallback()
             }
         }
         Toolkit.getDefaultToolkit().addAWTEventListener(l, AWTEvent.KEY_EVENT_MASK)

@@ -13,7 +13,7 @@ import ru.bartwell.kick.core.data.PlatformContext
 public actual class LayoutTriggerController actual constructor(
     @Suppress("UNUSED_PARAMETER") context: PlatformContext,
     private val onTrigger: () -> Unit,
-) {
+) : BaseLayoutTriggerController(context, onTrigger) {
     private var shakeView: ShakeView? = null
     private var windowObserver: NSObjectProtocol? = null
 
@@ -31,7 +31,7 @@ public actual class LayoutTriggerController actual constructor(
                 `object` = null,
                 queue = NSOperationQueue.mainQueue
             ) { note: NSNotification? ->
-                val w = (note?.`object` as? UIWindow) ?: topWindow()
+                val w = note?.`object` as? UIWindow ?: topWindow()
                 if (w != null && shakeView == null) {
                     attachToWindow(w)
                 }
@@ -53,7 +53,7 @@ public actual class LayoutTriggerController actual constructor(
     }
 
     private fun attachToWindow(window: UIWindow) {
-        val view = ShakeView { onTrigger() }.apply {
+        val view = ShakeView({ triggerCallback() }, { canTrigger() }).apply {
             setUserInteractionEnabled(false)
             setFrame(window.bounds)
             setAutoresizingMask(UIViewAutoresizingFlexibleWidth or UIViewAutoresizingFlexibleHeight)
@@ -71,8 +71,10 @@ private fun topWindow(): UIWindow? {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private class ShakeView(private val onShake: () -> Unit) :
-    UIView(frame = CGRectMake(0.0, 0.0, 0.0, 0.0)) {
+private class ShakeView(
+    private val onShake: () -> Unit,
+    private val canTrigger: () -> Boolean
+) : UIView(frame = CGRectMake(0.0, 0.0, 0.0, 0.0)) {
 
     override fun canBecomeFirstResponder(): Boolean = true
 
@@ -82,6 +84,8 @@ private class ShakeView(private val onShake: () -> Unit) :
     }
 
     override fun motionEnded(motion: UIEventSubtype, withEvent: UIEvent?) {
-        if (motion == UIEventSubtypeMotionShake) onShake()
+        if (motion == UIEventSubtypeMotionShake && canTrigger()) {
+            onShake()
+        }
     }
 }

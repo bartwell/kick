@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,9 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import ru.bartwell.kick.core.data.platformContext
 import ru.bartwell.kick.core.presentation.LocalAppUiEnvironment
 import ru.bartwell.kick.module.layout.core.data.LayoutNodeId
 import ru.bartwell.kick.module.layout.core.data.LayoutNodeSnapshot
+import ru.bartwell.kick.module.layout.core.extension.copyToClipboard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,12 +40,20 @@ internal fun LayoutHierarchyContent(
     modifier: Modifier = Modifier,
 ) {
     val state by component.model.subscribeAsState()
+    val context = platformContext()
     Column(modifier = modifier) {
         TopAppBar(
             title = { Text("Layout Hierarchy") },
             navigationIcon = {
                 IconButton(onClick = LocalAppUiEnvironment.current.screenCloser) {
                     Icon(imageVector = Icons.Outlined.Close, contentDescription = "Close")
+                }
+            },
+            actions = {
+                IconButton(onClick = {
+                    state.root?.toTreeString()?.let { context.copyToClipboard(it) }
+                }) {
+                    Icon(imageVector = Icons.Filled.ContentCopy, contentDescription = "Copy tree")
                 }
             }
         )
@@ -92,4 +103,11 @@ private fun NodeView(
             }
         }
     }
+}
+
+private fun LayoutNodeSnapshot.toTreeString(indent: Int = 0, builder: StringBuilder = StringBuilder()): String {
+    repeat(indent) { builder.append(' ') }
+    builder.append(displayName).append('\n')
+    children.forEach { it.toTreeString(indent + 2, builder) }
+    return builder.toString().trimEnd()
 }

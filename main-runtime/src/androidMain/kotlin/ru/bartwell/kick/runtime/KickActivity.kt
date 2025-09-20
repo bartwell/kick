@@ -11,6 +11,7 @@ import kotlinx.serialization.modules.polymorphic
 import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.component.Config
 import ru.bartwell.kick.core.data.StartScreen
+import ru.bartwell.kick.core.util.WindowStateManager
 import ru.bartwell.kick.runtime.core.component.DefaultRootComponent
 
 public class KickActivity : ComponentActivity() {
@@ -39,6 +40,16 @@ public class KickActivity : ComponentActivity() {
         setContent {
             App(rootComponent = rootComponent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        WindowStateManager.getInstance()?.setWindowOpen()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        WindowStateManager.getInstance()?.setWindowClosed()
     }
 
     public companion object {

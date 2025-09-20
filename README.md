@@ -239,7 +239,7 @@ Kick.configuration.getString("list")
 
 Browse the file system directly within the viewer—handy for quick checks of generated files or cached data.
 
-### Layout
+### Layout (Beta)
 
 Inspect the current UI hierarchy and examine properties like bounds, visibility and Compose `testTag` values.
 
