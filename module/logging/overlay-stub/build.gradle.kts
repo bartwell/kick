@@ -42,6 +42,9 @@ kotlin {
             implementation(projects.mainCore)
             implementation(compose.runtime)
             implementation(compose.material3)
+            implementation(libs.decompose)
+            implementation(libs.decompose.extensions.compose)
+            implementation(libs.decompose.essenty.lifecycle.coroutines)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

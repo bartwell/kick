@@ -9,8 +9,9 @@ import ru.bartwell.kick.core.component.Config
 import ru.bartwell.kick.core.component.StubConfig
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.ModuleDescription
+import ru.bartwell.kick.core.data.PlatformContext
 
-public class OverlayModule : Module {
+public class OverlayModule(private val context: PlatformContext) : Module {
     override val description: ModuleDescription = ModuleDescription.OVERLAY
     override val startConfig: Config = StubConfig(description)
 
