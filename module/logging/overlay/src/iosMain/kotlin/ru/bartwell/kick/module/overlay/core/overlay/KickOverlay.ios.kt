@@ -12,6 +12,9 @@ import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSSelectorFromString
 import platform.UIKit.NSLineBreakByWordWrapping
 import platform.UIKit.UIApplication
+import platform.Foundation.NSNotification
+import platform.Foundation.NSNotificationCenter
+import platform.Foundation.NSOperationQueue
 import platform.UIKit.UIButton
 import platform.UIKit.UIButtonTypeSystem
 import platform.UIKit.UIColor
@@ -22,6 +25,7 @@ import platform.UIKit.UIFont
 import platform.UIKit.UIFontWeightRegular
 import platform.UIKit.UIImage
 import platform.UIKit.UILabel
+import platform.UIKit.UIApplicationDidBecomeActiveNotification
 import platform.UIKit.UIPanGestureRecognizer
 import platform.UIKit.UISceneActivationStateForegroundActive
 import platform.UIKit.UIScreen
@@ -35,7 +39,7 @@ import platform.UIKit.UIViewAutoresizingFlexibleWidth
 import platform.UIKit.UIViewController
 import platform.UIKit.UIWindowLevelAlert
 import platform.UIKit.UIWindowScene
-import platform.UIKit.bounds
+import platform.UIKit.UIWindowDidBecomeKeyNotification
 import platform.UIKit.frame
 import platform.UIKit.setContentEdgeInsets
 import platform.darwin.dispatch_async
@@ -54,6 +58,8 @@ public actual object KickOverlay {
     private var scope: CoroutineScope? = null
     private var panTarget: PanTarget? = null
     private var closeTarget: ButtonTarget? = null
+    private var windowObserver: platform.darwin.NSObjectProtocol? = null
+    private var appActiveObserver: platform.darwin.NSObjectProtocol? = null
 
     private const val PANEL_WIDTH: Double = 280.0
     private const val PANEL_MIN_HEIGHT: Double = 44.0
@@ -65,7 +71,19 @@ public actual object KickOverlay {
     private const val BORDER_WIDTH: Double = 1.0
 
 
-    public actual fun init(context: PlatformContext): Unit = Unit
+    public actual fun init(context: PlatformContext): Unit = dispatch_async(dispatch_get_main_queue()) {
+        if (appActiveObserver == null) {
+            appActiveObserver = NSNotificationCenter.defaultCenter.addObserverForName(
+                name = UIApplicationDidBecomeActiveNotification,
+                `object` = null,
+                queue = NSOperationQueue.mainQueue
+            ) { _: NSNotification? ->
+                if (OverlaySettings.isEnabled()) {
+                    show(context)
+                }
+            }
+        }
+    }
 
     public actual fun show(context: PlatformContext): Unit = dispatch_async(dispatch_get_main_queue()) {
         OverlaySettings.setEnabled(true)
@@ -77,8 +95,24 @@ public actual object KickOverlay {
         }
 
         val scene: UIWindowScene? = activeForegroundScene()
-        val w: PassThroughWindow =
-            if (scene != null) PassThroughWindow(windowScene = scene) else PassThroughWindow(frame = UIScreen.mainScreen.bounds)
+        if (scene == null) {
+            if (windowObserver == null) {
+                windowObserver = NSNotificationCenter.defaultCenter.addObserverForName(
+                    name = UIWindowDidBecomeKeyNotification,
+                    `object` = null,
+                    queue = NSOperationQueue.mainQueue
+                ) { _: NSNotification? ->
+                    // Try again when the first window becomes key
+                    if (overlayWindow == null && OverlaySettings.isEnabled()) {
+                        show(context)
+                    }
+                    windowObserver?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
+                    windowObserver = null
+                }
+            }
+            return@dispatch_async
+        }
+        val w: PassThroughWindow = PassThroughWindow(windowScene = scene)
         w.setFrame(UIScreen.mainScreen.bounds)
         w.setWindowLevel(UIWindowLevelAlert)
         w.setBackgroundColor(UIColor.clearColor)
@@ -178,6 +212,10 @@ public actual object KickOverlay {
         label = null
         panTarget = null
         closeTarget = null
+        windowObserver?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
+        windowObserver = null
+        appActiveObserver?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
+        appActiveObserver = null
     }
 
     private fun activeForegroundScene(): UIWindowScene? {
@@ -211,7 +249,4 @@ public actual object KickOverlay {
         closeBtn.setFrame(CGRectMake(PANEL_WIDTH - CLOSE_MARGIN - CLOSE_SIZE, CLOSE_MARGIN, CLOSE_SIZE, CLOSE_SIZE))
     }
 }
-
-
-
 
