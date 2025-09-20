@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.bartwell.kick.module.overlay.core.store.OverlayStore
 
@@ -52,6 +53,9 @@ internal fun OverlayWindow(onCloseClick: () -> Unit) {
                     Text(
                         text = "$k: $v",
                         style = MaterialTheme.typography.bodySmall,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis,
                     )
                     Spacer(Modifier.height(2.dp))
                 }
