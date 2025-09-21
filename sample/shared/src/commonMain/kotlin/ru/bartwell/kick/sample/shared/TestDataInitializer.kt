@@ -11,7 +11,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.core.util.DateUtils
 import ru.bartwell.kick.module.configuration.ConfigurationModule
+import ru.bartwell.kick.module.configuration.configuration
 import ru.bartwell.kick.module.configuration.data.ConfigurationItem
 import ru.bartwell.kick.module.configuration.data.Editor
 import ru.bartwell.kick.module.configuration.data.ValueType
@@ -22,6 +24,8 @@ import ru.bartwell.kick.module.logging.LoggingModule
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.log
 import ru.bartwell.kick.module.multiplatformsettings.MultiplatformSettingsModule
+import ru.bartwell.kick.module.overlay.OverlayModule
+import ru.bartwell.kick.module.overlay.overlay
 import ru.bartwell.kick.module.sqlite.adapter.room.RoomWrapper
 import ru.bartwell.kick.module.sqlite.adapter.sqldelight.SqlDelightWrapper
 import ru.bartwell.kick.module.sqlite.runtime.SqliteModule
@@ -80,9 +84,11 @@ class TestDataInitializer(context: PlatformContext) {
             module(FileExplorerModule())
             module(LayoutModule(context))
             module(ConfigurationModule(context, createConfigurationItems()))
+            module(OverlayModule(context))
         }
         startTestLogging()
         makeTestHttpRequest()
+        startOverlayUpdater()
     }
 
     private fun makeTestHttpRequest() {
@@ -96,6 +102,19 @@ class TestDataInitializer(context: PlatformContext) {
         CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 Napier.log(priority = NapierLogLevel.entries.random(), message = testLogs.random())
+                delay(1.seconds)
+            }
+        }
+    }
+
+    private fun startOverlayUpdater() {
+        CoroutineScope(Dispatchers.IO).launch {
+            var counter = 0L
+            while (isActive) {
+                Kick.overlay.set("counter", counter)
+                Kick.overlay.set("config", Kick.configuration.getBoolean("featureEnabled"))
+                Kick.overlay.set("timestamp", DateUtils.currentTimeMillis())
+                counter++
                 delay(1.seconds)
             }
         }

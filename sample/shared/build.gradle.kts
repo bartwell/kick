@@ -58,6 +58,7 @@ kotlin {
                 api(projects.fileExplorerStub)
                 api(projects.layoutStub)
                 api(projects.configurationStub)
+                api(projects.overlayStub)
                 api(projects.ktor3Stub)
                 api(projects.sqliteRuntimeStub)
                 api(projects.sqliteSqldelightAdapterStub)
@@ -74,6 +75,7 @@ kotlin {
                 api(projects.fileExplorer)
                 api(projects.layout)
                 api(projects.configuration)
+                api(projects.overlay)
             }
             implementation(compose.runtime)
             implementation(compose.foundation)
