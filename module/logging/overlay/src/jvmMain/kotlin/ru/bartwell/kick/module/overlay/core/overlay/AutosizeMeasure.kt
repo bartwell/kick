@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.IntSize
 
 @Composable
 internal fun AutosizeMeasure(
-    onDesiredSize: (IntSize) -> Unit,
+    onSizes: (desired: IntSize, actual: IntSize) -> Unit,
     content: @Composable () -> Unit
 ) {
     SubcomposeLayout { constraints ->
@@ -22,12 +22,14 @@ internal fun AutosizeMeasure(
         }
         val desiredW = desiredPlaceables.maxOfOrNull { it.width } ?: 0
         val desiredH = desiredPlaceables.maxOfOrNull { it.height } ?: 0
-        onDesiredSize(IntSize(desiredW, desiredH))
+        val desired = IntSize(desiredW, desiredH)
 
         val actualPlaceables = subcompose("actual", content).map { it.measure(constraints) }
-        val w = actualPlaceables.maxOfOrNull { it.width } ?: constraints.minWidth
-        val h = actualPlaceables.maxOfOrNull { it.height } ?: constraints.minHeight
+        val actualW = actualPlaceables.maxOfOrNull { it.width } ?: constraints.minWidth
+        val actualH = actualPlaceables.maxOfOrNull { it.height } ?: constraints.minHeight
+        val actual = IntSize(actualW, actualH)
 
-        layout(w, h) { actualPlaceables.forEach { it.place(0, 0) } }
+        onSizes(desired, actual)
+        layout(actualW, actualH) { actualPlaceables.forEach { it.place(0, 0) } }
     }
 }

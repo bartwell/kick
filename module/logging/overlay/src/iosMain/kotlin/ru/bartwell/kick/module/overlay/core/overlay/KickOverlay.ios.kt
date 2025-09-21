@@ -210,9 +210,9 @@ public actual object KickOverlay {
             setUserInteractionEnabled(true)
             setAutoresizingMask(
                 UIViewAutoresizingFlexibleLeftMargin or
-                        UIViewAutoresizingFlexibleRightMargin or
-                        UIViewAutoresizingFlexibleTopMargin or
-                        UIViewAutoresizingFlexibleBottomMargin
+                    UIViewAutoresizingFlexibleRightMargin or
+                    UIViewAutoresizingFlexibleTopMargin or
+                    UIViewAutoresizingFlexibleBottomMargin
             )
         }
     }

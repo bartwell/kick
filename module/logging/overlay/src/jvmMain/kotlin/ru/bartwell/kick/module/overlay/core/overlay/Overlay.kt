@@ -1,6 +1,5 @@
 package ru.bartwell.kick.module.overlay.core.overlay
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,11 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
-import ru.bartwell.kick.module.overlay.core.overlay.KickOverlay.applyTransparentShape
 import java.awt.Dimension
 import javax.swing.JWindow
 import javax.swing.SwingUtilities
@@ -23,8 +19,6 @@ import kotlin.math.roundToInt
 private const val MIN_W_DIP = 180
 private const val MIN_H_DIP = 60
 private const val HYSTERESIS_DIP = 2
-private const val INITIAL_X = 360
-private const val INITIAL_Y = 220
 
 @Composable
 internal fun Overlay(
@@ -36,35 +30,33 @@ internal fun Overlay(
     onCloseClick: () -> Unit,
 ) {
     MaterialTheme {
-        var actualPx by remember { mutableStateOf(IntSize(INITIAL_X, INITIAL_Y)) }
-        var desiredPx by remember { mutableStateOf(IntSize(INITIAL_X, INITIAL_Y)) }
+        var desiredPx by remember { mutableStateOf(IntSize(0, 0)) }
+        var actualPx by remember { mutableStateOf(IntSize(0, 0)) }
 
-        AutosizeMeasure(onDesiredSize = { desiredPx = it }) {
-            OverlayWindow(onCloseClick = { onCloseClick() })
+        AutosizeMeasure(
+            onSizes = { desired, actual ->
+                desiredPx = desired
+                actualPx = actual
+            }
+        ) {
+            OverlayWindow(onCloseClick = onCloseClick)
         }
-
-        Box(
-            Modifier.onSizeChanged { actualPx = it }
-        )
 
         LaunchedEffect(desiredPx, actualPx) {
             SwingUtilities.invokeLater {
-                val dipWDesired = max(1, (desiredPx.width / scaleX).roundToInt())
-                val dipHDesired = max(1, (desiredPx.height / scaleY).roundToInt())
+                fun pxToDipW(px: Int) = max(1, (px / scaleX).roundToInt())
+                fun pxToDipH(px: Int) = max(1, (px / scaleY).roundToInt())
 
-                val contentDipW = max(1, (actualPx.width / scaleX).roundToInt())
-                val contentDipH = max(1, (actualPx.height / scaleY).roundToInt())
-                val contentDip = Dimension(contentDipW, contentDipH)
+                val dipWDesired = pxToDipW(desiredPx.width)
+                val dipHDesired = pxToDipH(desiredPx.height)
 
                 val targetW = max(MIN_W_DIP, dipWDesired)
                 val targetH = max(MIN_H_DIP, dipHDesired)
                 val target = Dimension(targetW, targetH)
 
-                val curW = window.width
-                val curH = window.height
                 val needResize =
-                    kotlin.math.abs(target.width - curW) >= HYSTERESIS_DIP ||
-                            kotlin.math.abs(target.height - curH) >= HYSTERESIS_DIP
+                    kotlin.math.abs(target.width - window.width) >= HYSTERESIS_DIP ||
+                        kotlin.math.abs(target.height - window.height) >= HYSTERESIS_DIP
 
                 if (needResize) {
                     panel.preferredSize = target
@@ -73,6 +65,13 @@ internal fun Overlay(
                     window.pack()
                     if (window.size != target) window.size = target
                 }
+
+                val dipWActual = pxToDipW(actualPx.width)
+                val dipHActual = pxToDipH(actualPx.height)
+                val contentDip = Dimension(
+                    max(1, if (dipWActual > 0) dipWActual else target.width),
+                    max(1, if (dipHActual > 0) dipHActual else target.height),
+                )
 
                 val shapeDip = Dimension(
                     min(window.width, contentDip.width),
