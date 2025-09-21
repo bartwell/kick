@@ -54,4 +54,16 @@ internal actual object FileSystemUtils {
             Result.Error(e.message ?: "Unknown error")
         }
     }
+
+    actual fun deleteFile(path: String): Result {
+        val file = File(path)
+        if (!file.exists()) {
+            return Result.Error("File not found: $path")
+        }
+        return if (file.delete()) {
+            Result.Success(path)
+        } else {
+            Result.Error("Can't delete $path")
+        }
+    }
 }

@@ -167,4 +167,15 @@ internal actual object FileSystemUtils {
         }
         Result.Success(destPath)
     }
+
+    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+    actual fun deleteFile(path: String): Result = memScoped {
+        val errorVar = alloc<ObjCObjectVar<NSError?>>()
+        val success = fileManager.removeItemAtPath(path, error = errorVar.ptr)
+        if (!success) {
+            val message = errorVar.value?.localizedDescription ?: "Unknown error"
+            return@memScoped Result.Error("Can't delete '$path': $message")
+        }
+        Result.Success(path)
+    }
 }

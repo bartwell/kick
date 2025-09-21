@@ -67,6 +67,30 @@ internal class DefaultFileExplorerComponent(
         _model.value = model.value.copy(exportedFilePath = null)
     }
 
+    override fun onDeleteClick() {
+        val fileName = model.value.selectedFileName ?: return
+        _model.value = model.value.copy(selectedFileName = null, fileToDelete = fileName)
+    }
+
+    override fun onDeleteConfirm() {
+        val state = model.value
+        val fileName = state.fileToDelete ?: return
+        val path = state.currentPath.appendToPath(fileName)
+        when (val result = FileSystemUtils.deleteFile(path)) {
+            is Result.Success -> {
+                loadDirectory(state.currentPath)
+                _model.value = model.value.copy(fileToDelete = null)
+            }
+            is Result.Error -> {
+                _model.value = model.value.copy(fileToDelete = null, error = result.message)
+            }
+        }
+    }
+
+    override fun onDeleteDismiss() {
+        _model.value = model.value.copy(fileToDelete = null)
+    }
+
     override fun onKnownFolderClick(path: String) {
         loadDirectory(path)
     }
