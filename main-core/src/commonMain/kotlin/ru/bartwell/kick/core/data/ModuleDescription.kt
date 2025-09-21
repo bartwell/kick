@@ -32,6 +32,12 @@ public enum class ModuleDescription(
         title = "File Explorer",
         description = "Browse app files—caches, logs, databases. Open, share, or delete to simulate scenarios."
     ),
-    LAYOUT(title = "Layout"),
-    OVERLAY(title = "Overlay"),
+    LAYOUT(
+        title = "Layout",
+        description = "Inspect the current screen’s UI tree: view hierarchy and key layout properties."
+    ),
+    OVERLAY(
+        title = "Overlay",
+        description = "Floating debug panel over the app that updates in real time. Shows live key/value metrics."
+    ),
 }
