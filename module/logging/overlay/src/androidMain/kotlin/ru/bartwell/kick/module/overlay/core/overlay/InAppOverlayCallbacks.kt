@@ -20,18 +20,17 @@ private const val INITIAL_Y = 200f
 
 internal class InAppOverlayCallbacks : Application.ActivityLifecycleCallbacks {
     private val overlays = WeakHashMap<Activity, FrameLayout>()
-    val currentActivity = WeakReference<Activity>(null)
+    var currentActivity: WeakReference<Activity> = WeakReference(null)
     var dragTarget: View? = null
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
     override fun onActivityStarted(activity: Activity) {
+        currentActivity = WeakReference(activity)
         if (OverlaySettings.isEnabled()) attach(activity)
     }
 
     override fun onActivityResumed(activity: Activity) {
-        currentActivity.clear()
-        currentActivity.enqueue()
-        currentActivity.get()
+        currentActivity = WeakReference(activity)
         overlays[activity]?.isVisible = OverlaySettings.isEnabled()
     }
 
