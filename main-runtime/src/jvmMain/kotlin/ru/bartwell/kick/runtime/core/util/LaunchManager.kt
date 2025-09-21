@@ -14,6 +14,7 @@ import ru.bartwell.kick.runtime.core.component.DefaultRootComponent
 import java.awt.Dimension
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
+import javax.swing.WindowConstants
 
 private const val WINDOW_WIDTH = 800
 private const val WINDOW_HEIGHT = 600
@@ -42,8 +43,12 @@ internal actual object LaunchManager {
             minimumSize = Dimension(MIN_WINDOW_SIZE, MIN_WINDOW_SIZE)
             preferredSize = Dimension(WINDOW_WIDTH, WINDOW_HEIGHT)
             setLocationRelativeTo(null)
+            defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
 
             addWindowListener(object : WindowAdapter() {
+                override fun windowClosing(e: WindowEvent?) {
+                    WindowStateManager.getInstance()?.setWindowClosed()
+                }
                 override fun windowClosed(e: WindowEvent?) {
                     WindowStateManager.getInstance()?.setWindowClosed()
                 }
