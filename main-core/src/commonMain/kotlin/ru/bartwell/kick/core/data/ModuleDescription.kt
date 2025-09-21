@@ -33,7 +33,7 @@ public enum class ModuleDescription(
         description = "Browse app files—caches, logs, databases. Open, share, or delete to simulate scenarios."
     ),
     LAYOUT(
-        title = "Layout",
+        title = "Layout (Beta)",
         description = "Inspect the current screen’s UI tree: view hierarchy and key layout properties."
     ),
     OVERLAY(

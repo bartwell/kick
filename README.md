@@ -20,6 +20,7 @@ Less complexity, faster development, total visibility. That's Kick.
     - [Configuration](#configuration)
     - [File Explorer](#file-explorer)
     - [Layout](#layout)
+    - [Overlay](#overlay)
 - [Advanced Module Configuration](#advanced-module-configuration)
 - [Shortcuts](#shortcuts)
 - [Launching Kick](#launching-kick)
@@ -239,16 +240,41 @@ Kick.configuration.getString("list")
 
 Browse the file system directly within the viewer—handy for quick checks of generated files or cached data.
 
-### Layout (Beta)
+### Layout
 
-Inspect the current UI hierarchy and examine properties like bounds, visibility and Compose `testTag` values.
+<a href="content/screenshots/layout.jpg" target="_blank" rel="noopener noreferrer">
+  <img src="content/screenshots/layout.jpg" alt="" height="120">
+</a>
+
+Inspect the current screen’s UI hierarchy without touching code. See a tree of views and key details like bounds, visibility, text, etc.
 
 Trigger it by shaking on Android and iOS or pressing ⌘⌥⇧K on macOS / Ctrl+Alt+Shift+K on Windows and Linux. Triggers work only while the module is enabled.
 
+### Overlay
+
+<a href="content/screenshots/overlay.jpg" target="_blank" rel="noopener noreferrer">
+  <img src="content/screenshots/overlay.jpg" alt="" height="120">
+</a>
+
+A small floating panel that shows live debug values over your app and updates in real time. You can drag it around or hide it at any moment. Ideal for tracking states or any quick metric while testing a scenario.
+
+Enable the module and update values from anywhere:
+
 ```kotlin
 Kick.init(context) {
-    module(LayoutModule(context))
+    module(OverlayModule(context))
 }
+
+// Update live values
+Kick.overlay.set("fps", 42)
+Kick.overlay.set("isWsConnected", true)
+```
+
+You can also show/hide the panel programmatically if needed:
+
+```kotlin
+Kick.overlay.show(context)  // show floating panel
+Kick.overlay.hide()         // hide it
 ```
 
 ### Advanced Module Configuration
