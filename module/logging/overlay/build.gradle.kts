@@ -55,11 +55,6 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
-//            implementation("androidx.lifecycle:lifecycle-runtime-android:2.9.4")
-//            implementation("androidx.lifecycle:lifecycle-viewmodel:2.9.4")
-//            implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
-//            implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
-//            implementation("androidx.savedstate:savedstate:1.3.3")
         }
         appleMain.dependencies {
         }

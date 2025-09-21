@@ -30,109 +30,21 @@ public actual object KickOverlay {
     public actual fun init(context: PlatformContext) {}
 
     public actual fun show(context: PlatformContext) {
-        window?.let {
-            it.isVisible = true
-            it.toFront()
+        if (window != null) {
+            window!!.isVisible = true
+            window!!.toFront()
             return
         }
         OverlaySettings.setEnabled(true)
 
         EventQueue.invokeLater {
-            val w = JWindow().apply {
-                isAlwaysOnTop = true
-                background = Color(0, 0, 0, 0)
-                layout = BorderLayout()
-            }
-            (w.rootPane as JComponent).isOpaque = false
-            (w.contentPane as JComponent).apply {
-                isOpaque = false
-                background = Color(0, 0, 0, 0)
-            }
+            val w = createWindow()
+            val panel = createPanel()
+            val (scaleX, scaleY) = computeScale(w)
 
-            val panel = ComposePanel().apply {
-                isOpaque = false
-                background = Color(0, 0, 0, 0)
-            }
-
-            val tx = w.graphicsConfiguration?.defaultTransform
-            val scaleX = tx?.scaleX ?: 1.0
-            val scaleY = tx?.scaleY ?: 1.0
-
-            var pressed = false
-            var dragging = false
-            var pressOffsetX = 0
-            var pressOffsetY = 0
-            var pressStartX = 0
-            var pressStartY = 0
-
-            val listener = AWTEventListener { ev ->
-                if (ev !is MouseEvent) return@AWTEventListener
-                val win = window ?: return@AWTEventListener
-
-                fun inWindowRect(x: Int, y: Int): Boolean {
-                    return Rectangle(win.x, win.y, win.width, win.height).contains(x, y)
-                }
-                fun inWindowShape(x: Int, y: Int): Boolean {
-                    val localX = x - win.x
-                    val localY = y - win.y
-                    val shp = win.shape
-                    return shp?.contains(localX.toDouble(), localY.toDouble()) ?: true
-                }
-
-                when (ev.id) {
-                    MouseEvent.MOUSE_PRESSED -> {
-                        if (ev.button == MouseEvent.BUTTON1 &&
-                            inWindowRect(ev.xOnScreen, ev.yOnScreen) &&
-                            inWindowShape(ev.xOnScreen, ev.yOnScreen)
-                        ) {
-                            pressed = true
-                            dragging = false
-                            pressStartX = ev.xOnScreen
-                            pressStartY = ev.yOnScreen
-                            pressOffsetX = ev.xOnScreen - win.x
-                            pressOffsetY = ev.yOnScreen - win.y
-                            win.toFront()
-                        }
-                    }
-                    MouseEvent.MOUSE_DRAGGED -> {
-                        if (pressed && ev.modifiersEx and MouseEvent.BUTTON1_DOWN_MASK != 0) {
-                            val dx = kotlin.math.abs(ev.xOnScreen - pressStartX)
-                            val dy = kotlin.math.abs(ev.yOnScreen - pressStartY)
-                            if (!dragging && (dx >= DRAG_SLOP || dy >= DRAG_SLOP)) dragging = true
-                            if (dragging) {
-                                win.setLocation(ev.xOnScreen - pressOffsetX, ev.yOnScreen - pressOffsetY)
-                            }
-                        }
-                    }
-                    MouseEvent.MOUSE_RELEASED -> {
-                        pressed = false
-                        dragging = false
-                    }
-                }
-            }
-            Toolkit.getDefaultToolkit()
-                .addAWTEventListener(
-                    listener,
-                    AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
-                )
-            awtListener = listener
-
-            panel.setContent {
-                Overlay(
-                    window = w,
-                    panel = panel,
-                    scaleX = scaleX,
-                    scaleY = scaleY,
-                    onReady = { dim -> applyTransparentShape(w, dim) },
-                    onCloseClick = ::onCloseClick,
-                )
-            }
-
-            w.contentPane.add(panel, BorderLayout.CENTER)
-            w.pack()
-            w.location = Point(INITIAL_WINDOW_X, INITIAL_WINDOW_Y)
-            w.isVisible = true
-            applyTransparentShape(w)
+            installDragListenerFor(w)
+            setupOverlayContent(w, panel, scaleX, scaleY)
+            attachAndShow(w, panel)
             window = w
         }
     }
@@ -152,6 +64,65 @@ public actual object KickOverlay {
 
     private fun onCloseClick() {
         hide()
+    }
+
+    private fun createWindow(): JWindow = JWindow().apply {
+        isAlwaysOnTop = true
+        background = Color(0, 0, 0, 0)
+        layout = BorderLayout()
+        (rootPane as JComponent).isOpaque = false
+        (contentPane as JComponent).apply {
+            isOpaque = false
+            background = Color(0, 0, 0, 0)
+        }
+    }
+
+    private fun createPanel(): ComposePanel = ComposePanel().apply {
+        isOpaque = false
+        background = Color(0, 0, 0, 0)
+    }
+
+    private fun computeScale(w: JWindow): Pair<Double, Double> {
+        val tx = w.graphicsConfiguration?.defaultTransform
+        return (tx?.scaleX ?: 1.0) to (tx?.scaleY ?: 1.0)
+    }
+
+    private fun installDragListenerFor(win: JWindow) {
+        val controller = DragController(win)
+        val listener = AWTEventListener { ev ->
+            if (ev is MouseEvent) controller.onMouseEvent(ev)
+        }
+        Toolkit.getDefaultToolkit().addAWTEventListener(
+            listener,
+            AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
+        )
+        awtListener = listener
+    }
+
+    private fun setupOverlayContent(
+        w: JWindow,
+        panel: ComposePanel,
+        scaleX: Double,
+        scaleY: Double,
+    ) {
+        panel.setContent {
+            Overlay(
+                window = w,
+                panel = panel,
+                scaleX = scaleX,
+                scaleY = scaleY,
+                onReady = { dim -> applyTransparentShape(w, dim) },
+                onCloseClick = ::onCloseClick,
+            )
+        }
+    }
+
+    private fun attachAndShow(w: JWindow, panel: ComposePanel) {
+        w.contentPane.add(panel, BorderLayout.CENTER)
+        w.pack()
+        w.location = Point(INITIAL_WINDOW_X, INITIAL_WINDOW_Y)
+        w.isVisible = true
+        applyTransparentShape(w)
     }
 
     private fun applyTransparentShape(
@@ -179,5 +150,59 @@ public actual object KickOverlay {
             arc
         )
         try { w.rootPane.putClientProperty("apple.awt.windowShadow", false) } catch (_: Throwable) { }
+    }
+
+    private class DragController(private val win: JWindow) {
+        private var pressed = false
+        private var dragging = false
+        private var pressOffsetX = 0
+        private var pressOffsetY = 0
+        private var pressStartX = 0
+        private var pressStartY = 0
+
+        fun onMouseEvent(ev: MouseEvent) {
+            when (ev.id) {
+                MouseEvent.MOUSE_PRESSED -> handlePressed(ev)
+                MouseEvent.MOUSE_DRAGGED -> handleDragged(ev)
+                MouseEvent.MOUSE_RELEASED -> handleReleased()
+            }
+        }
+
+        private fun handlePressed(ev: MouseEvent) {
+            if (ev.button != MouseEvent.BUTTON1) return
+            if (!inWindowRect(ev.xOnScreen, ev.yOnScreen)) return
+            if (!inWindowShape(ev.xOnScreen, ev.yOnScreen)) return
+
+            pressed = true
+            dragging = false
+            pressStartX = ev.xOnScreen
+            pressStartY = ev.yOnScreen
+            pressOffsetX = ev.xOnScreen - win.x
+            pressOffsetY = ev.yOnScreen - win.y
+            win.toFront()
+        }
+
+        private fun handleDragged(ev: MouseEvent) {
+            if (!pressed || ev.modifiersEx and MouseEvent.BUTTON1_DOWN_MASK == 0) return
+            val dx = kotlin.math.abs(ev.xOnScreen - pressStartX)
+            val dy = kotlin.math.abs(ev.yOnScreen - pressStartY)
+            if (!dragging && (dx >= DRAG_SLOP || dy >= DRAG_SLOP)) dragging = true
+            if (dragging) win.setLocation(ev.xOnScreen - pressOffsetX, ev.yOnScreen - pressOffsetY)
+        }
+
+        private fun handleReleased() {
+            pressed = false
+            dragging = false
+        }
+
+        private fun inWindowRect(x: Int, y: Int): Boolean =
+            Rectangle(win.x, win.y, win.width, win.height).contains(x, y)
+
+        private fun inWindowShape(x: Int, y: Int): Boolean {
+            val localX = x - win.x
+            val localY = y - win.y
+            val shp = win.shape
+            return shp?.contains(localX.toDouble(), localY.toDouble()) ?: true
+        }
     }
 }
