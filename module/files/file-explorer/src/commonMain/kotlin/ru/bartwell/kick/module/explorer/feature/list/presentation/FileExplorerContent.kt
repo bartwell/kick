@@ -107,10 +107,18 @@ internal fun FileExplorerContent(
             onFileActionDismiss = component::onFileActionDismiss,
             onDownloadClick = { component.onDownloadClick(context) },
             onViewAsTextClick = component::onViewAsTextClick,
+            onDeleteClick = component::onDeleteClick,
         )
 
         state.exportedFilePath?.let { exportedFilePath ->
             SuccessAlert(path = exportedFilePath, onExportAlertDismiss = component::onExportAlertDismiss)
+        }
+        state.fileToDelete?.let { fileName ->
+            DeleteAlert(
+                fileName = fileName,
+                onConfirm = component::onDeleteConfirm,
+                onDismiss = component::onDeleteDismiss
+            )
         }
         state.error?.let { error ->
             ErrorAlert(message = error, onDismiss = component::onErrorAlertDismiss)
@@ -189,6 +197,7 @@ private fun OptionsSheet(
     onFileActionDismiss: () -> Unit,
     onDownloadClick: () -> Unit,
     onViewAsTextClick: () -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     if (selectedFileName != null) {
@@ -203,6 +212,10 @@ private fun OptionsSheet(
             ListItem(
                 modifier = Modifier.clickable(onClick = onViewAsTextClick),
                 headlineContent = { Text(text = "View as text") }
+            )
+            ListItem(
+                modifier = Modifier.clickable(onClick = onDeleteClick),
+                headlineContent = { Text(text = "Delete") }
             )
         }
     }
@@ -222,5 +235,28 @@ private fun SuccessAlert(
         },
         title = { Text(text = "File exported") },
         text = { Text(text = path) }
+    )
+}
+
+@Composable
+private fun DeleteAlert(
+    fileName: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Delete")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        },
+        title = { Text(text = "Delete file") },
+        text = { Text(text = "Delete $fileName?") }
     )
 }

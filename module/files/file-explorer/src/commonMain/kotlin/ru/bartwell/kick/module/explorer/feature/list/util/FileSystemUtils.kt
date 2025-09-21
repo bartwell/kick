@@ -12,6 +12,7 @@ internal expect object FileSystemUtils {
     fun getParentPath(path: String): String?
     fun readText(path: String): Result
     fun exportFile(context: PlatformContext, path: String): Result
+    fun deleteFile(path: String): Result
 }
 
 internal data class KnownFolder(val name: String, val path: String)

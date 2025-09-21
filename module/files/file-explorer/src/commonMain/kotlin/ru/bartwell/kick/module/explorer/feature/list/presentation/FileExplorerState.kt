@@ -8,6 +8,7 @@ internal data class FileExplorerState(
     val canGoUp: Boolean = true,
     val selectedFileName: String? = null,
     val exportedFilePath: String? = null,
+    val fileToDelete: String? = null,
     val error: String? = null,
 ) {
     val folderName: String
