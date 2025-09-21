@@ -347,6 +347,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 }
 ```
 
+Desktop (Windows/macOS/Linux): when supported by the OS, Kick also adds a System Tray icon with the label "Inspect with Kick". Clicking the tray icon launches the viewer. The icon is removed automatically when the host app exits. This tray shortcut respects the same `enableShortcut` flag — set it to `false` to disable the icon.
 
 ## Contributing
 
