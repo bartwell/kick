@@ -1,9 +1,9 @@
 package ru.bartwell.kick.module.layout.feature.hierarchy.presentation
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -58,7 +58,11 @@ internal fun LayoutHierarchyContent(
             }
         )
         state.root?.let { root ->
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            Column(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+                    .verticalScroll(rememberScrollState())
+            ) {
                 NodeView(node = root, depth = 0, onNodeSelected = component::onNodeSelected)
             }
         }
@@ -77,7 +81,6 @@ private fun NodeView(
         androidx.compose.foundation.layout.Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(vertical = 4.dp)
         ) {
             if (node.children.isNotEmpty()) {
