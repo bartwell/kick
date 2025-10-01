@@ -39,6 +39,13 @@ private const val DEFAULT_MAX_ITEMS: Int = 5
 private const val INPUT_MIN_INT: Int = 1
 private const val INPUT_MAX_INT: Int = 10
 
+private const val PERF_KEY: String = "Performance"
+private const val PERF_FPS_BASE: Int = 30
+private const val PERF_FPS_MOD: Int = 31
+private const val PERF_CPU_MOD: Int = 100
+private const val PERF_HEAP_BASE_MB: Int = 128
+private const val PERF_HEAP_MOD: Int = 64
+
 class TestDataInitializer(context: PlatformContext) {
 
     @Suppress("MaxLineLength")
@@ -115,6 +122,10 @@ class TestDataInitializer(context: PlatformContext) {
                 Kick.overlay.set("counter", counter)
                 Kick.overlay.set("config", true)
                 Kick.overlay.set("timestamp", DateUtils.currentTimeMillis())
+                // Extra values under a separate category to demonstrate switching
+                Kick.overlay.set("fps", PERF_FPS_BASE + (counter % PERF_FPS_MOD).toInt(), PERF_KEY)
+                Kick.overlay.set("cpu", (counter % PERF_CPU_MOD).toInt(), PERF_KEY)
+                Kick.overlay.set("heapMb", PERF_HEAP_BASE_MB + (counter % PERF_HEAP_MOD).toInt(), PERF_KEY)
                 counter++
                 delay(1.seconds)
             }

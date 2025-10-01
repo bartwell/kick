@@ -14,6 +14,12 @@ public object OverlayAccessor {
     public fun set(key: String, value: Float) {}
     public fun set(key: String, value: String) {}
     public fun set(key: String, value: Boolean) {}
+    public fun set(key: String, value: Long, category: String) {}
+    public fun set(key: String, value: Int, category: String) {}
+    public fun set(key: String, value: Double, category: String) {}
+    public fun set(key: String, value: Float, category: String) {}
+    public fun set(key: String, value: String, category: String) {}
+    public fun set(key: String, value: Boolean, category: String) {}
     public fun show() {}
     public fun hide() {}
 }
