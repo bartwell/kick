@@ -20,8 +20,8 @@ public enum class ModuleDescription(
         title = "Ktor3",
         description = "Network monitor: see requests/responses (URL, status, body) and find where a call fails."
     ),
-    CONFIGURATION(
-        title = "Configuration",
+    CONTROL_PANEL(
+        title = "Control Panel",
         description = "Toggle features and options on the fly; switch endpoints, tweak limits, reset to defaults."
     ),
     MULTIPLATFORM_SETTINGS(

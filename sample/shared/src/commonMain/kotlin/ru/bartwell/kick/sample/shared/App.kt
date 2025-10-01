@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.data.Theme
 import ru.bartwell.kick.core.data.platformContext
-import ru.bartwell.kick.module.configuration.configuration
+import ru.bartwell.kick.module.controlpanel.controlPanel
 
 @Composable
 fun App() {
@@ -40,7 +40,8 @@ fun App() {
 
     LaunchedEffect(selectedTheme) {
         Kick.theme = selectedTheme.toLibraryTheme()
-        println("Configuration test: featureEnabled=" + Kick.configuration.getBoolean("featureEnabled"))
+        println("Configuration test: featureEnabled=" + Kick.controlPanel.getBoolean("featureEnabled"))
+        Kick.controlPanel.onButtonClick { id -> println("Button clicked: $id") }
     }
 
     MaterialTheme(colorScheme = selectedTheme.getColorScheme()) {

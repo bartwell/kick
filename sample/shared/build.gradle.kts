@@ -85,7 +85,7 @@ kotlin {
                 api(projects.mainRuntimeStub)
                 api(projects.loggingStub)
                 api(projects.multiplatformSettingsStub)
-                api(projects.configurationStub)
+                api(projects.controlPanelStub)
                 api(projects.overlayStub)
                 api(projects.ktor3Stub)
                 api(projects.sqliteRuntimeStub)
@@ -98,7 +98,7 @@ kotlin {
                 api(projects.logging)
                 api(projects.ktor3)
                 api(projects.multiplatformSettings)
-                api(projects.configuration)
+                api(projects.controlPanel)
                 api(projects.overlay)
                 api(projects.fileExplorer)
             }
