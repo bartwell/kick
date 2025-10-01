@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.presentation.ErrorAlert
 import ru.bartwell.kick.core.presentation.ErrorBox
@@ -79,22 +80,22 @@ private fun Toolbar(
         title = { Text(text = if (state.isDeleteMode) "Delete" else state.table) },
         navigationIcon = {
             if (state.isDeleteMode) {
-                IconButton(onClick = onCancelDelete) {
+                IconButton(onClick = onCancelDelete, modifier = Modifier.testTag("cancel_delete")) {
                     Icon(imageVector = Icons.Outlined.Close, contentDescription = "Cancel")
                 }
             } else {
-                IconButton(onClick = onBackPressed) {
+                IconButton(onClick = onBackPressed, modifier = Modifier.testTag("back")) {
                     Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
                 }
             }
         },
         actions = {
             if (state.isDeleteMode) {
-                IconButton(onClick = onConfirmDelete) {
+                IconButton(onClick = onConfirmDelete, modifier = Modifier.testTag("confirm_delete")) {
                     Icon(imageVector = Icons.Default.Done, contentDescription = "Delete selected")
                 }
             } else {
-                IconButton(onClick = { isMenuExpanded = true }) {
+                IconButton(onClick = { isMenuExpanded = true }, modifier = Modifier.testTag("menu_button")) {
                     Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Menu")
                 }
                 DropdownMenu(
@@ -102,6 +103,7 @@ private fun Toolbar(
                     onDismissRequest = { isMenuExpanded = false }
                 ) {
                     DropdownMenuItem(
+                        modifier = Modifier.testTag("menu_structure"),
                         text = { Text("Structure") },
                         onClick = {
                             isMenuExpanded = false
@@ -112,6 +114,7 @@ private fun Toolbar(
                         }
                     )
                     DropdownMenuItem(
+                        modifier = Modifier.testTag("menu_insert"),
                         text = { Text("Insert row") },
                         onClick = {
                             isMenuExpanded = false
@@ -122,6 +125,7 @@ private fun Toolbar(
                         }
                     )
                     DropdownMenuItem(
+                        modifier = Modifier.testTag("menu_delete"),
                         text = { Text("Delete") },
                         onClick = {
                             isMenuExpanded = false

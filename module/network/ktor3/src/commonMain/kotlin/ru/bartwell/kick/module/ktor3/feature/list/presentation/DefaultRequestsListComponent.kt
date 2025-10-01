@@ -6,7 +6,6 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
@@ -48,7 +47,7 @@ internal class DefaultRequestsListComponent(
     }
 
     override fun onClearAllClick() {
-        scope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.Default) {
             @Suppress("TooGenericExceptionCaught")
             try {
                 database.getRequestDao().deleteAll()

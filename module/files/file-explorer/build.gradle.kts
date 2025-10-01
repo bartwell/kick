@@ -24,6 +24,10 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+    }
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -47,6 +51,7 @@ kotlin {
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
             implementation(libs.decompose.essenty.lifecycle.coroutines)
+            implementation(libs.kotlinx.serialization.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -81,4 +86,3 @@ android {
         compose = true
     }
 }
-

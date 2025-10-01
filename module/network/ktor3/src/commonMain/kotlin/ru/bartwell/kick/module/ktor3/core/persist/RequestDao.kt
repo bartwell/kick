@@ -1,37 +1,82 @@
-package ru.bartwell.kick.core.persist
+package ru.bartwell.kick.module.ktor3.core.persist
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import app.cash.sqldelight.async.coroutines.awaitAsOneOrNull
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import ru.bartwell.kick.module.ktor3.db.Ktor3Db
+import ru.bartwell.kick.module.ktor3.db.Request
 
-@Dao
-public interface RequestDao {
-    @Insert
-    public suspend fun insert(item: RequestEntity)
+public class RequestDao(private val db: Ktor3Db) {
 
-    @Query("SELECT * FROM RequestEntity ORDER BY timestamp DESC")
-    public fun getAllAsFlow(): Flow<List<RequestEntity>>
+    public suspend fun insert(item: RequestEntity) {
+        withContext<Unit>(Dispatchers.Default) {
+            db.requestQueries.insertRequest(
+                timestamp = item.timestamp,
+                method = item.method,
+                url = item.url,
+                statusCode = item.statusCode?.toLong(),
+                durationMs = item.durationMs,
+                responseSizeBytes = item.responseSizeBytes,
+                isSecure = item.isSecure,
+                error = item.error,
+                requestHeaders = item.requestHeaders,
+                requestBody = item.requestBody,
+                responseHeaders = item.responseHeaders,
+                responseBody = item.responseBody,
+            )
+        }
+    }
 
-    @Query(
-        "SELECT * FROM RequestEntity " +
-            "WHERE " +
-            "url LIKE :filter OR " +
-            "method LIKE :filter OR " +
-            "requestHeaders LIKE :filter OR " +
-            "requestBody LIKE :filter OR " +
-            "responseHeaders LIKE :filter OR " +
-            "responseBody LIKE :filter " +
-            "ORDER BY timestamp DESC"
-    )
-    public fun getFilteredAsFlow(filter: String): Flow<List<RequestEntity>>
+    public fun getAllAsFlow(): Flow<List<RequestEntity>> =
+        db.requestQueries
+            .selectAll()
+            .asFlow()
+            .mapToList(Dispatchers.Default)
+            .map { list -> list.map { it.toEntity() } }
 
-    @Query("SELECT * FROM RequestEntity WHERE id = :id")
-    public suspend fun getById(id: Long): RequestEntity?
+    public fun getFilteredAsFlow(filter: String): Flow<List<RequestEntity>> =
+        db.requestQueries
+            .selectFiltered(filter)
+            .asFlow()
+            .mapToList(Dispatchers.Default)
+            .map { list -> list.map { it.toEntity() } }
 
-    @Query("DELETE FROM RequestEntity")
-    public suspend fun deleteAll()
+    public suspend fun getById(id: Long): RequestEntity? = withContext(Dispatchers.Default) {
+        db.requestQueries
+            .selectById(id)
+            .awaitAsOneOrNull()
+            ?.toEntity()
+    }
 
-    @Query("DELETE FROM RequestEntity WHERE timestamp < :timestamp")
-    public suspend fun deleteOld(timestamp: Long)
+    public suspend fun deleteAll() {
+        withContext(Dispatchers.Default) {
+            db.requestQueries.deleteAll()
+        }
+    }
+
+    public suspend fun deleteOld(timestamp: Long) {
+        withContext(Dispatchers.Default) {
+            db.requestQueries.deleteOld(timestamp)
+        }
+    }
 }
+
+private fun Request.toEntity(): RequestEntity = RequestEntity(
+    id = id,
+    timestamp = timestamp,
+    method = method,
+    url = url,
+    statusCode = statusCode?.toInt(),
+    durationMs = durationMs,
+    responseSizeBytes = responseSizeBytes,
+    isSecure = isSecure,
+    error = error,
+    requestHeaders = requestHeaders,
+    requestBody = requestBody,
+    responseHeaders = responseHeaders,
+    responseBody = responseBody,
+)

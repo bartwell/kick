@@ -73,6 +73,7 @@ internal class InAppOverlayCallbacks : Application.ActivityLifecycleCallbacks {
                 translationX = INITIAL_X
                 translationY = INITIAL_Y
                 setTag("KickOverlayPanel")
+                setBackgroundColor(android.graphics.Color.TRANSPARENT)
             }
 
             container.dragTarget = composeView

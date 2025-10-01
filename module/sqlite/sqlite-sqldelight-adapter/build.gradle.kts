@@ -22,6 +22,10 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+    }
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -39,6 +43,8 @@ kotlin {
         commonMain.dependencies {
             api(projects.sqliteCore)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.sqldelight.async.extensions)
+            implementation(libs.sqldelight.coroutines.extensions)
         }
     }
 
@@ -58,5 +64,3 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
-
-

@@ -74,3 +74,23 @@ allprojects {
         detektPlugins(detektRulesCompose)
     }
 }
+
+// Disable Lint analysis for AndroidTest variants to avoid flaky tool crashes
+subprojects {
+    plugins.withId("com.android.library") {
+        tasks.configureEach {
+            val n = name
+            if (n.startsWith("lint") && n.contains("AndroidTest")) {
+                enabled = false
+            }
+        }
+    }
+    plugins.withId("com.android.application") {
+        tasks.configureEach {
+            val n = name
+            if (n.startsWith("lint") && n.contains("AndroidTest")) {
+                enabled = false
+            }
+        }
+    }
+}

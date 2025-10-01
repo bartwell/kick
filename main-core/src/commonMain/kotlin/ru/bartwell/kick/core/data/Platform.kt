@@ -4,4 +4,5 @@ public enum class Platform {
     ANDROID,
     IOS,
     DESKTOP,
+    WEB,
 }

@@ -1,5 +1,6 @@
 package ru.bartwell.kick.module.ktor3.feature.detail.presentation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,12 +24,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.data.platformContext
-import ru.bartwell.kick.core.persist.RequestEntity
+import ru.bartwell.kick.module.ktor3.core.persist.RequestEntity
 import ru.bartwell.kick.module.ktor3.feature.detail.extension.formatDuration
 import ru.bartwell.kick.module.ktor3.feature.detail.extension.formatFileSize
 import ru.bartwell.kick.module.ktor3.feature.detail.extension.formatJson
@@ -41,23 +45,38 @@ import ru.bartwell.kick.module.ktor3.feature.list.data.Header
 internal fun RequestDetailsContent(component: RequestDetailsComponent, modifier: Modifier = Modifier) {
     val state by component.model.subscribeAsState()
     val context = platformContext()
-    val request = state.request ?: return
     val tabTitles = listOf("Overview", "Request", "Response")
 
     Column(modifier = modifier.fillMaxSize()) {
         TopAppBar(
-            title = { Text(request.method.name + " " + request.url.getPath(), maxLines = 1) },
+            title = {
+                val title = state.request?.let { it.method.name + " " + it.url.getPath() } ?: "Request details"
+                Text(title, maxLines = 1)
+            },
             navigationIcon = {
                 IconButton(onClick = component::onBackPressed) {
                     Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
                 }
             },
             actions = {
-                IconButton(onClick = { component.onCopyClick(context) }) {
+                IconButton(onClick = { component.onCopyClick(context) }, modifier = Modifier.testTag("copy_all")) {
                     Icon(imageVector = Icons.Default.ContentCopy, contentDescription = "Copy all details")
                 }
             }
         )
+        if (state.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            return
+        }
+        val request = state.request
+        if (request == null) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = "Request not found")
+            }
+            return
+        }
         TabRow(selectedTabIndex = state.selectedTab) {
             tabTitles.forEachIndexed { index, title ->
                 Tab(

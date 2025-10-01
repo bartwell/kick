@@ -14,8 +14,8 @@ import io.ktor.http.isSecure
 import io.ktor.util.AttributeKey
 import io.ktor.utils.io.charsets.Charsets
 import io.ktor.utils.io.core.toByteArray
-import ru.bartwell.kick.core.persist.RequestEntity
 import ru.bartwell.kick.core.util.DateUtils
+import ru.bartwell.kick.module.ktor3.core.persist.RequestEntity
 import ru.bartwell.kick.module.ktor3.core.util.Logger
 import ru.bartwell.kick.module.ktor3.feature.list.data.HttpMethod as KickHttpMethod
 

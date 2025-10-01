@@ -21,6 +21,10 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+    }
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -57,4 +61,3 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
-

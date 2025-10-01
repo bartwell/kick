@@ -41,7 +41,7 @@ internal actual object FileSystemUtils {
     private const val MILLIS_PER_SECOND = 1_000L
     private val fileManager = NSFileManager.defaultManager
 
-    actual fun getInitialDirectory(context: PlatformContext): String {
+    actual suspend fun getInitialDirectory(context: PlatformContext): String {
         val dirs = NSSearchPathForDirectoriesInDomains(
             NSDocumentDirectory,
             NSUserDomainMask,
@@ -51,7 +51,7 @@ internal actual object FileSystemUtils {
     }
 
     @OptIn(ExperimentalForeignApi::class)
-    actual fun listDirectory(path: String): List<FileEntry> {
+    actual suspend fun listDirectory(path: String): List<FileEntry> {
         val url = NSURL.fileURLWithPath(path)
         val keys = listOf(
             NSURLNameKey,
@@ -93,7 +93,7 @@ internal actual object FileSystemUtils {
         )
     }
 
-    actual fun getKnownFolders(context: PlatformContext): List<KnownFolder> {
+    actual suspend fun getKnownFolders(context: PlatformContext): List<KnownFolder> {
         val folderTypes = listOf(
             NSDocumentDirectory to "Documents",
             NSCachesDirectory to "Caches",
@@ -121,7 +121,7 @@ internal actual object FileSystemUtils {
             ?.path
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-    actual fun readText(path: String): Result = memScoped {
+    actual suspend fun readText(path: String): Result = memScoped {
         val errorVar = alloc<ObjCObjectVar<NSError?>>()
 
         val data = NSData.dataWithContentsOfFile(
@@ -145,7 +145,7 @@ internal actual object FileSystemUtils {
     }
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-    actual fun exportFile(context: PlatformContext, path: String): Result = memScoped {
+    actual suspend fun exportFile(context: PlatformContext, path: String): Result = memScoped {
         val dirs = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, true)
         val targetDir = dirs.firstOrNull() as? String
             ?: run {
@@ -169,7 +169,7 @@ internal actual object FileSystemUtils {
     }
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-    actual fun deleteFile(path: String): Result = memScoped {
+    actual suspend fun deleteFile(path: String): Result = memScoped {
         val errorVar = alloc<ObjCObjectVar<NSError?>>()
         val success = fileManager.removeItemAtPath(path, error = errorVar.ptr)
         if (!success) {

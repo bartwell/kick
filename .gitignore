@@ -10,9 +10,7 @@ captures
 local.properties
 xcuserdata
 .kotlin
-/sample/desktop/sample.db
-/module/logging/logging/schemas/*
-/module/logging/logging-stub/schemas/*
+/sample/desktop/*.db
 /module/network/ktor3/schemas/*
 /sample/shared/schemas/*
 /.gradle-home/*

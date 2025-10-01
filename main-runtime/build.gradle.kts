@@ -25,6 +25,10 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+    }
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -64,6 +68,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.sqldelight.driver.sqlite)
         }
+        val wasmJsMain by getting
     }
 
     explicitApi()
@@ -88,5 +93,4 @@ android {
 }
 
 sqldelight {}
-
 

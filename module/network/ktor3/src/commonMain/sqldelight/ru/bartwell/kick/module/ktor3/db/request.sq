@@ -1,0 +1,40 @@
+import ru.bartwell.kick.module.ktor3.feature.list.data.HttpMethod;
+import kotlin.Boolean;
+
+CREATE TABLE request (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  timestamp INTEGER NOT NULL,
+  method TEXT AS HttpMethod NOT NULL,
+  url TEXT NOT NULL,
+  statusCode INTEGER,
+  durationMs INTEGER NOT NULL,
+  responseSizeBytes INTEGER,
+  isSecure INTEGER AS Boolean NOT NULL,
+  error TEXT,
+  requestHeaders TEXT,
+  requestBody TEXT,
+  responseHeaders TEXT,
+  responseBody TEXT
+);
+
+selectAll:
+SELECT * FROM request ORDER BY timestamp DESC;
+
+selectFiltered:
+SELECT * FROM request
+WHERE url LIKE ?1 OR method LIKE ?1 OR requestHeaders LIKE ?1 OR requestBody LIKE ?1 OR responseHeaders LIKE ?1 OR responseBody LIKE ?1
+ORDER BY timestamp DESC;
+
+selectById:
+SELECT * FROM request WHERE id = ?;
+
+insertRequest:
+INSERT INTO request (
+  timestamp, method, url, statusCode, durationMs, responseSizeBytes, isSecure, error, requestHeaders, requestBody, responseHeaders, responseBody
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+deleteAll:
+DELETE FROM request;
+
+deleteOld:
+DELETE FROM request WHERE timestamp < ?;

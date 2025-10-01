@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 
@@ -35,7 +36,7 @@ public fun SettingsListContent(
         TopAppBar(
             title = { Text("Storages") },
             navigationIcon = {
-                IconButton(onClick = component::onBackPressed) {
+                IconButton(onClick = component::onBackPressed, modifier = Modifier.testTag("back")) {
                     Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
                 }
             },
@@ -51,12 +52,14 @@ public fun SettingsListContent(
             }
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().testTag("storage_list"),
                 state = rememberLazyListState(),
             ) {
                 items(state.storages) { storage ->
                     ListItem(
-                        modifier = Modifier.clickable { component.onItemClick(storage) },
+                        modifier = Modifier
+                            .clickable { component.onItemClick(storage) }
+                            .testTag("storage_item_" + storage),
                         headlineContent = { Text(storage) }
                     )
                 }

@@ -2,16 +2,15 @@ package ru.bartwell.kick.module.ktor3.core.util
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import ru.bartwell.kick.core.persist.RequestEntity
+import ru.bartwell.kick.module.ktor3.core.persist.RequestEntity
 
 internal object Logger {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val flow = MutableSharedFlow<RequestEntity>(
         replay = 0,

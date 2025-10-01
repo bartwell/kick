@@ -45,6 +45,7 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.data.platformContext
 import ru.bartwell.kick.core.presentation.ErrorAlert
 import ru.bartwell.kick.module.explorer.feature.list.util.FileSystemUtils
+import ru.bartwell.kick.module.explorer.feature.list.util.KnownFolder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -129,9 +130,12 @@ internal fun FileExplorerContent(
 @Composable
 private fun KnownFoldersRow(component: FileExplorerComponent) {
     val context = platformContext()
-    val knownFolders = remember { FileSystemUtils.getKnownFolders(context) }
+    var knownFolders by remember { mutableStateOf(emptyList<KnownFolder>()) }
+    LaunchedEffect(Unit) {
+        knownFolders = FileSystemUtils.getKnownFolders(context)
+    }
 
-    if (knownFolders.isNotEmpty()) {
+    if (knownFolders.size > 1) {
         LazyRow(modifier = Modifier.padding(horizontal = 16.dp)) {
             items(knownFolders) { folder ->
                 AssistChip(

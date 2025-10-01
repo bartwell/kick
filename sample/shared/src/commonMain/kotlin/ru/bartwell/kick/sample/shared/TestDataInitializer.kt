@@ -5,39 +5,38 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.bartwell.kick.Kick
+import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.core.util.DateUtils
 import ru.bartwell.kick.module.configuration.ConfigurationModule
-import ru.bartwell.kick.module.configuration.configuration
 import ru.bartwell.kick.module.configuration.data.ConfigurationItem
 import ru.bartwell.kick.module.configuration.data.Editor
 import ru.bartwell.kick.module.configuration.data.ValueType
 import ru.bartwell.kick.module.explorer.FileExplorerModule
 import ru.bartwell.kick.module.ktor3.Ktor3Module
-import ru.bartwell.kick.module.layout.LayoutModule
 import ru.bartwell.kick.module.logging.LoggingModule
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.log
 import ru.bartwell.kick.module.multiplatformsettings.MultiplatformSettingsModule
 import ru.bartwell.kick.module.overlay.OverlayModule
 import ru.bartwell.kick.module.overlay.overlay
-import ru.bartwell.kick.module.sqlite.adapter.room.RoomWrapper
 import ru.bartwell.kick.module.sqlite.adapter.sqldelight.SqlDelightWrapper
 import ru.bartwell.kick.module.sqlite.runtime.SqliteModule
 import ru.bartwell.kick.runtime.init
-import ru.bartwell.kick.sample.shared.database.room.AppDatabase
-import ru.bartwell.kick.sample.shared.database.room.DatabaseBuilder
 import ru.bartwell.kick.sample.shared.database.sqldelight.DriverFactory
 import ru.bartwell.kick.sample.shared.network.SampleHttpClient
 import ru.bartwell.kick.sample.shared.setting.CustomSettings
 import ru.bartwell.kick.sample.shared.setting.DefaultSettings
 import kotlin.time.Duration.Companion.seconds
 import io.github.aakira.napier.LogLevel as NapierLogLevel
+
+private const val DEFAULT_MAX_ITEMS: Int = 5
+private const val INPUT_MIN_INT: Int = 1
+private const val INPUT_MAX_INT: Int = 10
 
 class TestDataInitializer(context: PlatformContext) {
 
@@ -57,9 +56,9 @@ class TestDataInitializer(context: PlatformContext) {
 
     init {
         val sqlDelightDriver = DriverFactory().createDriver(context)
-        val roomDatabase = AppDatabase.create(DatabaseBuilder().createBuilder(context))
         val defaultSettings = DefaultSettings().settings
         val customSettings = CustomSettings(context).settings
+
         Napier.base(object : Antilog() {
             override fun performLog(priority: NapierLogLevel, tag: String?, throwable: Throwable?, message: String?) {
                 val level = when (priority) {
@@ -77,29 +76,30 @@ class TestDataInitializer(context: PlatformContext) {
 
         Kick.init(context) {
             module(SqliteModule(SqlDelightWrapper(sqlDelightDriver)))
-            module(SqliteModule(RoomWrapper(roomDatabase)))
+            createRoomModule(context)?.let { module(it) }
             module(LoggingModule(context))
             module(Ktor3Module(context))
             module(MultiplatformSettingsModule(listOf("Default" to defaultSettings, "Custom" to customSettings)))
             module(FileExplorerModule())
-            module(LayoutModule(context))
+            createLayoutModule(context)?.let { module(it) }
             module(ConfigurationModule(context, createConfigurationItems()))
             module(OverlayModule(context))
         }
+
         startTestLogging()
         makeTestHttpRequest()
         startOverlayUpdater()
     }
 
     private fun makeTestHttpRequest() {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             val client = SampleHttpClient()
             client.makeTestRequests()
         }
     }
 
     private fun startTestLogging() {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             while (isActive) {
                 Napier.log(priority = NapierLogLevel.entries.random(), message = testLogs.random())
                 delay(1.seconds)
@@ -108,11 +108,11 @@ class TestDataInitializer(context: PlatformContext) {
     }
 
     private fun startOverlayUpdater() {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             var counter = 0L
             while (isActive) {
                 Kick.overlay.set("counter", counter)
-                Kick.overlay.set("config", Kick.configuration.getBoolean("featureEnabled"))
+                Kick.overlay.set("config", true)
                 Kick.overlay.set("timestamp", DateUtils.currentTimeMillis())
                 counter++
                 delay(1.seconds)
@@ -128,7 +128,7 @@ class TestDataInitializer(context: PlatformContext) {
         ConfigurationItem(
             name = "maxItems",
             default = ValueType.Int(DEFAULT_MAX_ITEMS),
-            editor = Editor.InputNumber(min = 1.0, max = 10.0),
+            editor = Editor.InputNumber(min = INPUT_MIN_INT.toDouble(), max = INPUT_MAX_INT.toDouble()),
         ),
         ConfigurationItem(
             name = "endpoint",
@@ -147,8 +147,8 @@ class TestDataInitializer(context: PlatformContext) {
             ),
         ),
     )
-
-    private companion object {
-        const val DEFAULT_MAX_ITEMS: Int = 5
-    }
 }
+
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+expect fun createRoomModule(context: PlatformContext): Module?
+expect fun createLayoutModule(context: PlatformContext): Module?

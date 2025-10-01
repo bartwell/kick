@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.module.sqlite.runtime.feature.viewer.presentation.table.Table
@@ -57,7 +58,8 @@ internal fun QueryContent(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .focusRequester(focusRequester),
+                    .focusRequester(focusRequester)
+                    .testTag("query_input"),
                 value = state.query,
                 onValueChange = component::onQueryChange,
             )
@@ -65,7 +67,8 @@ internal fun QueryContent(
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .testTag("execute_btn"),
                 onClick = component::onExecuteClick,
             ) {
                 Text("Execute")
@@ -82,7 +85,7 @@ internal fun QueryContent(
                     MaterialTheme.colorScheme.onBackground
                 }
                 Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp).testTag("query_message"),
                     text = state.message,
                     style = MaterialTheme.typography.bodyLarge,
                     color = color,

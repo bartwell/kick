@@ -13,11 +13,11 @@ import javax.swing.SwingUtilities
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 internal actual object FileSystemUtils {
 
-    actual fun getInitialDirectory(context: PlatformContext): String {
+    actual suspend fun getInitialDirectory(context: PlatformContext): String {
         return System.getProperty("user.home")
     }
 
-    actual fun listDirectory(path: String): List<FileEntry> {
+    actual suspend fun listDirectory(path: String): List<FileEntry> {
         val dir = File(path)
         return dir.listFiles()?.map {
             FileEntry(
@@ -29,7 +29,7 @@ internal actual object FileSystemUtils {
         }?.sortedWith(compareByDescending<FileEntry> { it.isDirectory }.thenBy { it.name }) ?: emptyList()
     }
 
-    actual fun getKnownFolders(context: PlatformContext): List<KnownFolder> {
+    actual suspend fun getKnownFolders(context: PlatformContext): List<KnownFolder> {
         val home = Paths.get(System.getProperty("user.home"))
         val tmpDir = Paths.get(System.getProperty("java.io.tmpdir"))
 
@@ -64,9 +64,9 @@ internal actual object FileSystemUtils {
         return File(path).parent
     }
 
-    actual fun readText(path: String): Result = Result.Success(File(path).readText())
+    actual suspend fun readText(path: String): Result = Result.Success(File(path).readText())
 
-    actual fun exportFile(context: PlatformContext, path: String): Result {
+    actual suspend fun exportFile(context: PlatformContext, path: String): Result {
         val showDialog: () -> Result = {
             val chooser = JFileChooser().apply {
                 dialogTitle = "Save file"
@@ -90,7 +90,7 @@ internal actual object FileSystemUtils {
         }
     }
 
-    actual fun deleteFile(path: String): Result {
+    actual suspend fun deleteFile(path: String): Result {
         val file = File(path)
         if (!file.exists()) {
             return Result.Error("File not found: $path")

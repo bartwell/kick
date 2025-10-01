@@ -1,0 +1,28 @@
+import ru.bartwell.kick.module.logging.core.data.LogLevel;
+
+CREATE TABLE log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  time INTEGER NOT NULL,
+  level TEXT AS LogLevel NOT NULL,
+  message TEXT NOT NULL
+);
+
+-- Select all logs ordered by time desc
+selectAll:
+SELECT * FROM log ORDER BY time DESC;
+
+-- Select logs filtered by message pattern
+selectFiltered:
+SELECT * FROM log WHERE message LIKE ? ORDER BY time DESC;
+
+-- Insert a log entry
+insertLog:
+INSERT INTO log (time, level, message) VALUES (?, ?, ?);
+
+-- Delete all logs
+deleteAll:
+DELETE FROM log;
+
+-- Delete old logs
+deleteOld:
+DELETE FROM log WHERE time < ?;

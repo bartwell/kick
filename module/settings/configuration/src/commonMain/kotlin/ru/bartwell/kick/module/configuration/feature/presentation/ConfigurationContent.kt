@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.module.configuration.data.ConfigurationItem
@@ -50,19 +51,19 @@ internal fun ConfigurationContent(
         TopAppBar(
             title = { Text("Configuration") },
             navigationIcon = {
-                IconButton(onClick = component::onBackPressed) {
+                IconButton(onClick = component::onBackPressed, modifier = Modifier.testTag("back")) {
                     Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
                 }
             },
             actions = {
-                IconButton(onClick = component::onSavePressed) {
+                IconButton(onClick = component::onSavePressed, modifier = Modifier.testTag("save")) {
                     Icon(imageVector = Icons.Default.Save, contentDescription = "Save")
                 }
             },
         )
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(16.dp).testTag("config_list"),
             state = rememberLazyListState(),
         ) {
             items(state.items) { item ->
@@ -136,7 +137,7 @@ private fun StringItem(
 
         is Editor.InputString, null -> {
             OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().testTag("string_input_" + item.name),
                 value = (value as? ValueType.String)?.value ?: def.value,
                 onValueChange = { onValueChange(item.name, ValueType.String(it)) },
                 label = { Text(item.name) },
@@ -158,6 +159,7 @@ private fun BooleanItem(
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(item.name, modifier = Modifier.weight(1f))
         Switch(
+            modifier = Modifier.testTag("bool_" + item.name),
             checked = (value as? ValueType.Boolean)?.value ?: defValue.value,
             onCheckedChange = onCheckedChange,
         )
@@ -208,6 +210,7 @@ private fun NumberItemList(
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag("number_list_" + name)
                 .menuAnchor(type = MenuAnchorType.PrimaryNotEditable),
             value = selected.asString(),
             onValueChange = { },
@@ -245,7 +248,7 @@ private fun NumberItemInput(
 ) {
     val text = (value ?: default).asString()
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().testTag("number_input_" + name),
         value = text,
         onValueChange = { newText ->
             val parsed = newText.toDoubleOrNull() ?: 0.0

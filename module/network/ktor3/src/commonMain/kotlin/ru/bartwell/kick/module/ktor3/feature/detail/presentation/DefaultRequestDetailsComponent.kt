@@ -5,7 +5,6 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import ru.bartwell.kick.core.data.PlatformContext
@@ -29,16 +28,23 @@ internal class DefaultRequestDetailsComponent(
     }
 
     private fun loadData() {
-        scope.launch(Dispatchers.IO) {
-            val entity = database.getRequestDao().getById(requestId)
-            entity?.let {
-                _model.value = _model.value.copy(
-                    request = it,
-                    requestHeaders = parseHeaders(it.requestHeaders),
-                    requestBody = it.requestBody,
-                    responseHeaders = parseHeaders(it.responseHeaders),
-                    responseBody = it.responseBody,
-                )
+        scope.launch(Dispatchers.Default) {
+            try {
+                val entity = database.getRequestDao().getById(requestId)
+                _model.value = if (entity != null) {
+                    _model.value.copy(
+                        request = entity,
+                        requestHeaders = parseHeaders(entity.requestHeaders),
+                        requestBody = entity.requestBody,
+                        responseHeaders = parseHeaders(entity.responseHeaders),
+                        responseBody = entity.responseBody,
+                        isLoading = false,
+                    )
+                } else {
+                    _model.value.copy(isLoading = false)
+                }
+            } catch (_: Throwable) {
+                _model.value = _model.value.copy(isLoading = false)
             }
         }
     }

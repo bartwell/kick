@@ -18,9 +18,6 @@ public actual object KickOverlay {
         app.registerActivityLifecycleCallbacks(callbacks)
         appRef = WeakReference(app)
         installed = true
-        if (OverlaySettings.isEnabled()) {
-            callbacks.currentActivity.get()?.let { callbacks.attach(it) }
-        }
     }
 
     public actual fun show(context: PlatformContext) {

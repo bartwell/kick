@@ -3,14 +3,12 @@ package ru.bartwell.kick.module.ktor3
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import ru.bartwell.kick.core.component.Child
@@ -39,15 +37,11 @@ public class Ktor3Module(
 
     override val description: ModuleDescription = ModuleDescription.KTOR3
     override val startConfig: Config = RequestsListConfig
-    private val database = DatabaseBuilder().createBuilder(platformContext)
-        .fallbackToDestructiveMigration(dropAllTables = true)
-        .setDriver(BundledSQLiteDriver())
-        .setQueryCoroutineContext(Dispatchers.Default)
-        .build()
+    private val database = DatabaseBuilder().createDatabase(platformContext)
 
     init {
         DatabaseHolder.database = database
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             database.getRequestDao().deleteOld(
                 DateUtils.currentTimeMillis() - expireDelay.inWholeMilliseconds
             )

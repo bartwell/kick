@@ -2,8 +2,8 @@ package ru.bartwell.kick.module.ktor3.feature.detail.extension
 
 import io.ktor.http.Url
 import io.ktor.http.fullPath
-import ru.bartwell.kick.core.persist.RequestEntity
 import ru.bartwell.kick.core.util.DateUtils
+import ru.bartwell.kick.module.ktor3.core.persist.RequestEntity
 import ru.bartwell.kick.module.ktor3.feature.list.data.Header
 
 internal fun RequestEntity.buildFullTransactionReport(
