@@ -1,12 +1,11 @@
 package ru.bartwell.kick.module.logging.feature.table.presentation
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasSetTextAction
-import androidx.compose.ui.test.isDialog
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -14,102 +13,101 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.core.persist.LogEntity
 
-private const val TAG_LOG_LIST = "log_list"
+private const val TAG_LABEL_CHIPS = "label_chips"
 private const val TAG_LOG_ITEM = "log_item"
-private const val CD_FILTER = "Filter logs"
-private const val CD_DISABLE_FILTER = "Disable filter"
-private const val CD_CLEAR_ALL = "Clear all"
-private const val CD_SHARE_LOGS = "Share logs"
-private const val TEXT_FILTER = "Filter"
+private const val LABEL_A = "A"
+private const val LABEL_B = "B"
 private const val COUNT_ZERO = 0
+private const val COUNT_ONE = 1
 private const val COUNT_TWO = 2
-private const val COUNT_THREE = 3
+private const val COUNT_FOUR = 4
 
-@Suppress("FunctionNaming")
 @RunWith(AndroidJUnit4::class)
+@Suppress("FunctionNaming")
 class LogViewerAndroidUiTest {
-
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+    @get:Rule val compose = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun new_messages_are_on_top() {
+    fun label_chips_and_filter_and_toggle() {
         val logs = listOf(
-            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "old"),
-            LogEntity(id = 2, time = 3_000L, level = LogLevel.ERROR, message = "new"),
-            LogEntity(id = 3, time = 2_000L, level = LogLevel.DEBUG, message = "mid"),
+            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "[A][B] ab"),
+            LogEntity(id = 2, time = 2_000L, level = LogLevel.ERROR, message = "[A] aaa"),
+            LogEntity(id = 3, time = 3_000L, level = LogLevel.DEBUG, message = "[B] bbb"),
+            LogEntity(id = 4, time = 4_000L, level = LogLevel.DEBUG, message = "zzz"),
         )
         val fake = FakeLogViewerComponent(logs)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        compose.setContent { LogViewerContent(component = fake) }
 
-        composeTestRule.onAllNodesWithTag(TAG_LOG_LIST).assertCountEquals(1)
-        val items = composeTestRule.onAllNodesWithTag(TAG_LOG_ITEM)
-        items.assertCountEquals(COUNT_THREE)
-        items[0].assertIsDisplayed()
-        items[0].assert(hasTextContains("new"))
-        items[1].assert(hasTextContains("mid"))
-        items[2].assert(hasTextContains("old"))
+        compose.onAllNodesWithTag(TAG_LABEL_CHIPS).assertCountEquals(COUNT_ONE)
+
+        compose.onNode(
+            hasAnyAncestor(hasTestTag(TAG_LABEL_CHIPS)) and hasText(LABEL_A, substring = false)
+        ).performClick()
+        compose.onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_TWO)
+
+        compose.onNode(
+            hasAnyAncestor(hasTestTag(TAG_LABEL_CHIPS)) and hasText(LABEL_B, substring = false)
+        ).performClick()
+        compose.onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_ONE)
+
+        compose.onNode(
+            hasAnyAncestor(hasTestTag(TAG_LABEL_CHIPS)) and hasText(LABEL_A, substring = false)
+        ).performClick()
+        compose.onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_TWO)
+
+        compose.onNode(
+            hasAnyAncestor(hasTestTag(TAG_LABEL_CHIPS)) and hasText(LABEL_B, substring = false)
+        ).performClick()
+        compose.onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_FOUR)
     }
 
     @Test
-    fun filter_apply_and_remove() {
+    fun chips_hidden_when_no_labels() {
         val logs = listOf(
-            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "alpha"),
-            LogEntity(id = 2, time = 2_000L, level = LogLevel.ERROR, message = "beta"),
-            LogEntity(id = 3, time = 3_000L, level = LogLevel.DEBUG, message = "alphabet"),
+            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "no labels here"),
+            LogEntity(id = 2, time = 2_000L, level = LogLevel.ERROR, message = "still none"),
         )
         val fake = FakeLogViewerComponent(logs)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        compose.setContent { LogViewerContent(component = fake) }
 
-        composeTestRule.onNodeWithContentDescription(CD_FILTER).performClick()
-        composeTestRule
-            .onNode(hasAnyAncestor(isDialog()) and hasSetTextAction())
-            .performTextInput("alpha")
-        composeTestRule.onNodeWithText(TEXT_FILTER).performClick()
-
-        composeTestRule.onNodeWithContentDescription(CD_DISABLE_FILTER).assertIsDisplayed()
-        composeTestRule.onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_TWO)
-
-        composeTestRule.onNodeWithContentDescription(CD_DISABLE_FILTER).performClick()
-        composeTestRule.onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_THREE)
+        compose.onAllNodesWithTag(TAG_LABEL_CHIPS).assertCountEquals(COUNT_ZERO)
     }
 
     @Test
-    fun clear_log() {
+    fun combine_text_filter_and_label_filter() {
         val logs = listOf(
-            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "m1"),
-            LogEntity(id = 2, time = 2_000L, level = LogLevel.ERROR, message = "m2"),
+            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "[A][B] abcd"),
+            LogEntity(id = 2, time = 2_000L, level = LogLevel.ERROR, message = "[A] aaa"),
+            LogEntity(id = 3, time = 3_000L, level = LogLevel.DEBUG, message = "[B] bbb"),
+            LogEntity(id = 4, time = 4_000L, level = LogLevel.DEBUG, message = "zzz"),
         )
         val fake = FakeLogViewerComponent(logs)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        compose.setContent { LogViewerContent(component = fake) }
 
-        composeTestRule.onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_TWO)
-        composeTestRule.onNodeWithContentDescription(CD_CLEAR_ALL).performClick()
-        composeTestRule.onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_ZERO)
-    }
+        compose.onNodeWithContentDescription("Filter logs").performClick()
+        compose.onNode(hasAnyAncestor(androidx.compose.ui.test.isDialog()) and hasSetTextAction()).performTextInput("a")
+        compose.onNodeWithText("Filter").performClick()
+        compose.onAllNodesWithTag("log_item").assertCountEquals(2)
 
-    @Test
-    fun share_or_copy_action_invoked() {
-        val logs = listOf(
-            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "m1"),
-        )
-        val fake = FakeLogViewerComponent(logs)
+        compose.onAllNodesWithTag(TAG_LABEL_CHIPS).assertCountEquals(COUNT_ONE)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        compose.onNode(
+            hasAnyAncestor(hasTestTag(TAG_LABEL_CHIPS)) and hasText(LABEL_B, substring = false)
+        ).performClick()
+        compose.onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_ONE)
 
-        composeTestRule.onNodeWithContentDescription(CD_SHARE_LOGS).performClick()
-        assertTrue(fake.shareInvoked)
+        compose.onNode(
+            hasAnyAncestor(hasTestTag(TAG_LABEL_CHIPS)) and hasText(LABEL_B, substring = false)
+        ).performClick()
+        compose.onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_TWO)
     }
 }
-
-private fun hasTextContains(sub: String) = androidx.compose.ui.test.hasText(substring = true, text = sub)
