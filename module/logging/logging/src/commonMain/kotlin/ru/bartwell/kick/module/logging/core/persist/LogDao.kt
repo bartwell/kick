@@ -27,13 +27,6 @@ internal class LogDao(private val db: LoggingDb) {
             .mapToList(Dispatchers.Default)
             .let { flow -> flow.map { list -> list.map { it.toEntity() } } }
 
-    fun getFilteredAsFlow(filter: String): Flow<List<LogEntity>> =
-        db.logQueries
-            .selectFiltered(filter)
-            .asFlow()
-            .mapToList(Dispatchers.Default)
-            .let { flow -> flow.map { list -> list.map { it.toEntity() } } }
-
     suspend fun deleteAll() = withContext(Dispatchers.Default) {
         db.logQueries.deleteAll()
     }

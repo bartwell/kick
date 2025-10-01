@@ -22,12 +22,14 @@ import ru.bartwell.kick.module.logging.core.persist.DatabaseBuilder
 import ru.bartwell.kick.module.logging.core.util.DatabaseHolder
 import ru.bartwell.kick.module.logging.feature.table.presentation.DefaultLogViewerComponent
 import ru.bartwell.kick.module.logging.feature.table.presentation.LogViewerContent
+import ru.bartwell.kick.module.logging.feature.table.util.LabelExtractor
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
 public class LoggingModule(
     platformContext: PlatformContext,
-    private val expireDelay: Duration = 1.hours
+    private val expireDelay: Duration = 1.hours,
+    private val labelExtractor: LabelExtractor? = null,
 ) : Module {
 
     override val description: ModuleDescription = ModuleDescription.LOGGING
@@ -42,6 +44,24 @@ public class LoggingModule(
         }
     }
 
+    public constructor(platformContext: PlatformContext) : this(
+        platformContext = platformContext,
+        expireDelay = 1.hours,
+        labelExtractor = null,
+    )
+
+    public constructor(platformContext: PlatformContext, expireDelay: Duration) : this(
+        platformContext = platformContext,
+        expireDelay = expireDelay,
+        labelExtractor = null,
+    )
+
+    public constructor(platformContext: PlatformContext, labelExtractor: LabelExtractor?) : this(
+        platformContext = platformContext,
+        expireDelay = 1.hours,
+        labelExtractor = labelExtractor,
+    )
+
     override fun getComponent(
         componentContext: ComponentContext,
         nav: StackNavigation<Config>,
@@ -51,6 +71,7 @@ public class LoggingModule(
             DefaultLogViewerComponent(
                 componentContext = componentContext,
                 database = database,
+                labelExtractor = labelExtractor,
                 onFinished = { nav.pop() },
             )
         )

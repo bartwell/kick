@@ -2,7 +2,9 @@ package ru.bartwell.kick.module.logging.feature.table.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -14,6 +16,7 @@ import androidx.compose.material.icons.filled.FilterListOff
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.data.Platform
 import ru.bartwell.kick.core.data.platformContext
@@ -79,6 +83,9 @@ internal fun LogViewerContent(
         if (state.isFilterDialogVisible) {
             FilterDialog(component = component, state = state)
         }
+        if (state.labels.isNotEmpty()) {
+            LabelsBar(component = component, state = state)
+        }
         ErrorBox(modifier = Modifier.fillMaxSize(), error = state.error) {
             LazyColumn(
                 state = rememberLazyListState(),
@@ -88,6 +95,20 @@ internal fun LogViewerContent(
                     Item(item)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun LabelsBar(component: LogViewerComponent, state: LogViewerState) {
+    LazyRow(modifier = Modifier.testTag("label_chips")) {
+        items(state.labels) { label ->
+            FilterChip(
+                selected = state.selectedLabels.contains(label),
+                onClick = { component.onLabelClick(label) },
+                label = { Text(label) },
+                modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
+            )
         }
     }
 }

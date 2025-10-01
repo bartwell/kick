@@ -5,6 +5,8 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -105,6 +107,93 @@ class LogViewerUiTest {
         // On JVM platform the description is "Share logs"
         composeTestRule.onNodeWithContentDescription("Share logs").performClick()
         assertTrue(fake.shareInvoked)
+    }
+
+    @Test
+    fun label_chips_and_filter_and_toggle() {
+        val logs = listOf(
+            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "[A][B] ab"),
+            LogEntity(id = 2, time = 2_000L, level = LogLevel.ERROR, message = "[A] aaa"),
+            LogEntity(id = 3, time = 3_000L, level = LogLevel.DEBUG, message = "[B] bbb"),
+            LogEntity(id = 4, time = 4_000L, level = LogLevel.DEBUG, message = "zzz"),
+        )
+        val fake = FakeLogViewerComponent(logs)
+
+        composeTestRule.setContent { LogViewerContent(component = fake) }
+
+        // Chips visible with two labels
+        composeTestRule.onAllNodesWithTag("label_chips").assertCountEquals(1)
+
+        // Select A -> two items: [A][B] ab, [A] aaa
+        composeTestRule.onNode(
+            hasAnyAncestor(hasTestTag("label_chips")) and hasText("A", substring = false)
+        ).performClick()
+        composeTestRule.onAllNodesWithTag("log_item").assertCountEquals(2)
+
+        // Add B -> AND filter -> only [A][B] ab
+        composeTestRule.onNode(
+            hasAnyAncestor(hasTestTag("label_chips")) and hasText("B", substring = false)
+        ).performClick()
+        composeTestRule.onAllNodesWithTag("log_item").assertCountEquals(1)
+
+        // Deselect A -> only B selected -> two items: [A][B] ab, [B] bbb
+        composeTestRule.onNode(
+            hasAnyAncestor(hasTestTag("label_chips")) and hasText("A", substring = false)
+        ).performClick()
+        composeTestRule.onAllNodesWithTag("log_item").assertCountEquals(2)
+
+        // Deselect B -> show all
+        composeTestRule.onNode(
+            hasAnyAncestor(hasTestTag("label_chips")) and hasText("B", substring = false)
+        ).performClick()
+        composeTestRule.onAllNodesWithTag("log_item").assertCountEquals(4)
+    }
+
+    @Test
+    fun chips_hidden_when_no_labels() {
+        val logs = listOf(
+            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "no labels here"),
+            LogEntity(id = 2, time = 2_000L, level = LogLevel.ERROR, message = "still none"),
+        )
+        val fake = FakeLogViewerComponent(logs)
+
+        composeTestRule.setContent { LogViewerContent(component = fake) }
+
+        composeTestRule.onAllNodesWithTag("label_chips").assertCountEquals(0)
+    }
+
+    @Test
+    fun combine_text_filter_and_label_filter() {
+        val logs = listOf(
+            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "[A][B] abcd"),
+            LogEntity(id = 2, time = 2_000L, level = LogLevel.ERROR, message = "[A] aaa"),
+            LogEntity(id = 3, time = 3_000L, level = LogLevel.DEBUG, message = "[B] bbb"),
+            LogEntity(id = 4, time = 4_000L, level = LogLevel.DEBUG, message = "zzz"),
+        )
+        val fake = FakeLogViewerComponent(logs)
+
+        composeTestRule.setContent { LogViewerContent(component = fake) }
+
+        // Apply text filter: 'a' -> should leave 2 items (abcd, aaa)
+        composeTestRule.onNodeWithContentDescription("Filter logs").performClick()
+        composeTestRule.onNode(hasAnyAncestor(isDialog()) and hasSetTextAction()).performTextInput("a")
+        composeTestRule.onNodeWithText("Filter").performClick()
+        composeTestRule.onAllNodesWithTag("log_item").assertCountEquals(2)
+
+        // Chips visible and include B (present in abcd)
+        composeTestRule.onAllNodesWithTag("label_chips").assertCountEquals(1)
+
+        // Select B -> AND with text filter => only [A][B] abcd remains
+        composeTestRule.onNode(
+            hasAnyAncestor(hasTestTag("label_chips")) and hasText("B", substring = false)
+        ).performClick()
+        composeTestRule.onAllNodesWithTag("log_item").assertCountEquals(1)
+
+        // Deselect B -> back to 2
+        composeTestRule.onNode(
+            hasAnyAncestor(hasTestTag("label_chips")) and hasText("B", substring = false)
+        ).performClick()
+        composeTestRule.onAllNodesWithTag("log_item").assertCountEquals(2)
     }
 }
 

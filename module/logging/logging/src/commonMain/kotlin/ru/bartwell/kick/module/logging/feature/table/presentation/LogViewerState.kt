@@ -8,4 +8,6 @@ public data class LogViewerState(
     val filterQuery: String = "",
     val isFilterActive: Boolean = false,
     val isFilterDialogVisible: Boolean = false,
+    val labels: List<String> = emptyList(),
+    val selectedLabels: Set<String> = emptySet(),
 )
