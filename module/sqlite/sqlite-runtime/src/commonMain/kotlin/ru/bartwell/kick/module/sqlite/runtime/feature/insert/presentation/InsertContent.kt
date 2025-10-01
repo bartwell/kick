@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -82,7 +83,8 @@ internal fun InsertContent(
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .testTag("insert_btn"),
                 onClick = component::onSaveClick,
             ) {
                 Text("Insert")
@@ -146,7 +148,8 @@ private fun Card(
         )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .testTag("insert_input_" + column.name),
             value = getFieldValue(state, column),
             onValueChange = { onValueChange(column, it) },
             enabled = state.valueTypes[column] == InsertValueType.VALUE,

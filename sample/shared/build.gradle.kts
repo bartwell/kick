@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -29,6 +30,11 @@ kotlin {
         }
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -49,48 +55,63 @@ kotlin {
     jvm()
 
     sourceSets {
+        val commonMain by getting
+        val androidMain by getting
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+        val jvmMain by getting
+        val wasmJsMain by getting
+        val nonWasmMain by creating { dependsOn(commonMain) }
+        val nativeMain by creating { dependsOn(nonWasmMain) }
+        androidMain.dependsOn(nonWasmMain)
+        iosX64Main.dependsOn(nonWasmMain)
+        iosArm64Main.dependsOn(nonWasmMain)
+        iosSimulatorArm64Main.dependsOn(nonWasmMain)
+        jvmMain.dependsOn(nonWasmMain)
+        val iosMain by creating { dependsOn(nonWasmMain) }
+        iosX64Main.dependsOn(nativeMain)
+        iosArm64Main.dependsOn(nativeMain)
+        iosSimulatorArm64Main.dependsOn(nativeMain)
+        iosMain.dependsOn(nativeMain)
+        iosX64Main.dependsOn(iosMain)
+        iosArm64Main.dependsOn(iosMain)
+        iosSimulatorArm64Main.dependsOn(iosMain)
+
         commonMain.dependencies {
             api(projects.mainCore)
+            api(projects.sqliteCore)
             if (isRelease) {
                 api(projects.mainRuntimeStub)
                 api(projects.loggingStub)
                 api(projects.multiplatformSettingsStub)
-                api(projects.fileExplorerStub)
-                api(projects.layoutStub)
                 api(projects.configurationStub)
                 api(projects.overlayStub)
                 api(projects.ktor3Stub)
                 api(projects.sqliteRuntimeStub)
                 api(projects.sqliteSqldelightAdapterStub)
-                api(projects.sqliteRoomAdapterStub)
+                api(projects.fileExplorerStub)
             } else {
                 api(projects.mainRuntime)
-                api(projects.sqliteCore)
                 api(projects.sqliteRuntime)
                 api(projects.sqliteSqldelightAdapter)
-                api(projects.sqliteRoomAdapter)
                 api(projects.logging)
                 api(projects.ktor3)
                 api(projects.multiplatformSettings)
-                api(projects.fileExplorer)
-                api(projects.layout)
                 api(projects.configuration)
                 api(projects.overlay)
+                api(projects.fileExplorer)
             }
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
-            implementation(libs.decompose)
-            implementation(libs.decompose.extensions.compose)
             implementation(libs.kotlinx.coroutines.core)
-            api(libs.room.runtime)
-            implementation(libs.room.driver)
             implementation(libs.napier)
+            implementation(libs.sqldelight.coroutines.extensions)
             api(libs.settings)
             implementation(libs.settings.noArg)
             implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
         }
@@ -106,9 +127,29 @@ kotlin {
             implementation(libs.sqldelight.native.driver)
             implementation(libs.ktor.client.darwin)
         }
+        nonWasmMain.dependencies {
+            if (isRelease) {
+                api(projects.sqliteRoomAdapterStub)
+                api(projects.layoutStub)
+            } else {
+                api(projects.sqliteRoomAdapter)
+                api(projects.layout)
+            }
+            api(libs.room.runtime)
+            implementation(libs.room.driver)
+        }
+        androidMain.dependencies {}
+        jvmMain.dependencies {}
+        iosMain.dependencies {}
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.sqldelight.driver.sqlite)
+            implementation(libs.ktor.client.cio)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.js.wasm)
+            implementation(libs.sqldelight.web.worker.driver.wasm)
+            implementation(libs.sqldelight.async.extensions)
         }
     }
 }
@@ -147,6 +188,7 @@ sqldelight {
     databases {
         create("SampleDatabase") {
             packageName.set("ru.bartwell.kick.sample.shared")
+            generateAsync.set(true)
         }
     }
 }

@@ -4,10 +4,9 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.room)
+    alias(libs.plugins.sqldelight)
     alias(libs.plugins.publish.plugin)
     id("publish-convention")
 }
@@ -24,6 +23,11 @@ kotlin {
                 }
             }
         }
+    }
+
+    @Suppress("OPT_IN_USAGE")
+    wasmJs {
+        browser()
     }
 
     listOf(
@@ -49,26 +53,53 @@ kotlin {
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
             implementation(libs.decompose.essenty.lifecycle.coroutines)
-            implementation(libs.room.runtime)
-            implementation(libs.room.driver)
+            implementation(libs.sqldelight.coroutines.extensions)
+            implementation(libs.sqldelight.async.extensions)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.logging)
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+            implementation(libs.kotlinx.serialization.json)
         }
         commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(libs.androidx.test.ext.junit)
+            implementation(libs.androidx.test.runner)
+            implementation(libs.androidx.compose.ui.test.junit4)
+        }
+        jvmTest.dependencies {
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.desktop.uiTestJUnit4)
             implementation(libs.kotlin.test)
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.sqldelight.android.driver)
         }
         appleMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.sqldelight.native.driver)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.ktor.client.cio)
+            implementation(libs.sqldelight.driver.sqlite)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.js.wasm)
+            implementation(libs.sqldelight.web.worker.driver.wasm)
+        }
+        iosTest.dependencies {
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
+            implementation(libs.kotlin.test)
+        }
+        wasmJsTest.dependencies {
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
+            implementation(libs.kotlin.test)
         }
     }
 
@@ -81,6 +112,7 @@ android {
 
     defaultConfig {
         minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -94,13 +126,14 @@ android {
 }
 
 dependencies {
-    add("kspAndroid", libs.room.compiler)
-    add("kspIosSimulatorArm64", libs.room.compiler)
-    add("kspIosX64", libs.room.compiler)
-    add("kspIosArm64", libs.room.compiler)
-    add("kspJvm", libs.room.compiler)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
-room {
-    schemaDirectory("$projectDir/schemas")
+sqldelight {
+    databases {
+        create("Ktor3Db") {
+            packageName.set("ru.bartwell.kick.module.ktor3.db")
+            generateAsync.set(true)
+        }
+    }
 }

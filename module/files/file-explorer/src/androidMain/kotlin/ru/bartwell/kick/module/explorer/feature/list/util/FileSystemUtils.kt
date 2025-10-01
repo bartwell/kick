@@ -10,12 +10,12 @@ import java.io.File
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 internal actual object FileSystemUtils {
 
-    actual fun getInitialDirectory(context: PlatformContext): String {
+    actual suspend fun getInitialDirectory(context: PlatformContext): String {
         val files = context.get().filesDir
         return files.parentFile?.absolutePath ?: files.absolutePath
     }
 
-    actual fun listDirectory(path: String): List<FileEntry> {
+    actual suspend fun listDirectory(path: String): List<FileEntry> {
         val dir = File(path)
         return dir.listFiles()?.map {
             FileEntry(
@@ -27,7 +27,7 @@ internal actual object FileSystemUtils {
         }?.sortedWith(compareByDescending<FileEntry> { it.isDirectory }.thenBy { it.name }) ?: emptyList()
     }
 
-    actual fun getKnownFolders(context: PlatformContext): List<KnownFolder> {
+    actual suspend fun getKnownFolders(context: PlatformContext): List<KnownFolder> {
         val folders = mutableListOf<KnownFolder>()
         folders += KnownFolder("App", getInitialDirectory(context))
         val external = Environment.getExternalStorageDirectory()
@@ -41,9 +41,9 @@ internal actual object FileSystemUtils {
         return File(path).parent
     }
 
-    actual fun readText(path: String): Result = Result.Success(File(path).readText())
+    actual suspend fun readText(path: String): Result = Result.Success(File(path).readText())
 
-    actual fun exportFile(context: PlatformContext, path: String): Result {
+    actual suspend fun exportFile(context: PlatformContext, path: String): Result {
         val destinationDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val destination = File(destinationDir, File(path).name)
         @Suppress("TooGenericExceptionCaught")
@@ -55,7 +55,7 @@ internal actual object FileSystemUtils {
         }
     }
 
-    actual fun deleteFile(path: String): Result {
+    actual suspend fun deleteFile(path: String): Result {
         val file = File(path)
         if (!file.exists()) {
             return Result.Error("File not found: $path")

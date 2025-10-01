@@ -29,6 +29,8 @@ include("desktop")
 project(":desktop").projectDir = file("sample/desktop")
 include("shared")
 project(":shared").projectDir = file("sample/shared")
+include("web")
+project(":web").projectDir = file("sample/web")
 // Modules
 // SQLite
 include(":sqlite-core")

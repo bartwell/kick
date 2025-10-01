@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -58,7 +59,8 @@ internal fun Table(
         modifier = Modifier
             .fillMaxSize()
             .horizontalScroll(horizontalScrollState)
-            .padding(16.dp),
+            .padding(16.dp)
+            .testTag("table"),
     ) {
         visibleColumns?.let {
             item {
@@ -113,6 +115,7 @@ private fun TableRow(
             ) {
                 val isChecked = selectedRows.contains(row.id)
                 Checkbox(
+                    modifier = Modifier.testTag("row_checkbox_${'$'}{row.id}"),
                     checked = isChecked,
                     onCheckedChange = { onRowSelected(row.id, it) },
                 )

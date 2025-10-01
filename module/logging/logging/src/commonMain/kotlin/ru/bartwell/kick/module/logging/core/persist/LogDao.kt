@@ -1,24 +1,51 @@
 package ru.bartwell.kick.module.logging.core.persist
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import ru.bartwell.kick.module.logging.db.Log
+import ru.bartwell.kick.module.logging.db.LoggingDb
 
-@Dao
-internal interface LogDao {
-    @Insert
-    suspend fun insert(item: LogEntity)
+internal class LogDao(private val db: LoggingDb) {
 
-    @Query("SELECT * FROM LogEntity ORDER BY time DESC")
-    fun getAllAsFlow(): Flow<List<LogEntity>>
+    suspend fun insert(item: LogEntity) = withContext(Dispatchers.Default) {
+        db.logQueries.insertLog(
+            time = item.time,
+            level = item.level,
+            message = item.message,
+        )
+    }
 
-    @Query("SELECT * FROM LogEntity WHERE message LIKE :filter ORDER BY time DESC")
-    fun getFilteredAsFlow(filter: String): Flow<List<LogEntity>>
+    fun getAllAsFlow(): Flow<List<LogEntity>> =
+        db.logQueries
+            .selectAll()
+            .asFlow()
+            .mapToList(Dispatchers.Default)
+            .let { flow -> flow.map { list -> list.map { it.toEntity() } } }
 
-    @Query("DELETE FROM LogEntity")
-    suspend fun deleteAll()
+    fun getFilteredAsFlow(filter: String): Flow<List<LogEntity>> =
+        db.logQueries
+            .selectFiltered(filter)
+            .asFlow()
+            .mapToList(Dispatchers.Default)
+            .let { flow -> flow.map { list -> list.map { it.toEntity() } } }
 
-    @Query("DELETE FROM LogEntity WHERE time < :time")
-    suspend fun deleteOld(time: Long)
+    suspend fun deleteAll() = withContext(Dispatchers.Default) {
+        db.logQueries.deleteAll()
+    }
+
+    suspend fun deleteOld(time: Long) = withContext(Dispatchers.Default) {
+        db.logQueries.deleteOld(time)
+    }
 }
+
+private fun Log.toEntity(): LogEntity = LogEntity(
+    id = id,
+    time = time,
+    level = level,
+    message = message,
+)

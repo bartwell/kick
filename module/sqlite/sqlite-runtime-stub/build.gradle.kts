@@ -24,6 +24,10 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+    }
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -80,4 +84,3 @@ android {
         compose = true
     }
 }
-

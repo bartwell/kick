@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.data.Platform
 import ru.bartwell.kick.core.data.platformContext
@@ -52,7 +53,7 @@ internal fun LogViewerContent(
                 }
             },
             actions = {
-                IconButton(onClick = component::onFilterClick) {
+                IconButton(onClick = component::onFilterClick, modifier = Modifier.testTag("filter_toggle")) {
                     val (icon, description) = if (state.isFilterActive) {
                         Icons.Default.FilterListOff to "Disable filter"
                     } else {
@@ -60,11 +61,13 @@ internal fun LogViewerContent(
                     }
                     Icon(imageVector = icon, contentDescription = description)
                 }
-                IconButton(onClick = component::onClearAllClick) {
+                IconButton(onClick = component::onClearAllClick, modifier = Modifier.testTag("clear_all")) {
                     Icon(imageVector = Icons.Default.ClearAll, contentDescription = "Clear all")
                 }
-                IconButton(onClick = { component.onShareClick(context) }) {
-                    val (icon, contentDescription) = if (PlatformUtils.getPlatform() == Platform.IOS) {
+                IconButton(onClick = { component.onShareClick(context) }, modifier = Modifier.testTag("share_copy")) {
+                    val shouldCopy = PlatformUtils.getPlatform() == Platform.IOS ||
+                        PlatformUtils.getPlatform() == Platform.WEB
+                    val (icon, contentDescription) = if (shouldCopy) {
                         Icons.Default.ContentCopy to "Copy logs"
                     } else {
                         Icons.Default.Share to "Share logs"
@@ -79,7 +82,7 @@ internal fun LogViewerContent(
         ErrorBox(modifier = Modifier.fillMaxSize(), error = state.error) {
             LazyColumn(
                 state = rememberLazyListState(),
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().testTag("log_list"),
             ) {
                 items(state.log) { item ->
                     Item(item)
@@ -123,6 +126,7 @@ private fun Item(item: LogEntity) {
         text = item.toLogString(),
         style = MaterialTheme.typography.bodySmall,
         color = item.level.color,
+        modifier = Modifier.testTag("log_item"),
     )
 }
 

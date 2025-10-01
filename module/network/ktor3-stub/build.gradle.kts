@@ -4,10 +4,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.room)
     alias(libs.plugins.publish.plugin)
     id("publish-convention")
 }
@@ -24,6 +22,10 @@ kotlin {
                 }
             }
         }
+    }
+
+    wasmJs {
+        browser()
     }
 
     listOf(
@@ -80,16 +82,3 @@ android {
         compose = true
     }
 }
-
-dependencies {
-    add("kspAndroid", libs.room.compiler)
-    add("kspIosSimulatorArm64", libs.room.compiler)
-    add("kspIosX64", libs.room.compiler)
-    add("kspIosArm64", libs.room.compiler)
-    add("kspJvm", libs.room.compiler)
-}
-
-room {
-    schemaDirectory("$projectDir/schemas")
-}
-

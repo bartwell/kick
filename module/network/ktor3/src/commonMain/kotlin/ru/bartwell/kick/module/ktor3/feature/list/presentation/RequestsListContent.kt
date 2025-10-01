@@ -37,10 +37,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import ru.bartwell.kick.core.persist.RequestEntity
 import ru.bartwell.kick.core.presentation.ErrorBox
+import ru.bartwell.kick.module.ktor3.core.persist.RequestEntity
 import ru.bartwell.kick.module.ktor3.feature.detail.extension.formatDuration
 import ru.bartwell.kick.module.ktor3.feature.detail.extension.formatFileSize
 import ru.bartwell.kick.module.ktor3.feature.detail.extension.formatTimestamp
@@ -64,7 +65,7 @@ internal fun RequestsListContent(
                 }
             },
             actions = {
-                IconButton(onClick = component::onSearchClick) {
+                IconButton(onClick = component::onSearchClick, modifier = Modifier.testTag("search_toggle")) {
                     val (icon, contentDescription) = if (state.searchQuery.isBlank()) {
                         Icons.Default.Search to "Search requests"
                     } else {
@@ -72,7 +73,7 @@ internal fun RequestsListContent(
                     }
                     Icon(imageVector = icon, contentDescription = contentDescription)
                 }
-                IconButton(onClick = component::onClearAllClick) {
+                IconButton(onClick = component::onClearAllClick, modifier = Modifier.testTag("clear_all")) {
                     Icon(imageVector = Icons.Default.ClearAll, contentDescription = "Clear all")
                 }
             }
@@ -104,7 +105,7 @@ internal fun RequestsListContent(
         ErrorBox(modifier = Modifier.fillMaxSize(), error = state.error) {
             LazyColumn(
                 state = rememberLazyListState(),
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().testTag("request_list"),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -127,7 +128,8 @@ private fun RequestItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .testTag("request_item"),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Column(

@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -30,7 +31,7 @@ internal fun UpdateContent(
         TopAppBar(
             title = { Text(state.column.name + " (" + state.column.type.name.lowercase() + ")") },
             navigationIcon = {
-                IconButton(onClick = component::onBackPressed) {
+                IconButton(onClick = component::onBackPressed, modifier = Modifier.testTag("back")) {
                     Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
                 }
             },
@@ -49,7 +50,7 @@ internal fun UpdateContent(
                 )
                 if (!state.column.isNotNullable) {
                     CheckboxWithText(
-                        modifier = Modifier.offset(y = (-8).dp),
+                        modifier = Modifier.offset(y = (-8).dp).testTag("null_checkbox"),
                         text = "null",
                         isChecked = state.isNull,
                         onClick = component::onNullCheckboxClick,
@@ -60,9 +61,8 @@ internal fun UpdateContent(
                     modifier = Modifier.fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     onClick = component::onSaveClick,
-                ) {
-                    Text("Save")
-                }
+                    content = { Text("Save") }
+                )
                 Spacer(modifier = Modifier.height(32.dp))
             }
         }
@@ -107,7 +107,8 @@ private fun ValueTextField(
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(top = 16.dp),
+            .padding(top = 16.dp)
+            .testTag("update_value"),
         value = state.value.orEmpty(),
         onValueChange = onValueChange,
         enabled = !state.isNull,

@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 
@@ -39,12 +40,12 @@ internal fun SettingsEditorContent(
         TopAppBar(
             title = { Text(state.storageName) },
             navigationIcon = {
-                IconButton(onClick = component::onBackPressed) {
+                IconButton(onClick = component::onBackPressed, modifier = Modifier.testTag("back")) {
                     Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
                 }
             },
             actions = {
-                IconButton(onClick = component::onSavePressed) {
+                IconButton(onClick = component::onSavePressed, modifier = Modifier.testTag("save")) {
                     Icon(imageVector = Icons.Default.Save, contentDescription = "Save")
                 }
             },
@@ -58,7 +59,7 @@ internal fun SettingsEditorContent(
             items(state.entries.entries.toList()) { (key, value) ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).testTag("entry_" + key),
                         value = value,
                         onValueChange = { newValue ->
                             component.onValueChange(key, newValue)
@@ -66,7 +67,10 @@ internal fun SettingsEditorContent(
                         label = { Text(text = key) },
                     )
                     Spacer(modifier = Modifier.width(16.dp))
-                    IconButton(onClick = { component.onDeleteClick(key) }) {
+                    IconButton(
+                        onClick = { component.onDeleteClick(key) },
+                        modifier = Modifier.testTag("delete_" + key)
+                    ) {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
                     }
                 }

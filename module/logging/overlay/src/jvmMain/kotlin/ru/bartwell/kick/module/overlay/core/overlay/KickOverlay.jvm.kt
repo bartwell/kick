@@ -111,7 +111,7 @@ public actual object KickOverlay {
                 panel = panel,
                 scaleX = scaleX,
                 scaleY = scaleY,
-                onReady = { dim -> applyTransparentShape(w, dim) },
+                onReady = { dim -> applyTransparentShape(w, dim, arc = 0f) },
                 onCloseClick = ::onCloseClick,
             )
         }
@@ -122,13 +122,13 @@ public actual object KickOverlay {
         w.pack()
         w.location = Point(INITIAL_WINDOW_X, INITIAL_WINDOW_Y)
         w.isVisible = true
-        applyTransparentShape(w)
+        applyTransparentShape(w, arc = 0f)
     }
 
     private fun applyTransparentShape(
         w: JWindow,
         shapeDip: Dimension? = null,
-        arc: Float = 16f
+        arc: Float = 0f
     ) {
         w.background = Color(0, 0, 0, 0)
         (w.contentPane as JComponent).apply {
@@ -141,14 +141,23 @@ public actual object KickOverlay {
         val proposedShapeWidthDip = if (swRaw < MIN_SHAPE_DIP) w.width else swRaw
         val proposedShapeHeightDip = if (shRaw < MIN_SHAPE_DIP) w.height else shRaw
 
-        w.shape = java.awt.geom.RoundRectangle2D.Float(
-            0f,
-            0f,
-            proposedShapeWidthDip.toFloat(),
-            proposedShapeHeightDip.toFloat(),
-            arc,
-            arc
-        )
+        w.shape = if (arc <= 0f) {
+            java.awt.geom.Rectangle2D.Float(
+                0f,
+                0f,
+                proposedShapeWidthDip.toFloat(),
+                proposedShapeHeightDip.toFloat(),
+            )
+        } else {
+            java.awt.geom.RoundRectangle2D.Float(
+                0f,
+                0f,
+                proposedShapeWidthDip.toFloat(),
+                proposedShapeHeightDip.toFloat(),
+                arc,
+                arc
+            )
+        }
         try { w.rootPane.putClientProperty("apple.awt.windowShadow", false) } catch (_: Throwable) { }
     }
 

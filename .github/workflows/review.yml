@@ -44,6 +44,11 @@ jobs:
       - name: Assemble debug build
         run: ./gradlew clean assembleDebug
 
+      - name: Assemble stubs
+        run: |
+          echo "isRelease=true" > settings.properties
+          ./gradlew assembleDebug
+
       - name: Run Lint
         run: ./gradlew lintDebug
 

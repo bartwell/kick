@@ -2,7 +2,6 @@ package ru.bartwell.kick.module.logging.core.util
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,7 +12,7 @@ import ru.bartwell.kick.module.logging.core.persist.LogEntity
 
 internal object Logger {
 
-    private val loggerScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val loggerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val logFlow = MutableSharedFlow<LogEntity>(
         replay = 0,

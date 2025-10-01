@@ -28,7 +28,7 @@ public class SqlDelightWrapper(private val driver: SqlDriver) : DatabaseWrapper(
                     }
                 )
             }
-        ).value
+        ).await()
         emit(result)
     }
 
@@ -50,7 +50,7 @@ public class SqlDelightWrapper(private val driver: SqlDriver) : DatabaseWrapper(
                 )
             }
         )
-            .value
+            .await()
             .first()
         emit(result)
     }
@@ -66,7 +66,7 @@ public class SqlDelightWrapper(private val driver: SqlDriver) : DatabaseWrapper(
                 bindValue(index = 0, column = column, value = value)
                 bindLong(index = 1, long = id)
             }
-        )
+        ).await()
         emit(Unit)
     }
 
@@ -84,20 +84,20 @@ public class SqlDelightWrapper(private val driver: SqlDriver) : DatabaseWrapper(
                     }
                 }
             }
-        )
+        ).await()
         emit(Unit)
     }
 
     public override fun delete(table: String, ids: List<Long>): Flow<Unit> = flow {
         if (ids.isNotEmpty()) {
             val sql = buildDeleteQuery(table, ids)
-            driver.execute(identifier = null, sql = sql, parameters = 0)
+            driver.execute(identifier = null, sql = sql, parameters = 0).await()
         }
         emit(Unit)
     }
 
     override fun raw(sql: String): Flow<Unit> = flow {
-        driver.execute(identifier = null, sql = sql, parameters = 0)
+        driver.execute(identifier = null, sql = sql, parameters = 0).await()
         emit(Unit)
     }
 }

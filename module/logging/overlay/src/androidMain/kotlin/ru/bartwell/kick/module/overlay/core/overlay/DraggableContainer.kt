@@ -21,6 +21,9 @@ internal class DraggableContainer(
     private var dragging = false
     private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
 
+    @Suppress("EmptyFunctionBlock")
+    override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         val t = dragTarget ?: return false
 
