@@ -170,13 +170,14 @@ Napier.base(object : Antilog() {
         Kick.log(level, message)
     }
 })
+```
 
 #### Labels and Filtering
 
 The log viewer supports two kinds of filtering:
 
-- Message filter — click the filter icon to filter by a text query contained in the message.
-- Label filter — when a label extractor is provided, the viewer shows label chips above the list. Clicking chips toggles selected labels. Multiple selected labels are combined with AND. Label chips reflect the current text filter, so you can combine both.
+- Message filter - click the filter icon to filter by a text query contained in the message.
+- Label filter - when a label extractor is provided, the viewer shows label chips above the list. Clicking chips toggles selected labels. Multiple selected labels are combined with AND. Label chips reflect the current text filter, so you can combine both.
 
 Provide a label extractor via the `LoggingModule` constructor. A ready‑to‑use `BracketLabelExtractor` is available; it extracts labels from square brackets like `[UI]`, `[Network]` in the beginning or anywhere in the message:
 
@@ -207,7 +208,6 @@ Kick.init(context) {
 ```
 
 If no extractor is provided, label chips are hidden and only text filtering is available.
-```
 
 ### Multiplatform Settings
 
@@ -262,7 +262,6 @@ ControlPanelModule(
             ),
             category = "General",
         ),
-        // Action button example
         ControlPanelItem(
             name = "Refresh Cache",
             type = ActionType.Button(id = "refresh_cache"),
@@ -284,17 +283,6 @@ Kick.controlPanel.getString("list")
 #### Actions
 
 You can also add action buttons to trigger code in your app. Register an action listener and handle button IDs you defined in `ControlPanelItem(type = ActionType.Button("id"))`:
-
-```
-Kick.controlPanel.onButtonClick { id ->
-    when (id) {
-        "refresh_cache" -> refreshCache()
-        // handle other actions
-    }
-}
-```
-
-Register an action listener to handle button clicks:
 
 ```
 Kick.controlPanel.onButtonClick { id ->
@@ -350,7 +338,7 @@ Kick.overlay.show(context)  // show floating panel
 Kick.overlay.hide()         // hide it
 ```
 
-Categories
+#### Categories
 
 Group values by categories and switch them in the Overlay settings screen (default category is "Default"). The floating window shows only the values of the currently selected category. The selection is persisted across app restarts.
 
