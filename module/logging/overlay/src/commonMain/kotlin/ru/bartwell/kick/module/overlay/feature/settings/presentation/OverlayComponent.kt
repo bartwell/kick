@@ -10,6 +10,7 @@ internal interface OverlayComponent : Component {
     fun init(context: PlatformContext)
     fun onBackClick()
     fun onEnabledChange(context: PlatformContext, enabled: Boolean)
+    fun onCategoryChange(category: String)
 }
 
 internal data class OverlayState(

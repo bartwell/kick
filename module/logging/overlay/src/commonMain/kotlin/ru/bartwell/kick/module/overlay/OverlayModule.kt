@@ -16,6 +16,7 @@ import ru.bartwell.kick.module.overlay.core.component.child.OverlayChild
 import ru.bartwell.kick.module.overlay.core.component.config.OverlayConfig
 import ru.bartwell.kick.module.overlay.core.overlay.KickOverlay
 import ru.bartwell.kick.module.overlay.core.persists.OverlaySettings
+import ru.bartwell.kick.module.overlay.core.store.OverlayStore
 import ru.bartwell.kick.module.overlay.feature.settings.presentation.DefaultOverlayComponent
 import ru.bartwell.kick.module.overlay.feature.settings.presentation.OverlayContent
 
@@ -25,6 +26,8 @@ public class OverlayModule(private val context: PlatformContext) : Module {
 
     init {
         OverlaySettings(context)
+        // Initialize selected category from persisted settings
+        OverlayStore.selectCategory(OverlaySettings.getSelectedCategory())
         KickOverlay.init(context)
         if (OverlaySettings.isEnabled()) {
             KickOverlay.show(context)

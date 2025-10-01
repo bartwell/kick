@@ -5,6 +5,7 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.overlay.core.persists.OverlaySettings
+import ru.bartwell.kick.module.overlay.core.store.OverlayStore
 
 internal class DefaultOverlayComponent(
     componentContext: ComponentContext,
@@ -18,8 +19,10 @@ internal class DefaultOverlayComponent(
     override fun init(context: PlatformContext) {
         OverlaySettings(context)
         val enabled = OverlaySettings.isEnabled()
+        val category = OverlaySettings.getSelectedCategory()
         _model.value = OverlayState(enabled)
         onEnabledChangeCallback(enabled)
+        OverlayStore.selectCategory(category)
     }
 
     override fun onBackClick() = onBackCallback()
@@ -28,5 +31,10 @@ internal class DefaultOverlayComponent(
         _model.value = _model.value.copy(enabled = enabled)
         OverlaySettings.setEnabled(enabled)
         onEnabledChangeCallback(enabled)
+    }
+
+    override fun onCategoryChange(category: String) {
+        OverlaySettings.setSelectedCategory(category)
+        OverlayStore.selectCategory(category)
     }
 }

@@ -1,17 +1,24 @@
 package ru.bartwell.kick.module.overlay.feature.settings.presentation
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -37,6 +44,8 @@ internal fun OverlayContent(
 ) {
     val state = component.model.subscribeAsState()
     val items by OverlayStore.items.collectAsState()
+    val categories by OverlayStore.categories.collectAsState()
+    val selectedCategory by OverlayStore.selectedCategory.collectAsState()
     val context = platformContext()
 
     var launched by rememberSaveable { mutableStateOf(false) }
@@ -73,6 +82,12 @@ internal fun OverlayContent(
                 },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
+            CategoryPicker(
+                selectedCategory = selectedCategory,
+                categories = categories,
+                onSelect = { component.onCategoryChange(it) }
+            )
+            Spacer(modifier = Modifier.height(32.dp))
             Text(
                 text = "Properties: one per line",
                 style = MaterialTheme.typography.bodySmall,
@@ -86,6 +101,47 @@ internal fun OverlayContent(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                     )
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CategoryPicker(
+    selectedCategory: String,
+    categories: List<String>,
+    onSelect: (String) -> Unit,
+) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+    ) {
+        OutlinedTextField(
+            readOnly = true,
+            value = selectedCategory,
+            onValueChange = {},
+            label = { Text("Category") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .menuAnchor()
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            categories.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        expanded = false
+                        onSelect(option)
+                    }
+                )
             }
         }
     }

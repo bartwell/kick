@@ -313,6 +313,16 @@ Kick.overlay.show(context)  // show floating panel
 Kick.overlay.hide()         // hide it
 ```
 
+Categories
+
+Group values by categories and switch them in the Overlay settings screen (default category is "Default"). The floating window shows only the values of the currently selected category. The selection is persisted across app restarts.
+
+```kotlin
+// Write values into a specific category
+Kick.overlay.set("fps", 42, "Performance")
+Kick.overlay.set("isWsConnected", true, "Network")
+```
+
 ### Advanced Module Configuration
 
 You don't need to add all the available modules. Just include the ones you need. Here only logging and network inspection are enabled:

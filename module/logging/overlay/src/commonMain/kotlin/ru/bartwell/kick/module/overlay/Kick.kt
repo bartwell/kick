@@ -19,6 +19,14 @@ public object OverlayAccessor {
     public fun set(key: String, value: String) { OverlayStore.set(key, value) }
     public fun set(key: String, value: Boolean) { OverlayStore.set(key, value.toString()) }
 
+    // Category-aware overloads
+    public fun set(key: String, value: Long, category: String) { OverlayStore.set(key, value.toString(), category) }
+    public fun set(key: String, value: Int, category: String) { OverlayStore.set(key, value.toString(), category) }
+    public fun set(key: String, value: Double, category: String) { OverlayStore.set(key, value.toString(), category) }
+    public fun set(key: String, value: Float, category: String) { OverlayStore.set(key, value.toString(), category) }
+    public fun set(key: String, value: String, category: String) { OverlayStore.set(key, value, category) }
+    public fun set(key: String, value: Boolean, category: String) { OverlayStore.set(key, value.toString(), category) }
+
     public fun show(context: PlatformContext) { KickOverlay.show(context) }
     public fun hide() { KickOverlay.hide() }
 }
