@@ -17,7 +17,7 @@ Less complexity, faster development, total visibility. That's Kick.
     - [SQLite](#sqlite)
     - [Logging](#logging)
     - [Multiplatform Settings](#multiplatform-settings)
-    - [Configuration](#configuration)
+    - [Control Panel](#control-panel)
     - [File Explorer](#file-explorer)
     - [Layout](#layout)
     - [Overlay](#overlay)
@@ -181,55 +181,91 @@ Napier.base(object : Antilog() {
 Edit values stored with [Multiplatform Settings](https://github.com/russhwolf/multiplatform-settings). Register as many storages as you need and switch between them at runtime.
 **Note:** Multiplatform Settings doesn’t expose metadata about field types, so Kick can only display and edit values as plain text. When type information becomes available, it will be possible to implement type‑specific views — for example, a switch for Boolean or a numeric input for Int, Long, Double, or Float.
 
-### Configuration
+### Control Panel
 
 <a href="content/screenshots/configuration.jpg" target="_blank" rel="noopener noreferrer">
   <img src="content/screenshots/configuration.jpg" alt="" height="120">
 </a>
 
 Create configuration options, such as an endpoint URL or debug flags, available during app runtime.
-Provide a list of `ConfigurationItem` objects to `ConfigurationModule`. Each item defines its default `ValueType` and can optionally include an editor UI:
+Provide a list of `ControlPanelItem` objects to `ControlPanelModule`. Each item is either an input (`InputType`) or an action (`ActionType`).
+You can optionally group items by `category` to keep long lists organized. Categories are collapsible; items without a category are shown first and are always visible.
+Inputs can optionally include an editor UI:
 
 ```
-ConfigurationModule(
+ControlPanelModule(
     context = context,
     items = listOf(
-        ConfigurationItem(
+        ControlPanelItem(
             name = "featureEnabled",
-            default = ValueType.Boolean(true),
+            type = InputType.Boolean(true),
+            category = "General",
         ),
-        ConfigurationItem(
+        ControlPanelItem(
             name = "maxItems",
-            default = ValueType.Int(DEFAULT_MAX_ITEMS),
+            type = InputType.Int(DEFAULT_MAX_ITEMS),
             editor = Editor.InputNumber(min = 1.0, max = 10.0),
+            category = "General",
         ),
-        ConfigurationItem(
+        ControlPanelItem(
             name = "endpoint",
-            default = ValueType.String("https://example.com"),
+            type = InputType.String("https://example.com"),
             editor = Editor.InputString(singleLine = true),
+            category = "Network",
         ),
-        ConfigurationItem(
+        ControlPanelItem(
             name = "list",
-            default = ValueType.String("Item 2"),
+            type = InputType.String("Item 2"),
             editor = Editor.List(
                 listOf(
-                    ValueType.String("Item 1"),
-                    ValueType.String("Item 2"),
-                    ValueType.String("Item 3"),
+                    InputType.String("Item 1"),
+                    InputType.String("Item 2"),
+                    InputType.String("Item 3"),
                 )
             ),
+            category = "General",
+        ),
+        // Action button example
+        ControlPanelItem(
+            name = "Refresh Cache",
+            type = ActionType.Button(id = "refresh_cache"),
+            category = "Actions",
         ),
     )
 )
 ```
 
-Access these values anywhere using the convenient `Kick.configuration.get*()` methods:
+Access these values anywhere using the convenient `Kick.controlPanel.get*()` methods:
 
 ```
-Kick.configuration.getBoolean("featureEnabled")
-Kick.configuration.getInt("maxItems")
-Kick.configuration.getString("endpoint")
-Kick.configuration.getString("list")
+Kick.controlPanel.getBoolean("featureEnabled")
+Kick.controlPanel.getInt("maxItems")
+Kick.controlPanel.getString("endpoint")
+Kick.controlPanel.getString("list")
+```
+
+#### Actions
+
+You can also add action buttons to trigger code in your app. Register an action listener and handle button IDs you defined in `ControlPanelItem(type = ActionType.Button("id"))`:
+
+```
+Kick.controlPanel.onButtonClick { id ->
+    when (id) {
+        "refresh_cache" -> refreshCache()
+        // handle other actions
+    }
+}
+```
+
+Register an action listener to handle button clicks:
+
+```
+Kick.controlPanel.onButtonClick { id ->
+    when (id) {
+        "refresh_cache" -> refreshCache()
+        // handle other actions
+    }
+}
 ```
 
 ### File Explorer

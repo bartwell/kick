@@ -12,10 +12,11 @@ import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.core.util.DateUtils
-import ru.bartwell.kick.module.configuration.ConfigurationModule
-import ru.bartwell.kick.module.configuration.data.ConfigurationItem
-import ru.bartwell.kick.module.configuration.data.Editor
-import ru.bartwell.kick.module.configuration.data.ValueType
+import ru.bartwell.kick.module.controlpanel.ControlPanelModule
+import ru.bartwell.kick.module.controlpanel.data.ActionType
+import ru.bartwell.kick.module.controlpanel.data.ControlPanelItem
+import ru.bartwell.kick.module.controlpanel.data.Editor
+import ru.bartwell.kick.module.controlpanel.data.InputType
 import ru.bartwell.kick.module.explorer.FileExplorerModule
 import ru.bartwell.kick.module.ktor3.Ktor3Module
 import ru.bartwell.kick.module.logging.LoggingModule
@@ -82,7 +83,7 @@ class TestDataInitializer(context: PlatformContext) {
             module(MultiplatformSettingsModule(listOf("Default" to defaultSettings, "Custom" to customSettings)))
             module(FileExplorerModule())
             createLayoutModule(context)?.let { module(it) }
-            module(ConfigurationModule(context, createConfigurationItems()))
+            module(ControlPanelModule(context, createControlPanelItems()))
             module(OverlayModule(context))
         }
 
@@ -120,31 +121,43 @@ class TestDataInitializer(context: PlatformContext) {
         }
     }
 
-    private fun createConfigurationItems() = listOf(
-        ConfigurationItem(
+    private fun createControlPanelItems() = listOf(
+        ControlPanelItem(
             name = "featureEnabled",
-            default = ValueType.Boolean(true),
+            category = "General",
+            type = InputType.Boolean(true),
         ),
-        ConfigurationItem(
+        ControlPanelItem(
             name = "maxItems",
-            default = ValueType.Int(DEFAULT_MAX_ITEMS),
+            type = InputType.Int(DEFAULT_MAX_ITEMS),
             editor = Editor.InputNumber(min = INPUT_MIN_INT.toDouble(), max = INPUT_MAX_INT.toDouble()),
         ),
-        ConfigurationItem(
+        ControlPanelItem(
             name = "endpoint",
-            default = ValueType.String("https://example.com"),
+            category = "General",
+            type = InputType.String("https://example.com"),
             editor = Editor.InputString(singleLine = true),
         ),
-        ConfigurationItem(
+        ControlPanelItem(
             name = "list",
-            default = ValueType.String("Item 2"),
+            type = InputType.String("Item 2"),
             editor = Editor.List(
                 listOf(
-                    ValueType.String("Item 1"),
-                    ValueType.String("Item 2"),
-                    ValueType.String("Item 3"),
+                    InputType.String("Item 1"),
+                    InputType.String("Item 2"),
+                    InputType.String("Item 3"),
                 )
             ),
+        ),
+        ControlPanelItem(
+            name = "Log A",
+            category = "Actions",
+            type = ActionType.Button("aaaaaa"),
+        ),
+        ControlPanelItem(
+            name = "Log B",
+            category = "Actions",
+            type = ActionType.Button("bbbbbb"),
         ),
     )
 }
