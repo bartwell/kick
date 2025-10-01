@@ -1,63 +1,249 @@
-name: Review PR with Danger
+name: Review
 
 on:
   pull_request:
-    branches: ["develop"]
-    types: [opened, synchronize, closed]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: review-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
 
 jobs:
-  build:
+  android_build_both:
     runs-on: ubuntu-latest
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxMetaspaceSize=512m -Djava.awt.headless=true" -Dorg.gradle.workers.max=2
+      KOTLIN_DAEMON_JVMARGS: -Xmx2048m
     steps:
-
-      - name: Clone repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
-
-      - name: set up JDK 17
-        uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: gradle
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Assemble Android (default)
+        run: ./gradlew --no-daemon --stacktrace --max-workers=2 assembleDebug
+      - name: Enable isRelease=true
+        shell: bash
+        run: |
+          if [ -f settings.properties ]; then
+            if grep -q '^isRelease=' settings.properties; then
+              sed -i 's/^isRelease=.*/isRelease=true/' settings.properties
+            else
+              echo 'isRelease=true' >> settings.properties
+            fi
+          else
+            echo 'isRelease=true' > settings.properties
+          fi
+      - name: Assemble Android (isRelease=true)
+        run: ./gradlew --no-daemon --stacktrace --max-workers=2 assembleDebug
 
-      - name: Set up Ruby 3.0
-        uses: actions/setup-ruby@v1
-
-      - uses: actions/cache@v4
+  static_checks:
+    runs-on: ubuntu-latest
+    needs: android_build_both
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m -Djava.awt.headless=true"
+    steps:
+      - uses: actions/checkout@v4
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-
+          fetch-depth: 100
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Run Detekt
+        run: ./gradlew --no-daemon --stacktrace detektCheckAll
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+          bundler-cache: true
       - name: Bundle install
         run: |
-          gem install bundler
-          bundle config path vendor/bundle
+          bundle config set path 'vendor/bundle'
           bundle install --jobs 4 --retry 3
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Assemble debug build
-        run: ./gradlew clean assembleDebug
-
-      - name: Assemble stubs
-        run: |
-          echo "isRelease=true" > settings.properties
-          ./gradlew assembleDebug
-
-      - name: Run Lint
-        run: ./gradlew lintDebug
-
-      - name: Run Detekt
-        run: ./gradlew detektCheckAll
-
-      - name: Run Danger
-        run: |
-          gem install danger
-          bundle exec danger --verbose --dangerfile=Dangerfile --danger_id=danger-pr --fail-on-errors=true
+      - name: Danger (Detekt)
         env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SKIP_JUNIT: "1"
+        run: bundle exec danger --dangerfile=Dangerfile --danger_id=danger-detekt --fail-on-errors=true
+
+  tests_jvm:
+    runs-on: ubuntu-latest
+    needs: android_build_both
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxMetaspaceSize=512m -Djava.awt.headless=true"
+      KOTLIN_DAEMON_JVMARGS: -Xmx1536m
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: JVM UI tests
+        timeout-minutes: 15
+        run: ./gradlew --no-daemon --stacktrace jvmTest
+      - name: Collect reports
+        if: always()
+        run: |
+          mkdir -p test-results
+          find . -type f -name "*.xml" -path "*/build/test-results/*" -print0 | xargs -0 -I{} cp "{}" test-results/ || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jvm-tests
+          path: test-results
+          if-no-files-found: warn
+          retention-days: 7
+
+  tests_wasm:
+    runs-on: ubuntu-latest
+    needs: android_build_both
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx5g -XX:MaxMetaspaceSize=768m -Djava.awt.headless=true" -Dorg.gradle.workers.max=2
+      KOTLIN_DAEMON_JVMARGS: -Xmx3g
+      ORG_GRADLE_PROJECT_kotlin.daemon.jvmargs: -Xmx3g
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: 22
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: gradle/actions/setup-gradle@v4
+      - name: WASM UI tests
+        timeout-minutes: 15
+        run: ./gradlew --no-daemon --stacktrace --max-workers=2 wasmJsTest
+      - name: Collect reports
+        if: always()
+        run: |
+          mkdir -p test-results
+          find . -type f -name "*.xml" -path "*/build/test-results/*" -print0 | xargs -0 -I{} cp "{}" test-results/ || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wasm-tests
+          path: test-results
+          if-no-files-found: warn
+          retention-days: 7
+
+  tests_android:
+    runs-on: ubuntu-latest
+    needs: android_build_both
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxMetaspaceSize=512m -Djava.awt.headless=true" -Dorg.gradle.workers.max=2
+      KOTLIN_DAEMON_JVMARGS: -Xmx2048m
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Pre-assemble Android test APKs
+        run: ./gradlew --no-daemon --stacktrace --max-workers=2 assembleDebug assembleAndroidTest
+      - name: Connected Android tests
+        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 15
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          force-avd-creation: true
+          emulator-boot-timeout: 180
+          disable-animations: true
+          emulator-options: -no-snapshot -no-boot-anim -noaudio -camera-back none -camera-front none -gpu swiftshader_indirect -accel on -memory 2048
+          script: ./gradlew --no-daemon --stacktrace --max-workers=1 connectedAndroidTest
+      - name: Collect reports
+        if: always()
+        run: |
+          mkdir -p test-results
+          find . -type f -name "*.xml" \( -path "*/build/outputs/androidTest-results/*" -o -path "*/build/reports/androidTests/connected/*" \) -print0 | xargs -0 -I{} cp "{}" test-results/ || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-tests
+          path: test-results
+          if-no-files-found: warn
+          retention-days: 7
+
+  tests_ios:
+    runs-on: macos-latest
+    needs: android_build_both
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx6g -XX:MaxMetaspaceSize=1g -Djava.awt.headless=true"
+      KOTLIN_DAEMON_JVMARGS: -Xmx4096m
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: iOS UI tests (simulator)
+        timeout-minutes: 15
+        run: ./gradlew --no-daemon --stacktrace iosSimulatorArm64Test
+      - name: Collect reports
+        if: always()
+        run: |
+          mkdir -p test-results
+          find . -type f -name "*.xml" \( -path "*/build/test-results/iosSimulatorArm64Test/*" -o -path "*/build/test-results/*/TEST-*.xml" \) -print0 | xargs -0 -I{} cp "{}" test-results/ || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-tests
+          path: test-results
+          if-no-files-found: warn
+          retention-days: 7
+
+  report:
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    needs: [static_checks, tests_jvm, tests_wasm, tests_android, tests_ios]
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "*-tests"
+          path: test-results
+          merge-multiple: true
+      - uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            test-results/**/*.xml
+          check_name: Unit Test Results
+          fail_on: nothing
+      - uses: ruby/setup-ruby@v1
+        if: always()
+        with:
+          ruby-version: 3.2
+          bundler-cache: true
+      - name: Bundle install
+        if: always()
+        run: |
+          bundle config set path 'vendor/bundle'
+          bundle install --jobs 4 --retry 3
+      - name: Danger (JUnit)
+        if: always()
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SKIP_DETEKT: "1"
+        run: bundle exec danger --dangerfile=Dangerfile --danger_id=danger-tests --fail-on-errors=false
