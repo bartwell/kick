@@ -170,6 +170,43 @@ Napier.base(object : Antilog() {
         Kick.log(level, message)
     }
 })
+
+#### Labels and Filtering
+
+The log viewer supports two kinds of filtering:
+
+- Message filter — click the filter icon to filter by a text query contained in the message.
+- Label filter — when a label extractor is provided, the viewer shows label chips above the list. Clicking chips toggles selected labels. Multiple selected labels are combined with AND. Label chips reflect the current text filter, so you can combine both.
+
+Provide a label extractor via the `LoggingModule` constructor. A ready‑to‑use `BracketLabelExtractor` is available; it extracts labels from square brackets like `[UI]`, `[Network]` in the beginning or anywhere in the message:
+
+```kotlin
+import ru.bartwell.kick.module.logging.LoggingModule
+import ru.bartwell.kick.module.logging.feature.table.util.BracketLabelExtractor
+
+Kick.init(context) {
+    module(LoggingModule(context, BracketLabelExtractor()))
+}
+```
+
+You can also implement a custom extractor by providing your own `LabelExtractor`:
+
+```kotlin
+import ru.bartwell.kick.module.logging.feature.table.util.LabelExtractor
+
+class HashLabelExtractor : LabelExtractor {
+    private val regex = Regex("#(\\w+)")
+    override fun extract(message: String?): Set<String> =
+        if (message.isNullOrEmpty()) emptySet()
+        else regex.findAll(message).map { it.groupValues[1] }.toSet()
+}
+
+Kick.init(context) {
+    module(LoggingModule(context, HashLabelExtractor()))
+}
+```
+
+If no extractor is provided, label chips are hidden and only text filtering is available.
 ```
 
 ### Multiplatform Settings
