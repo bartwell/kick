@@ -301,7 +301,7 @@ Kick.controlPanel.onButtonClick { id ->
 
 Browse the file system directly within the viewer—handy for quick checks of generated files or cached data.
 
-### Layout (Beta)
+### Layout
 
 <a href="content/screenshots/layout.jpg" target="_blank" rel="noopener noreferrer">
   <img src="content/screenshots/layout.jpg" alt="" height="120">
