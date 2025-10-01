@@ -19,7 +19,7 @@ Less complexity, faster development, total visibility. That's Kick.
     - [Multiplatform Settings](#multiplatform-settings)
     - [Control Panel](#control-panel)
     - [File Explorer](#file-explorer)
-    - [Layout](#layout)
+    - [Layout (Beta)](#layout)
     - [Overlay](#overlay)
 - [Advanced Module Configuration](#advanced-module-configuration)
 - [Shortcuts](#shortcuts)
@@ -301,7 +301,7 @@ Kick.controlPanel.onButtonClick { id ->
 
 Browse the file system directly within the viewer—handy for quick checks of generated files or cached data.
 
-### Layout
+### Layout (Beta)
 
 <a href="content/screenshots/layout.jpg" target="_blank" rel="noopener noreferrer">
   <img src="content/screenshots/layout.jpg" alt="" height="120">
