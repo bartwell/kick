@@ -1,14 +1,24 @@
 require "danger"
-require "danger-kotlin_detekt"
-require "danger-junit"
+
+skip_detekt = ENV["SKIP_DETEKT"] == "1"
+skip_junit  = ENV["SKIP_JUNIT"]  == "1"
+
+begin
+  require "danger-kotlin_detekt" unless skip_detekt
+rescue LoadError
+  warn("danger-kotlin_detekt not available")
+end
+
+begin
+  require "danger-junit" unless skip_junit
+rescue LoadError
+  warn("danger-junit not available")
+end
 
 has_wip_label = github.pr_labels.any? { |label| label.include? "Engineers at work" }
 has_wip_title = github.pr_title.include? "[WIP]"
 warn("PR is marked as Work in Progress") if has_wip_label || has_wip_title
 warn("Big PR") if git.lines_of_code > 5000
-
-skip_detekt = ENV["SKIP_DETEKT"] == "1"
-skip_junit = ENV["SKIP_JUNIT"] == "1"
 
 unless skip_detekt
   module_dirs = {}
