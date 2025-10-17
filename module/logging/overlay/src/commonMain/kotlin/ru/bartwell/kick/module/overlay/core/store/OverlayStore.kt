@@ -3,12 +3,15 @@ package ru.bartwell.kick.module.overlay.core.store
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 internal const val DEFAULT_CATEGORY: String = "Default"
 
 internal object OverlayStore {
-    private val categoriesMap: LinkedHashMap<String, LinkedHashMap<String, String>> = LinkedHashMap()
-    private val declaredCategories: LinkedHashSet<String> = LinkedHashSet()
+    private val categoriesMapState: MutableStateFlow<LinkedHashMap<String, LinkedHashMap<String, String>>> =
+        MutableStateFlow(linkedMapOf<String, LinkedHashMap<String, String>>())
+    private val declaredCategoriesState: MutableStateFlow<LinkedHashSet<String>> =
+        MutableStateFlow(linkedSetOf<String>())
     private const val KEY_CATEGORY_DELIMITER: String = "::"
 
     private val _items = MutableStateFlow<List<Pair<String, String>>>(emptyList())
@@ -38,8 +41,8 @@ internal object OverlayStore {
     }
 
     fun clear() {
-        categoriesMap.clear()
-        declaredCategories.clear()
+        categoriesMapState.value = linkedMapOf<String, LinkedHashMap<String, String>>()
+        declaredCategoriesState.value = linkedSetOf<String>()
         updateCategoriesList()
         updateItems()
     }
@@ -53,11 +56,15 @@ internal object OverlayStore {
 
     fun declareCategories(categories: Collection<String>) {
         var changed = false
-        for (category in categories) {
-            val normalized = category.ifBlank { DEFAULT_CATEGORY }
-            if (declaredCategories.add(normalized)) {
-                changed = true
+        declaredCategoriesState.update { current ->
+            val updated = LinkedHashSet(current)
+            for (category in categories) {
+                val normalized = category.ifBlank { DEFAULT_CATEGORY }
+                if (updated.add(normalized)) {
+                    changed = true
+                }
             }
+            updated
         }
         if (changed) {
             updateCategoriesList()
@@ -66,23 +73,30 @@ internal object OverlayStore {
 
     private fun updateItems() {
         val category = _selectedCategory.value
-        val mapForCategory = categoriesMap[category]
+        val mapForCategory = categoriesMapState.value[category]
         _items.value = mapForCategory?.entries?.map { it.key to it.value } ?: emptyList()
     }
 
     private fun updateCategoriesList(extra: String? = null) {
         val set = LinkedHashSet<String>()
         set.add(DEFAULT_CATEGORY)
-        set.addAll(declaredCategories)
-        set.addAll(categoriesMap.keys)
+        set.addAll(declaredCategoriesState.value)
+        set.addAll(categoriesMapState.value.keys)
         extra?.let { set.add(it) }
         set.add(_selectedCategory.value)
         _categories.value = set.toList()
     }
 
     private fun setInternal(key: String, value: String, category: String) {
-        val mapForCategory = categoriesMap.getOrPut(category) { LinkedHashMap() }
-        mapForCategory[key] = value
+        categoriesMapState.update { current ->
+            val updated = LinkedHashMap<String, LinkedHashMap<String, String>>(current.size + 1)
+            for ((existingCategory, existingValues) in current) {
+                updated[existingCategory] = LinkedHashMap(existingValues)
+            }
+            val mapForCategory = updated.getOrPut(category) { LinkedHashMap() }
+            mapForCategory[key] = value
+            updated
+        }
         updateCategoriesList(extra = category)
         updateItems()
     }
