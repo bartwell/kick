@@ -20,7 +20,7 @@ public actual object KickOverlay {
         installed = true
     }
 
-    public actual fun show(context: PlatformContext) {
+    public actual fun show() {
         OverlaySettings.setEnabled(true)
         callbacks.currentActivity.get()?.let { callbacks.attach(it) }
     }

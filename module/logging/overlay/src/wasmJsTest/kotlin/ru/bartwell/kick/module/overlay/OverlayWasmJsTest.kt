@@ -21,7 +21,7 @@ class OverlayWasmJsTest {
 
         val ctx = getPlatformContext()
         KickOverlay.init(ctx)
-        KickOverlay.show(ctx)
+        KickOverlay.show()
 
         val el = document.getElementById(OVERLAY_ELEMENT_ID) as? HTMLElement
         assertNotNull(el)

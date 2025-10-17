@@ -51,6 +51,7 @@ kotlin {
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
             implementation(libs.decompose.essenty.lifecycle.coroutines)
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.settings)
             implementation(libs.settings.noArg)
         }

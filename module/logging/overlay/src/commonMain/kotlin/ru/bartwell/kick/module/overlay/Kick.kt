@@ -1,7 +1,6 @@
 package ru.bartwell.kick.module.overlay
 
 import ru.bartwell.kick.Kick
-import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.overlay.core.overlay.KickOverlay
 import ru.bartwell.kick.module.overlay.core.store.OverlayStore
 
@@ -27,6 +26,6 @@ public object OverlayAccessor {
     public fun set(key: String, value: String, category: String) { OverlayStore.set(key, value, category) }
     public fun set(key: String, value: Boolean, category: String) { OverlayStore.set(key, value.toString(), category) }
 
-    public fun show(context: PlatformContext) { KickOverlay.show(context) }
+    public fun show() { KickOverlay.show() }
     public fun hide() { KickOverlay.hide() }
 }

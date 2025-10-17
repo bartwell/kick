@@ -334,7 +334,7 @@ Kick.overlay.set("isWsConnected", true)
 You can also show/hide the panel programmatically if needed:
 
 ```kotlin
-Kick.overlay.show(context)  // show floating panel
+Kick.overlay.show()         // show floating panel
 Kick.overlay.hide()         // hide it
 ```
 

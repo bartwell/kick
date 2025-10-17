@@ -18,7 +18,7 @@ public actual object KickOverlay {
     public actual fun init(context: PlatformContext) {}
 
     @OptIn(ExperimentalComposeUiApi::class)
-    public actual fun show(context: PlatformContext) {
+    public actual fun show() {
         val existing = overlayRoot
         if (existing != null) {
             existing.style.display = ""
