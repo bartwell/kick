@@ -9,22 +9,22 @@ import kotlinx.cinterop.ptr
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.value
 import platform.Foundation.NSProcessInfo
-import platform.posix.CPU_STATE_IDLE
-import platform.posix.CPU_STATE_NICE
-import platform.posix.CPU_STATE_SYSTEM
-import platform.posix.CPU_STATE_USER
-import platform.posix.HOST_CPU_LOAD_INFO
-import platform.posix.HOST_CPU_LOAD_INFO_COUNT
-import platform.posix.KERN_SUCCESS
-import platform.posix.MACH_TASK_BASIC_INFO
-import platform.posix.MACH_TASK_BASIC_INFO_COUNT
-import platform.posix.host_cpu_load_info
-import platform.posix.host_statistics
-import platform.posix.mach_host_self
-import platform.posix.mach_msg_type_number_tVar
-import platform.posix.mach_task_basic_info
-import platform.posix.mach_task_self_
-import platform.posix.task_info
+import platform.darwin.CPU_STATE_IDLE
+import platform.darwin.CPU_STATE_NICE
+import platform.darwin.CPU_STATE_SYSTEM
+import platform.darwin.CPU_STATE_USER
+import platform.darwin.HOST_CPU_LOAD_INFO
+import platform.darwin.HOST_CPU_LOAD_INFO_COUNT
+import platform.darwin.KERN_SUCCESS
+import platform.darwin.MACH_TASK_BASIC_INFO
+import platform.darwin.MACH_TASK_BASIC_INFO_COUNT
+import platform.darwin.host_cpu_load_info
+import platform.darwin.host_statistics
+import platform.darwin.mach_host_self
+import platform.darwin.mach_msg_type_number_tVar
+import platform.darwin.mach_task_basic_info
+import platform.darwin.mach_task_self_
+import platform.darwin.task_info
 import kotlin.native.concurrent.ThreadLocal
 
 private data class CpuSample(val user: ULong, val nice: ULong, val system: ULong, val idle: ULong)
@@ -62,11 +62,13 @@ private fun readCpuUsage(): Double? = memScoped {
         return null
     }
 
+    val ticks = cpuInfo.cpu_ticks
+
     val sample = CpuSample(
-        user = cpuInfo.cpu_ticks[CPU_STATE_USER],
-        nice = cpuInfo.cpu_ticks[CPU_STATE_NICE],
-        system = cpuInfo.cpu_ticks[CPU_STATE_SYSTEM],
-        idle = cpuInfo.cpu_ticks[CPU_STATE_IDLE],
+        user = ticks[CPU_STATE_USER.toInt()].value.toULong(),
+        nice = ticks[CPU_STATE_NICE.toInt()].value.toULong(),
+        system = ticks[CPU_STATE_SYSTEM.toInt()].value.toULong(),
+        idle = ticks[CPU_STATE_IDLE.toInt()].value.toULong(),
     )
 
     val previousSample = CpuState.previous
