@@ -52,7 +52,7 @@ public class OverlayModule(
                 provider.categories.forEach(OverlayStore::addCategory)
 
                 val shouldStart = isWindowEnabled && provider.isAvailable &&
-                        provider.categories.any { it == currentCategory }
+                    provider.categories.any { it == currentCategory }
 
                 if (shouldStart) {
                     provider.start(providerScope)

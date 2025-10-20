@@ -11,7 +11,6 @@ import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.ModuleDescription
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.overlay.core.provider.OverlayProvider
-import ru.bartwell.kick.module.overlay.core.provider.PerformanceOverlayProvider
 
 @Suppress("UnusedPrivateProperty", "EmptyFunctionBlock", "UNUSED_PARAMETER")
 public class OverlayModule(

@@ -69,7 +69,7 @@ private fun readCpuUsage(): Double? {
                 ?: return@runCatching null
 
             val idle = (tokens.getOrNull(CPU_IDLE_INDEX) ?: 0L) +
-                    (tokens.getOrNull(CPU_IOWAIT_INDEX) ?: 0L)
+                (tokens.getOrNull(CPU_IOWAIT_INDEX) ?: 0L)
             val total = tokens.sum()
 
             val prev = previousCpuTimes
@@ -81,7 +81,9 @@ private fun readCpuUsage(): Double? {
                 val deltaTotal = total - prev.total
                 if (deltaTotal > 0) {
                     (1.0 - deltaIdle.toDouble() / deltaTotal.toDouble()) * CPU_PERCENT_FACTOR
-                } else null
+                } else {
+                    null
+                }
             } else {
                 (total - idle).toDouble() / total.toDouble() * CPU_PERCENT_FACTOR
             }
@@ -91,35 +93,34 @@ private fun readCpuUsage(): Double? {
     return result
 }
 
-
 private fun readMemoryInfo(): MemoryInfo? = runCatching {
-        val memInfo = File(PROC_MEMINFO_PATH)
-        if (!memInfo.exists()) {
-            return@runCatching null
-        }
+    val memInfo = File(PROC_MEMINFO_PATH)
+    if (!memInfo.exists()) {
+        return@runCatching null
+    }
 
-        val values = mutableMapOf<String, Long>()
-        memInfo.useLines { sequence ->
-            sequence.forEach { line ->
-                val parts = line.split(KEY_VALUE_DELIMITER, limit = 2)
-                if (parts.size == 2) {
-                    val key = parts[0].trim()
-                    val value = parts[1].trim().split(SPACE_DELIMITER).firstOrNull()?.toLongOrNull()
-                    if (value != null) {
-                        values[key] = value * KIB_IN_BYTES
-                    }
+    val values = mutableMapOf<String, Long>()
+    memInfo.useLines { sequence ->
+        sequence.forEach { line ->
+            val parts = line.split(KEY_VALUE_DELIMITER, limit = 2)
+            if (parts.size == 2) {
+                val key = parts[0].trim()
+                val value = parts[1].trim().split(SPACE_DELIMITER).firstOrNull()?.toLongOrNull()
+                if (value != null) {
+                    values[key] = value * KIB_IN_BYTES
                 }
             }
         }
+    }
 
-        val total = values["MemTotal"]
-        val available = values["MemAvailable"] ?: run {
-            val free = values["MemFree"] ?: 0L
-            val buffers = values["Buffers"] ?: 0L
-            val cached = values["Cached"] ?: 0L
-            free + buffers + cached
-        }
+    val total = values["MemTotal"]
+    val available = values["MemAvailable"] ?: run {
+        val free = values["MemFree"] ?: 0L
+        val buffers = values["Buffers"] ?: 0L
+        val cached = values["Cached"] ?: 0L
+        free + buffers + cached
+    }
 
-        val used = if (total != null) total - available else null
-        MemoryInfo(used = used, total = total)
-    }.getOrNull()
+    val used = if (total != null) total - available else null
+    MemoryInfo(used = used, total = total)
+}.getOrNull()

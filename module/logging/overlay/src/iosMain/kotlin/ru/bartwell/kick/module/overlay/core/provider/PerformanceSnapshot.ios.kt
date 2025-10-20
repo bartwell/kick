@@ -66,12 +66,11 @@ private fun readCpuUsage(): Double? = memScoped {
     fun tick(cpuStateIndex: Int) = (ticksPtr + cpuStateIndex)!!.pointed.value.toULong()
 
     val sample = CpuSample(
-        user   = tick(CPU_STATE_USER),
-        nice   = tick(CPU_STATE_NICE),
+        user = tick(CPU_STATE_USER),
+        nice = tick(CPU_STATE_NICE),
         system = tick(CPU_STATE_SYSTEM),
-        idle   = tick(CPU_STATE_IDLE),
+        idle = tick(CPU_STATE_IDLE),
     )
-
 
     val previousSample = CpuState.previous
     CpuState.previous = sample
