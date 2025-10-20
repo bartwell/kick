@@ -1,36 +1,65 @@
 package ru.bartwell.kick.module.overlay.core.provider
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import ru.bartwell.kick.module.overlay.OverlayAccessor
+import ru.bartwell.kick.Kick
+import ru.bartwell.kick.core.data.Platform
+import ru.bartwell.kick.core.util.PlatformUtils
+import ru.bartwell.kick.module.overlay.overlay
 import kotlin.math.roundToInt
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+
+private const val PERCENT_PRECISION_MULTIPLIER: Int = 10
+private const val PERCENT_PRECISION_DIVISOR: Double = 10.0
+private const val MIN_PERCENT: Double = 0.0
+private const val MAX_PERCENT: Double = 100.0
+private const val DECIMAL_SEPARATOR: String = "."
+private const val DEFAULT_DECIMAL_SUFFIX: String = ".0"
+private const val UNIT_STEP: Double = 1024.0
+public const val CATEGORY: String = "Performance"
+private const val CPU_USAGE_KEY: String = "CPU"
+private const val MEMORY_USAGE_KEY: String = "RAM"
+private const val NOT_AVAILABLE_VALUE: String = "—"
+private val BYTE_UNITS = arrayOf("B", "KB", "MB", "GB", "TB", "PB")
 
 public class PerformanceOverlayProvider(
-    private val updateIntervalMillis: Long = 1_000,
+    private val updateIntervalMillis: Duration = 1.seconds,
 ) : OverlayProvider {
 
     override val categories: Set<String> = setOf(CATEGORY)
+    override val isAvailable: Boolean
+        get() = PlatformUtils.getPlatform() != Platform.WEB
+    private var job: Job? = null
 
-    override fun start(scope: CoroutineScope, overlay: OverlayAccessor, category: String): OverlayProviderHandle {
-        require(category == CATEGORY) { "PerformanceOverlayProvider started for unexpected category: $category" }
+    override fun start(scope: CoroutineScope) {
+        Kick.overlay.set(CPU_USAGE_KEY, NOT_AVAILABLE_VALUE, CATEGORY)
+        Kick.overlay.set(MEMORY_USAGE_KEY, NOT_AVAILABLE_VALUE, CATEGORY)
 
-        overlay.set(CPU_USAGE_KEY, NOT_AVAILABLE_VALUE)
-        overlay.set(MEMORY_USAGE_KEY, NOT_AVAILABLE_VALUE)
-
-        val job = scope.launch {
+        job = scope.launch {
             while (isActive) {
                 val snapshot = readPerformanceSnapshot()
-                overlay.set(CPU_USAGE_KEY, snapshot.cpuUsagePercent?.let(::formatPercent) ?: NOT_AVAILABLE_VALUE)
-                overlay.set(MEMORY_USAGE_KEY, formatMemory(snapshot))
+                Kick.overlay.set(
+                    key = CPU_USAGE_KEY,
+                    value = snapshot.cpuUsagePercent?.let(::formatPercent) ?: NOT_AVAILABLE_VALUE,
+                    category = CATEGORY,
+                )
+                Kick.overlay.set(
+                    key = MEMORY_USAGE_KEY,
+                    value = formatMemory(snapshot),
+                    category = CATEGORY,
+                )
                 delay(updateIntervalMillis)
             }
         }
+    }
 
-        return OverlayProviderHandle {
-            job.cancel()
-        }
+    override fun stop() {
+        job?.cancel()
+        job = null
     }
 
     private fun formatPercent(value: Double): String {
@@ -79,21 +108,4 @@ public class PerformanceOverlayProvider(
     }
 
     private fun Double.isFinite(): Boolean = !isNaN() && !isInfinite()
-
-    public companion object {
-        private const val KEY_SEPARATOR: String = "::"
-        private const val PERCENT_PRECISION_MULTIPLIER: Int = 10
-        private const val PERCENT_PRECISION_DIVISOR: Double = 10.0
-        private const val MIN_PERCENT: Double = 0.0
-        private const val MAX_PERCENT: Double = 100.0
-        private const val DECIMAL_SEPARATOR: String = "."
-        private const val DEFAULT_DECIMAL_SUFFIX: String = ".0"
-        private const val UNIT_STEP: Double = 1024.0
-        public const val CATEGORY: String = "Performance"
-        public const val CPU_USAGE_KEY: String = CATEGORY + KEY_SEPARATOR + "CPU"
-        public const val MEMORY_USAGE_KEY: String = CATEGORY + KEY_SEPARATOR + "RAM"
-        public const val CUSTOM_KEY_PREFIX: String = CATEGORY + KEY_SEPARATOR
-        private const val NOT_AVAILABLE_VALUE: String = "—"
-        private val BYTE_UNITS = arrayOf("B", "KB", "MB", "GB", "TB", "PB")
-    }
 }

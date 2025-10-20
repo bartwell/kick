@@ -83,7 +83,7 @@ class OverlayUiTest {
                     onEnabledChangeCallback = { enabled ->
                         if (enabled) KickOverlay.show() else KickOverlay.hide()
                     },
-                    onBackCallback = {}
+                    onBackCallback = {},
                 )
                 activity.setContent { OverlayContent(component = component) }
             }

@@ -48,7 +48,7 @@ class OverlaySettingsCategoriesTest {
             component = DefaultOverlayComponent(
                 componentContext = DefaultComponentContext(LifecycleRegistry()),
                 onEnabledChangeCallback = {},
-                onBackCallback = {}
+                onBackCallback = {},
             )
             activity.setContent { OverlayContent(component = component) }
         }
