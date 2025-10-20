@@ -49,13 +49,15 @@ public class OverlayModule(
     private fun observeFloatingWindowState() {
         combine(OverlaySettings.observeEnabled(), OverlayStore.selectedCategory) { isWindowEnabled, currentCategory ->
             providers.forEach { provider ->
-                provider.categories.forEach { providerCategory ->
-                    OverlayStore.addCategory(providerCategory)
-                    if (isWindowEnabled && providerCategory == currentCategory && provider.isAvailable) {
-                        provider.start(providerScope)
-                    } else {
-                        provider.stop()
-                    }
+                provider.categories.forEach(OverlayStore::addCategory)
+
+                val shouldStart = isWindowEnabled && provider.isAvailable &&
+                        provider.categories.any { it == currentCategory }
+
+                if (shouldStart) {
+                    provider.start(providerScope)
+                } else {
+                    provider.stop()
                 }
             }
         }

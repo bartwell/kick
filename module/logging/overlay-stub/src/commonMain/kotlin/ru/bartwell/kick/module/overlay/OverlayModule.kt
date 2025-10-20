@@ -16,7 +16,7 @@ import ru.bartwell.kick.module.overlay.core.provider.PerformanceOverlayProvider
 @Suppress("UnusedPrivateProperty", "EmptyFunctionBlock", "UNUSED_PARAMETER")
 public class OverlayModule(
     context: PlatformContext,
-    providers: List<OverlayProvider> = listOf(PerformanceOverlayProvider()),
+    providers: List<OverlayProvider> = emptyList(),
 ) : Module {
     override val description: ModuleDescription = ModuleDescription.OVERLAY
     override val startConfig: Config = StubConfig(description)

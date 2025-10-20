@@ -6,9 +6,7 @@ import ru.bartwell.kick.module.overlay.OverlayAccessor
 public interface OverlayProvider {
     public val categories: Set<String>
 
-    public fun start(scope: CoroutineScope, overlay: OverlayAccessor, category: String): OverlayProviderHandle
-}
+    public fun start(scope: CoroutineScope)
 
-public fun interface OverlayProviderHandle {
     public fun stop()
 }
