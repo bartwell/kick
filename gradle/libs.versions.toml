@@ -22,6 +22,11 @@ ktor = "3.2.2"
 publish-plugin = "0.34.0"
 sqljs = "1.8.0"
 copyWebpackPlugin = "9.1.0"
+firebase-messaging = "24.0.0"
+firebase-installations = "18.0.0"
+play-services-base = "18.5.0"
+datetime = "0.6.1"
+androidx-core-ktx = "1.15.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -58,6 +63,11 @@ androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "a
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose-ui" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose-ui" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx", version.ref = "firebase-messaging" }
+firebase-installations = { module = "com.google.firebase:firebase-installations-ktx", version.ref = "firebase-installations" }
+play-services-base = { module = "com.google.android.gms:play-services-base", version.ref = "play-services-base" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

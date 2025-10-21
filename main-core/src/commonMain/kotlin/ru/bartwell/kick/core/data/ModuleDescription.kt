@@ -40,4 +40,8 @@ public enum class ModuleDescription(
         title = "Overlay",
         description = "Floating debug panel over the app that updates in real time. Shows live key/value metrics."
     ),
+    FIREBASE_CLOUD_MESSAGING(
+        title = "Firebase Cloud Messaging",
+        description = "Inspect FCM tokens, installation id, delivered pushes and emulate notifications."
+    ),
 }
