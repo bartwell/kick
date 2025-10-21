@@ -6,6 +6,11 @@ import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import ru.bartwell.kick.core.component.Child
 import ru.bartwell.kick.core.component.Config
@@ -16,22 +21,47 @@ import ru.bartwell.kick.module.overlay.core.component.child.OverlayChild
 import ru.bartwell.kick.module.overlay.core.component.config.OverlayConfig
 import ru.bartwell.kick.module.overlay.core.overlay.KickOverlay
 import ru.bartwell.kick.module.overlay.core.persists.OverlaySettings
+import ru.bartwell.kick.module.overlay.core.provider.OverlayProvider
+import ru.bartwell.kick.module.overlay.core.provider.PerformanceOverlayProvider
 import ru.bartwell.kick.module.overlay.core.store.OverlayStore
 import ru.bartwell.kick.module.overlay.feature.settings.presentation.DefaultOverlayComponent
 import ru.bartwell.kick.module.overlay.feature.settings.presentation.OverlayContent
 
-public class OverlayModule(private val context: PlatformContext) : Module {
+public class OverlayModule(
+    context: PlatformContext,
+    private val providers: List<OverlayProvider> = listOf(PerformanceOverlayProvider()),
+) : Module {
     override val description: ModuleDescription = ModuleDescription.OVERLAY
     override val startConfig: Config = OverlayConfig
 
+    private val providerScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     init {
         OverlaySettings(context)
-        // Initialize selected category from persisted settings
+        observeFloatingWindowState()
         OverlayStore.selectCategory(OverlaySettings.getSelectedCategory())
         KickOverlay.init(context)
         if (OverlaySettings.isEnabled()) {
-            KickOverlay.show(context)
+            KickOverlay.show()
         }
+    }
+
+    private fun observeFloatingWindowState() {
+        combine(OverlaySettings.observeEnabled(), OverlayStore.selectedCategory) { isWindowEnabled, currentCategory ->
+            providers.forEach { provider ->
+                provider.categories.forEach(OverlayStore::addCategory)
+
+                val shouldStart = isWindowEnabled && provider.isAvailable &&
+                    provider.categories.any { it == currentCategory }
+
+                if (shouldStart) {
+                    provider.start(providerScope)
+                } else {
+                    provider.stop()
+                }
+            }
+        }
+            .launchIn(providerScope)
     }
 
     override fun getComponent(
@@ -42,7 +72,8 @@ public class OverlayModule(private val context: PlatformContext) : Module {
         OverlayChild(
             DefaultOverlayComponent(
                 componentContext = componentContext,
-                onEnabledChangeCallback = { enabled -> if (enabled) KickOverlay.show(context) else KickOverlay.hide() },
+                providers = providers,
+                onEnabledChangeCallback = { enabled -> if (enabled) KickOverlay.show() else KickOverlay.hide() },
                 onBackCallback = { nav.pop() },
             )
         )

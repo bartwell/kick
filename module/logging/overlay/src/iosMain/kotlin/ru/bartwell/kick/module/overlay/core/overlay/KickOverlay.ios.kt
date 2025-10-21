@@ -84,14 +84,14 @@ public actual object KickOverlay {
                     queue = NSOperationQueue.mainQueue
                 ) { _: NSNotification? ->
                     if (OverlaySettings.isEnabled()) {
-                        show(context)
+                        show()
                     }
                 }
             }
         }
     }
 
-    public actual fun show(context: PlatformContext) {
+    public actual fun show() {
         dispatch_async(dispatch_get_main_queue()) {
             OverlaySettings.setEnabled(true)
 
@@ -110,7 +110,7 @@ public actual object KickOverlay {
                         queue = NSOperationQueue.mainQueue
                     ) { _: NSNotification? ->
                         if (overlayWindow == null && OverlaySettings.isEnabled()) {
-                            show(context)
+                            show()
                         }
                         windowObserver?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
                         windowObserver = null

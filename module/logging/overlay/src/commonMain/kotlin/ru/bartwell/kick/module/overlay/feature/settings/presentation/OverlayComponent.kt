@@ -3,6 +3,7 @@ package ru.bartwell.kick.module.overlay.feature.settings.presentation
 import com.arkivanov.decompose.value.Value
 import ru.bartwell.kick.core.component.Component
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.module.overlay.feature.settings.data.ProviderDescription
 
 internal interface OverlayComponent : Component {
     val model: Value<OverlayState>
@@ -15,4 +16,6 @@ internal interface OverlayComponent : Component {
 
 internal data class OverlayState(
     val enabled: Boolean = false,
+    val providers: List<ProviderDescription>,
+    val warning: String? = null,
 )

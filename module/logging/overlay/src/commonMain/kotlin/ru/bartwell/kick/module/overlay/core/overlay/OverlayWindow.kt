@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import ru.bartwell.kick.module.overlay.core.store.OverlayStore
 
 @Composable
-internal fun OverlayWindow(onCloseClick: () -> Unit, measureFull: Boolean = false) {
+internal fun OverlayWindow(onCloseClick: () -> Unit) {
     val lines by OverlayStore.items.collectAsState()
 
     val shape = RectangleShape
@@ -48,11 +48,6 @@ internal fun OverlayWindow(onCloseClick: () -> Unit, measureFull: Boolean = fals
         ) {
             Spacer(Modifier.height(2.dp))
             lines.forEach { (k, v) ->
-                val (ml, sw, of) = if (measureFull) {
-                    Triple(Int.MAX_VALUE, false, TextOverflow.Clip)
-                } else {
-                    Triple(1, false, TextOverflow.Ellipsis)
-                }
                 Text(
                     text = "$k: $v",
                     style = MaterialTheme.typography.bodySmall,

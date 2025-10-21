@@ -29,7 +29,7 @@ public actual object KickOverlay {
     @Suppress("EmptyFunctionBlock")
     public actual fun init(context: PlatformContext) {}
 
-    public actual fun show(context: PlatformContext) {
+    public actual fun show() {
         if (window != null) {
             window!!.isVisible = true
             window!!.toFront()

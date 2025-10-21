@@ -85,6 +85,7 @@ internal fun OverlayContent(
             CategoryPicker(
                 selectedCategory = selectedCategory,
                 categories = categories,
+                warning = state.value.warning,
                 onSelect = { component.onCategoryChange(it) }
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -111,6 +112,7 @@ internal fun OverlayContent(
 private fun CategoryPicker(
     selectedCategory: String,
     categories: List<String>,
+    warning: String?,
     onSelect: (String) -> Unit,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -119,15 +121,17 @@ private fun CategoryPicker(
         onExpandedChange = { expanded = it },
     ) {
         OutlinedTextField(
-            readOnly = true,
-            value = selectedCategory,
-            onValueChange = {},
-            label = { Text("Category") },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .menuAnchor()
                 .padding(horizontal = 16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            value = selectedCategory,
+            onValueChange = {},
+            supportingText = { warning?.let { Text(text = it) } },
+            isError = warning != null,
+            label = { Text("Category") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            readOnly = true,
         )
 
         DropdownMenu(

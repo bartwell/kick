@@ -24,7 +24,7 @@ class OverlayJvmTest {
 
         // Show
         KickOverlay.init(ctx)
-        KickOverlay.show(ctx)
+        KickOverlay.show()
         // Wait up to 2 seconds for window to appear
         run {
             val start = System.currentTimeMillis()

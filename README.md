@@ -334,7 +334,7 @@ Kick.overlay.set("isWsConnected", true)
 You can also show/hide the panel programmatically if needed:
 
 ```kotlin
-Kick.overlay.show(context)  // show floating panel
+Kick.overlay.show()         // show floating panel
 Kick.overlay.hide()         // hide it
 ```
 
@@ -347,6 +347,28 @@ Group values by categories and switch them in the Overlay settings screen (defau
 Kick.overlay.set("fps", 42, "Performance")
 Kick.overlay.set("isWsConnected", true, "Network")
 ```
+
+#### Providers
+
+Overlay modules can populate categories automatically through `OverlayProvider`s. By default `OverlayModule` registers the built-in `PerformanceOverlayProvider`, which exposes CPU and memory usage in the "Performance" category whenever the floating panel is visible.
+
+Pass custom providers to `OverlayModule` to emit additional metrics:
+
+```kotlin
+Kick.init(context) {
+    module(
+        OverlayModule(
+            context = context,
+            providers = listOf(
+                PerformanceOverlayProvider(),
+                MyCustomOverlayProvider(), // implements OverlayProvider
+            ),
+        ),
+    )
+}
+```
+
+Implement `OverlayProvider` to decide when your provider should run, which categories it contributes to, and how it updates values via `Kick.overlay.set` inside the supplied coroutine scope.
 
 ### Advanced Module Configuration
 

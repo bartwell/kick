@@ -12,11 +12,16 @@ internal object OverlayStore {
     private val _items = MutableStateFlow<List<Pair<String, String>>>(emptyList())
     val items: StateFlow<List<Pair<String, String>>> = _items.asStateFlow()
 
-    private val _categories = MutableStateFlow<List<String>>(listOf(DEFAULT_CATEGORY))
+    private val _categories = MutableStateFlow(listOf(DEFAULT_CATEGORY))
     val categories: StateFlow<List<String>> = _categories.asStateFlow()
 
     private val _selectedCategory = MutableStateFlow(DEFAULT_CATEGORY)
     val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()
+
+    internal fun addCategory(category: String) {
+        categoriesMap.getOrPut(category) { LinkedHashMap() }
+        updateCategoriesList(category)
+    }
 
     fun set(key: String, value: String) {
         set(key = key, value = value, category = DEFAULT_CATEGORY)

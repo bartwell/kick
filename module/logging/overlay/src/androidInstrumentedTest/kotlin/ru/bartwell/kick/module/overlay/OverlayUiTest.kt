@@ -81,9 +81,9 @@ class OverlayUiTest {
                 component = DefaultOverlayComponent(
                     componentContext = DefaultComponentContext(LifecycleRegistry()),
                     onEnabledChangeCallback = { enabled ->
-                        if (enabled) KickOverlay.show(platformContext) else KickOverlay.hide()
+                        if (enabled) KickOverlay.show() else KickOverlay.hide()
                     },
-                    onBackCallback = {}
+                    onBackCallback = {},
                 )
                 activity.setContent { OverlayContent(component = component) }
             }

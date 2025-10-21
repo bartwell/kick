@@ -4,6 +4,6 @@ import ru.bartwell.kick.core.data.PlatformContext
 
 public expect object KickOverlay {
     public fun init(context: PlatformContext)
-    public fun show(context: PlatformContext)
+    public fun show()
     public fun hide()
 }

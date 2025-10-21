@@ -44,6 +44,8 @@ room-driver = { module = "androidx.sqlite:sqlite-bundled", version.ref = "room-d
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
 settings-noArg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatform-settings" }
+settings-make-observable = { module = "com.russhwolf:multiplatform-settings-make-observable", version.ref = "multiplatform-settings" }
+settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatform-settings" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
