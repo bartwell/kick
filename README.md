@@ -348,6 +348,28 @@ Kick.overlay.set("fps", 42, "Performance")
 Kick.overlay.set("isWsConnected", true, "Network")
 ```
 
+#### Providers
+
+Overlay modules can populate categories automatically through `OverlayProvider`s. By default `OverlayModule` registers the built-in `PerformanceOverlayProvider`, which exposes CPU and memory usage in the "Performance" category whenever the floating panel is visible.【F:module/logging/overlay/src/commonMain/kotlin/ru/bartwell/kick/module/overlay/OverlayModule.kt†L30-L55】【F:module/logging/overlay/src/commonMain/kotlin/ru/bartwell/kick/module/overlay/core/provider/PerformanceOverlayProvider.kt†L25-L87】
+
+Pass custom providers to `OverlayModule` to emit additional metrics:
+
+```kotlin
+Kick.init(context) {
+    module(
+        OverlayModule(
+            context = context,
+            providers = listOf(
+                PerformanceOverlayProvider(),
+                MyCustomOverlayProvider(), // implements OverlayProvider
+            ),
+        ),
+    )
+}
+```
+
+Implement `OverlayProvider` to decide when your provider should run, which categories it contributes to, and how it updates values via `Kick.overlay.set` inside the supplied coroutine scope.【F:module/logging/overlay/src/commonMain/kotlin/ru/bartwell/kick/module/overlay/core/provider/OverlayProvider.kt†L3-L17】
+
 ### Advanced Module Configuration
 
 You don't need to add all the available modules. Just include the ones you need. Here only logging and network inspection are enabled:
