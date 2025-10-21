@@ -122,10 +122,24 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.sqldelight.android.driver)
             implementation(libs.ktor.client.okhttp)
+            implementation(
+                if (isRelease) {
+                    projects.firebaseCloudMessagingStub
+                } else {
+                    projects.firebaseCloudMessaging
+                }
+            )
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
             implementation(libs.ktor.client.darwin)
+            implementation(
+                if (isRelease) {
+                    projects.firebaseCloudMessagingStub
+                } else {
+                    projects.firebaseCloudMessaging
+                }
+            )
         }
         nonWasmMain.dependencies {
             if (isRelease) {
@@ -138,18 +152,17 @@ kotlin {
             api(libs.room.runtime)
             implementation(libs.room.driver)
         }
-        androidMain.dependencies {}
-        jvmMain.dependencies {}
-        iosMain.dependencies {}
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.sqldelight.driver.sqlite)
             implementation(libs.ktor.client.cio)
+            implementation(projects.firebaseCloudMessagingStub)
         }
         wasmJsMain.dependencies {
             implementation(libs.ktor.client.js.wasm)
             implementation(libs.sqldelight.web.worker.driver.wasm)
             implementation(libs.sqldelight.async.extensions)
+            implementation(projects.firebaseCloudMessagingStub)
         }
     }
 }

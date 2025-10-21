@@ -93,7 +93,10 @@ class TestDataInitializer(context: PlatformContext) {
             createLayoutModule(context)?.let { module(it) }
             module(ControlPanelModule(context, createControlPanelItems()))
             module(OverlayModule(context))
+            registerFirebaseCloudMessagingModule(context)
         }
+
+        setupFirebaseCloudMessagingIntegration(context)
 
         startTestLogging()
         makeTestHttpRequest()
@@ -177,3 +180,6 @@ class TestDataInitializer(context: PlatformContext) {
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect fun createRoomModule(context: PlatformContext): Module?
 expect fun createLayoutModule(context: PlatformContext): Module?
+
+expect fun Kick.Configuration.registerFirebaseCloudMessagingModule(context: PlatformContext)
+expect fun setupFirebaseCloudMessagingIntegration(context: PlatformContext)
