@@ -58,10 +58,14 @@ internal object FirebaseCloudMessagingActions {
     }
 
     fun emitMessage(message: FirebaseMessage) {
-        _messages.update { current -> listOf(message) + current }
+        _messages.update { current ->
+            (listOf(message) + current).take(MAX_MESSAGES)
+        }
     }
 
     fun clearMessages() {
         _messages.value = emptyList()
     }
 }
+
+private const val MAX_MESSAGES: Int = 200

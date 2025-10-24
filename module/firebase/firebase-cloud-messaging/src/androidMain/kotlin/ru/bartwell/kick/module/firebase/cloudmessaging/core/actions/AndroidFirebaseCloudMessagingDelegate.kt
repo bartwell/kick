@@ -44,7 +44,6 @@ public class AndroidFirebaseCloudMessagingDelegate(
     }
 
     override suspend fun sendLocalNotification(request: FirebaseLocalNotificationRequest): Result<Unit> = runCatching {
-        ensureFirebase()
         val manager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelId = ensureChannel(manager, request.channelId)
         val contentText = request.body ?: request.data.entries.joinToString { "${it.key}: ${it.value}" }
@@ -55,16 +54,27 @@ public class AndroidFirebaseCloudMessagingDelegate(
             .setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
             .setAutoCancel(true)
             .build()
-        manager.notify(System.currentTimeMillis().toInt(), notification)
+        try {
+            manager.notify(System.currentTimeMillis().toInt(), notification)
+        } catch (error: SecurityException) {
+            throw LocalNotificationException(
+                status = collectNotificationStatus(manager),
+                cause = error,
+            )
+        }
     }
 
     override suspend fun getNotificationStatus(): Result<FirebaseNotificationStatus> = runCatching {
         ensureFirebase()
         val manager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        collectNotificationStatus(manager)
+    }
+
+    private fun collectNotificationStatus(manager: NotificationManager): FirebaseNotificationStatus {
         val channelInfo = buildChannelStatus(manager)
         val playServices = GoogleApiAvailability.getInstance()
             .isGooglePlayServicesAvailable(applicationContext) == ConnectionResult.SUCCESS
-        FirebaseNotificationStatus(
+        return FirebaseNotificationStatus(
             androidChannel = channelInfo,
             isGooglePlayServicesAvailable = playServices,
         )
@@ -109,6 +119,32 @@ public class AndroidFirebaseCloudMessagingDelegate(
     private fun ensureFirebase() {
         require(isFirebaseInitialized) { "Firebase is not initialised" }
     }
+
+    private class LocalNotificationException(
+        val status: FirebaseNotificationStatus,
+        cause: Throwable,
+    ) : IllegalStateException(
+        buildString {
+            append("Failed to display local notification. ")
+            append(cause.message ?: cause::class.java.simpleName)
+            append(". Ensure notification permissions are granted.")
+            status.androidChannel?.let { channel ->
+                append(" Channel '")
+                append(channel.id)
+                append("' is")
+                append(if (channel.isEnabled == true) " enabled" else " disabled")
+                channel.isAppNotificationsEnabled?.let { enabled ->
+                    append(", app notifications are ")
+                    append(if (enabled) "allowed" else "blocked")
+                }
+            }
+            status.isGooglePlayServicesAvailable?.let { available ->
+                append(". Google Play Services: ")
+                append(if (available) "available" else "unavailable")
+            }
+        },
+        cause,
+    )
 
     private fun Int.toImportanceDescription(): String = when (this) {
         NotificationManager.IMPORTANCE_NONE -> "none"

@@ -70,9 +70,10 @@ internal class DefaultFirebaseCloudMessagingComponent(
         uiScope.launch {
             val delegate = FirebaseCloudMessagingActions.currentDelegate()
             if (!ensureDelegate(delegate)) {
+                val message = if (delegate == null) NO_DELEGATE_MESSAGE else NOT_INITIALISED_MESSAGE
                 updateState {
                     copy(
-                        tokenError = NOT_INITIALISED_MESSAGE,
+                        tokenError = message,
                         isTokenLoading = false,
                     )
                 }
@@ -98,9 +99,10 @@ internal class DefaultFirebaseCloudMessagingComponent(
         uiScope.launch {
             val delegate = FirebaseCloudMessagingActions.currentDelegate()
             if (!ensureDelegate(delegate)) {
+                val message = if (delegate == null) NO_DELEGATE_MESSAGE else NOT_INITIALISED_MESSAGE
                 updateState {
                     copy(
-                        firebaseIdError = NOT_INITIALISED_MESSAGE,
+                        firebaseIdError = message,
                         isFirebaseIdLoading = false,
                     )
                 }
@@ -138,9 +140,10 @@ internal class DefaultFirebaseCloudMessagingComponent(
         uiScope.launch {
             val delegate = FirebaseCloudMessagingActions.currentDelegate()
             if (!ensureDelegate(delegate)) {
+                val message = if (delegate == null) NO_DELEGATE_MESSAGE else NOT_INITIALISED_MESSAGE
                 updateState {
                     copy(
-                        statusError = NOT_INITIALISED_MESSAGE,
+                        statusError = message,
                         isStatusLoading = false,
                     )
                 }
@@ -185,10 +188,12 @@ internal class DefaultFirebaseCloudMessagingComponent(
     override fun sendLocalNotification() {
         uiScope.launch {
             val delegate = FirebaseCloudMessagingActions.currentDelegate()
-            if (!ensureDelegate(delegate)) {
-                updateLocalNotification { copy(error = NOT_INITIALISED_MESSAGE, isSending = false) }
+            if (!ensureDelegate(delegate, requireFirebase = false)) {
+                updateLocalNotification { copy(error = NO_DELEGATE_MESSAGE, isSending = false) }
                 return@launch
             }
+
+            val activeDelegate = delegate ?: return@launch
 
             val current = state.value.localNotification
             val dataResult = parseData(current.data)
@@ -199,7 +204,7 @@ internal class DefaultFirebaseCloudMessagingComponent(
 
             updateLocalNotification { copy(isSending = true, error = null, successMessage = null) }
             val result = safeCall {
-                delegate.sendLocalNotification(
+                activeDelegate.sendLocalNotification(
                     FirebaseLocalNotificationRequest(
                         title = current.title.takeIf { it.isNotBlank() },
                         body = current.body.takeIf { it.isNotBlank() },
@@ -241,17 +246,38 @@ internal class DefaultFirebaseCloudMessagingComponent(
         updateState { copy(localNotification = localNotification.block()) }
     }
 
-    private fun ensureDelegate(delegate: FirebaseCloudMessagingDelegate?): Boolean {
-        val available = delegate?.isFirebaseInitialized == true
-        if (!available) {
+    private fun ensureDelegate(
+        delegate: FirebaseCloudMessagingDelegate?,
+        requireFirebase: Boolean = true,
+    ): Boolean {
+        if (delegate == null) {
+            updateState {
+                copy(
+                    isFirebaseAvailable = false,
+                    availabilityMessage = NO_DELEGATE_MESSAGE,
+                )
+            }
+            return false
+        }
+
+        val initialised = delegate.isFirebaseInitialized
+        if (!initialised) {
             updateState {
                 copy(
                     isFirebaseAvailable = false,
                     availabilityMessage = NOT_INITIALISED_MESSAGE,
                 )
             }
+            return !requireFirebase
         }
-        return available
+
+        updateState {
+            copy(
+                isFirebaseAvailable = true,
+                availabilityMessage = null,
+            )
+        }
+        return true
     }
 
     private fun parseData(raw: String): Map<String, String>? {
@@ -287,5 +313,6 @@ internal class DefaultFirebaseCloudMessagingComponent(
 
     companion object {
         private const val NOT_INITIALISED_MESSAGE: String = "Firebase is not initialised in the host application"
+        private const val NO_DELEGATE_MESSAGE: String = "Firebase Cloud Messaging delegate is not registered"
     }
 }
