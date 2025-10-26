@@ -7,7 +7,3 @@ import ru.bartwell.kick.module.firebase.cloudmessaging.FirebaseCloudMessagingMod
 actual fun Kick.Configuration.registerFirebaseCloudMessagingModule(context: PlatformContext) {
     module(FirebaseCloudMessagingModule(context))
 }
-
-actual fun setupFirebaseCloudMessagingIntegration(context: PlatformContext) {
-    // Firebase Cloud Messaging is not available on the desktop sample target.
-}

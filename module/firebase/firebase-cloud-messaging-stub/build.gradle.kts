@@ -60,6 +60,7 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
+            implementation(libs.firebase.messaging)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)

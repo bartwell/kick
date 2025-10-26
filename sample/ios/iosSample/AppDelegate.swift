@@ -9,4 +9,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     ) -> UISceneConfiguration {
         return ShortcutActionHandler.shared.getConfiguration(session: connectingSceneSession)
     }
+
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        KickCompanion().logFirebaseMessage(userInfo: userInfo)
+        completionHandler(.noData)
+    }
 }

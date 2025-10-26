@@ -96,8 +96,6 @@ class TestDataInitializer(context: PlatformContext) {
             registerFirebaseCloudMessagingModule(context)
         }
 
-        setupFirebaseCloudMessagingIntegration(context)
-
         startTestLogging()
         makeTestHttpRequest()
         startOverlayUpdater()
@@ -182,4 +180,3 @@ expect fun createRoomModule(context: PlatformContext): Module?
 expect fun createLayoutModule(context: PlatformContext): Module?
 
 expect fun Kick.Configuration.registerFirebaseCloudMessagingModule(context: PlatformContext)
-expect fun setupFirebaseCloudMessagingIntegration(context: PlatformContext)

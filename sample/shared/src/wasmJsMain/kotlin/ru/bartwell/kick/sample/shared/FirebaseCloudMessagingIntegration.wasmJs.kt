@@ -7,6 +7,3 @@ actual fun Kick.Configuration.registerFirebaseCloudMessagingModule(context: Plat
     // Firebase Cloud Messaging UI is not exposed for the web sample target.
 }
 
-actual fun setupFirebaseCloudMessagingIntegration(context: PlatformContext) {
-    // No Firebase support on the web sample target.
-}

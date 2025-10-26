@@ -3,11 +3,16 @@ package ru.bartwell.kick.module.firebase.cloudmessaging.core.actions
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.RemoteMessage
 import ru.bartwell.kick.Kick
+import ru.bartwell.kick.module.firebase.cloudmessaging.FirebaseCloudMessagingAccessor
 import ru.bartwell.kick.module.firebase.cloudmessaging.core.data.FirebaseMessage
 import ru.bartwell.kick.module.firebase.cloudmessaging.firebaseCloudMessaging
 
 public fun Kick.Companion.logFirebaseMessage(message: RemoteMessage) {
     firebaseCloudMessaging.log(message.toFirebaseMessage())
+}
+
+public fun FirebaseCloudMessagingAccessor.handleFcm(message: RemoteMessage) {
+    log(message.toFirebaseMessage())
 }
 
 private fun RemoteMessage.toFirebaseMessage(): FirebaseMessage {

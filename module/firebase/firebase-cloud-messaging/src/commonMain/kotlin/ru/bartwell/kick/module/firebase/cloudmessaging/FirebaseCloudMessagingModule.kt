@@ -12,6 +12,7 @@ import ru.bartwell.kick.core.component.Config
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.ModuleDescription
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.module.firebase.cloudmessaging.core.actions.FirebaseCloudMessagingActions
 import ru.bartwell.kick.module.firebase.cloudmessaging.core.component.child.FirebaseCloudMessagingChild
 import ru.bartwell.kick.module.firebase.cloudmessaging.core.component.config.FirebaseCloudMessagingConfig
 import ru.bartwell.kick.module.firebase.cloudmessaging.feature.presentation.DefaultFirebaseCloudMessagingComponent
@@ -25,6 +26,10 @@ public class FirebaseCloudMessagingModule(
 
     override val description: ModuleDescription = ModuleDescription.FIREBASE_CLOUD_MESSAGING
     override val startConfig: Config = FirebaseCloudMessagingConfig
+
+    init {
+        FirebaseCloudMessagingActions.initialize(context)
+    }
 
     override fun getComponent(
         componentContext: ComponentContext,

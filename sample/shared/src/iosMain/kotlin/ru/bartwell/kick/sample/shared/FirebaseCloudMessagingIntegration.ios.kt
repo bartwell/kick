@@ -7,8 +7,3 @@ import ru.bartwell.kick.module.firebase.cloudmessaging.FirebaseCloudMessagingMod
 actual fun Kick.Configuration.registerFirebaseCloudMessagingModule(context: PlatformContext) {
     module(FirebaseCloudMessagingModule(context))
 }
-
-actual fun setupFirebaseCloudMessagingIntegration(context: PlatformContext) {
-    // The sample application does not bundle Firebase on iOS.
-    // Host apps should register their own FirebaseCloudMessagingDelegate implementation.
-}

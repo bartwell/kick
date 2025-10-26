@@ -122,13 +122,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.sqldelight.android.driver)
             implementation(libs.ktor.client.okhttp)
-            implementation(
-                if (isRelease) {
-                    projects.firebaseCloudMessagingStub
-                } else {
-                    projects.firebaseCloudMessaging
-                }
-            )
+            implementation(projects.firebaseCloudMessaging)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
