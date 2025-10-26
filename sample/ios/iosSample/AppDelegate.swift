@@ -15,7 +15,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        KickCompanion().logFirebaseMessage(userInfo: userInfo)
+        KickCompanion().firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo)
         completionHandler(.noData)
     }
 }

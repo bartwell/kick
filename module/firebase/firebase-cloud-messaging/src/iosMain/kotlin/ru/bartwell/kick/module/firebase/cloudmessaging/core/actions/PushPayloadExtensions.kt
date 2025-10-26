@@ -2,21 +2,20 @@ package ru.bartwell.kick.module.firebase.cloudmessaging.core.actions
 
 import platform.Foundation.NSDictionary
 import platform.UserNotifications.UNNotification
-import ru.bartwell.kick.Kick
 import ru.bartwell.kick.module.firebase.cloudmessaging.core.data.FirebaseMessage
-import ru.bartwell.kick.module.firebase.cloudmessaging.firebaseCloudMessaging
+import ru.bartwell.kick.module.firebase.cloudmessaging.FirebaseCloudMessagingAccessor
 
-public fun Kick.Companion.logFirebaseMessage(userInfo: NSDictionary) {
-    firebaseCloudMessaging.log(userInfo.toFirebaseMessage())
+public fun FirebaseCloudMessagingAccessor.handleApnsPayload(userInfo: NSDictionary) {
+    log(userInfo.toFirebaseMessage())
 }
 
-public fun Kick.Companion.logFirebaseMessage(userInfo: Map<Any?, *>) {
-    firebaseCloudMessaging.log(userInfo.toFirebaseMessage())
+public fun FirebaseCloudMessagingAccessor.handleApnsPayload(userInfo: Map<Any?, *>) {
+    log(userInfo.toFirebaseMessage())
 }
 
-public fun Kick.Companion.logFirebaseMessage(notification: UNNotification) {
+public fun FirebaseCloudMessagingAccessor.handleApnsNotification(notification: UNNotification) {
     val payload = notification.request.content.userInfo
-    firebaseCloudMessaging.log(payload.toFirebaseMessage())
+    log(payload.toFirebaseMessage())
 }
 
 private fun NSDictionary.toFirebaseMessage(): FirebaseMessage = entries().associate { entry ->

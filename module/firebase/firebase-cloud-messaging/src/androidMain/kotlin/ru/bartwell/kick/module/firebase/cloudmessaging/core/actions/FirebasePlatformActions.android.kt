@@ -18,6 +18,7 @@ import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.core.data.get
 import ru.bartwell.kick.module.firebase.cloudmessaging.core.data.AndroidNotificationChannelStatus
 import ru.bartwell.kick.module.firebase.cloudmessaging.core.data.FirebaseLocalNotificationRequest
+import ru.bartwell.kick.module.firebase.cloudmessaging.core.data.FirebaseNotificationImportance
 import ru.bartwell.kick.module.firebase.cloudmessaging.core.data.FirebaseNotificationStatus
 
 private var applicationContext: Context? = null
@@ -35,7 +36,9 @@ internal actual suspend fun platformGetRegistrationToken(
     forceRefresh: Boolean,
 ): Result<String> = runCatching {
     val context = requireContext()
-    ensureFirebaseInitialized(context)
+    if (!ensureFirebaseInitialized(context)) {
+        throw FirebaseNotInitializedException()
+    }
     val messaging = FirebaseMessaging.getInstance()
     if (forceRefresh) {
         messaging.deleteToken().await()
@@ -45,7 +48,9 @@ internal actual suspend fun platformGetRegistrationToken(
 
 internal actual suspend fun platformGetFirebaseInstallationId(): Result<String> = runCatching {
     val context = requireContext()
-    ensureFirebaseInitialized(context)
+    if (!ensureFirebaseInitialized(context)) {
+        throw FirebaseNotInitializedException()
+    }
     FirebaseInstallations.getInstance().id.await()
 }
 
@@ -54,20 +59,29 @@ internal actual suspend fun platformSendLocalNotification(
 ): Result<Unit> = runCatching {
     val context = requireContext()
     val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    val channelId = ensureChannel(manager, request.channelId)
+    val channelId = ensureChannel(manager, request)
+    if (!manager.areNotificationsEnabled()) {
+        throw LocalNotificationException(
+            status = collectNotificationStatus(context, manager, channelId),
+            cause = IllegalStateException("Notifications are disabled"),
+        )
+    }
     val contentText = request.body ?: request.data.entries.joinToString { "${'$'}{it.key}: ${'$'}{it.value}" }
     val notification = NotificationCompat.Builder(context, channelId)
-        .setSmallIcon(android.R.drawable.ic_dialog_info)
+        .setSmallIcon(request.smallIconResId ?: android.R.drawable.ic_dialog_info)
         .setContentTitle(request.title ?: "Firebase push")
         .setContentText(contentText)
         .setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
         .setAutoCancel(true)
+        .apply {
+            request.pendingIntent?.let { intent -> setContentIntent(intent) }
+        }
         .build()
     try {
         manager.notify(System.currentTimeMillis().toInt(), notification)
     } catch (error: SecurityException) {
         throw LocalNotificationException(
-            status = collectNotificationStatus(context, manager),
+            status = collectNotificationStatus(context, manager, channelId),
             cause = error,
         )
     }
@@ -75,16 +89,16 @@ internal actual suspend fun platformSendLocalNotification(
 
 internal actual suspend fun platformGetNotificationStatus(): Result<FirebaseNotificationStatus> = runCatching {
     val context = requireContext()
-    ensureFirebaseInitialized(context)
     val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    collectNotificationStatus(context, manager)
+    collectNotificationStatus(context, manager, DEFAULT_CHANNEL_ID)
 }
 
 private fun collectNotificationStatus(
     context: Context,
     manager: NotificationManager,
+    channelId: String,
 ): FirebaseNotificationStatus {
-    val channelInfo = buildChannelStatus(manager)
+    val channelInfo = buildChannelStatus(manager, channelId)
     val playServices = GoogleApiAvailability.getInstance()
         .isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS
     return FirebaseNotificationStatus(
@@ -93,12 +107,15 @@ private fun collectNotificationStatus(
     )
 }
 
-private fun buildChannelStatus(manager: NotificationManager): AndroidNotificationChannelStatus {
+private fun buildChannelStatus(
+    manager: NotificationManager,
+    requestedChannelId: String,
+): AndroidNotificationChannelStatus {
     val notificationsEnabled = manager.areNotificationsEnabled()
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val channel = manager.getNotificationChannel(DEFAULT_CHANNEL_ID)
+        val channel = manager.getNotificationChannel(requestedChannelId)
         AndroidNotificationChannelStatus(
-            id = channel?.id ?: DEFAULT_CHANNEL_ID,
+            id = channel?.id ?: requestedChannelId,
             name = channel?.name?.toString(),
             description = channel?.description,
             importance = channel?.importance?.toImportanceDescription(),
@@ -107,7 +124,7 @@ private fun buildChannelStatus(manager: NotificationManager): AndroidNotificatio
         )
     } else {
         AndroidNotificationChannelStatus(
-            id = DEFAULT_CHANNEL_ID,
+            id = requestedChannelId,
             name = null,
             description = null,
             importance = null,
@@ -117,20 +134,27 @@ private fun buildChannelStatus(manager: NotificationManager): AndroidNotificatio
     }
 }
 
-private fun ensureChannel(manager: NotificationManager, requested: String?): String {
-    val id = requested ?: DEFAULT_CHANNEL_ID
+private fun ensureChannel(
+    manager: NotificationManager,
+    request: FirebaseLocalNotificationRequest,
+): String {
+    val id = request.channelId ?: DEFAULT_CHANNEL_ID
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val existing = manager.getNotificationChannel(id)
         if (existing == null) {
-            val channel = NotificationChannel(id, DEFAULT_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(
+                id,
+                request.channelName ?: DEFAULT_CHANNEL_NAME,
+                request.channelImportance?.toImportance() ?: NotificationManager.IMPORTANCE_DEFAULT,
+            )
             manager.createNotificationChannel(channel)
         }
     }
     return id
 }
 
-private fun ensureFirebaseInitialized(context: Context) {
-    require(FirebaseApp.getApps(context).isNotEmpty()) { "Firebase is not initialised" }
+private fun ensureFirebaseInitialized(context: Context): Boolean {
+    return FirebaseApp.getApps(context).isNotEmpty()
 }
 
 private fun requireContext(): Context = applicationContext
@@ -162,6 +186,10 @@ private class LocalNotificationException(
     cause,
 )
 
+private class FirebaseNotInitializedException : IllegalStateException(
+    "Firebase is not initialised",
+)
+
 private fun Int.toImportanceDescription(): String = when (this) {
     NotificationManager.IMPORTANCE_NONE -> "none"
     NotificationManager.IMPORTANCE_MIN -> "min"
@@ -170,6 +198,14 @@ private fun Int.toImportanceDescription(): String = when (this) {
     NotificationManager.IMPORTANCE_HIGH -> "high"
     NotificationManager.IMPORTANCE_MAX -> "max"
     else -> toString()
+}
+
+private fun FirebaseNotificationImportance.toImportance(): Int = when (this) {
+    FirebaseNotificationImportance.MIN -> NotificationManager.IMPORTANCE_MIN
+    FirebaseNotificationImportance.LOW -> NotificationManager.IMPORTANCE_LOW
+    FirebaseNotificationImportance.DEFAULT -> NotificationManager.IMPORTANCE_DEFAULT
+    FirebaseNotificationImportance.HIGH -> NotificationManager.IMPORTANCE_HIGH
+    FirebaseNotificationImportance.MAX -> NotificationManager.IMPORTANCE_MAX
 }
 
 private suspend fun <T> Task<T>.await(): T = suspendCancellableCoroutine { continuation ->

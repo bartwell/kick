@@ -5,4 +5,8 @@ public data class FirebaseLocalNotificationRequest(
     val body: String?,
     val data: Map<String, String>,
     val channelId: String?,
+    val channelName: String? = null,
+    val channelImportance: FirebaseNotificationImportance? = null,
+    val smallIconResId: Int? = null,
+    val pendingIntent: PlatformPendingIntent? = null,
 )
