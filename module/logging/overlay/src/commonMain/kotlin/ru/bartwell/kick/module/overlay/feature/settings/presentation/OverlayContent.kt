@@ -12,7 +12,6 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.data.platformContext
+import ru.bartwell.kick.core.ui.ExposedDropdownMenuBox
 import ru.bartwell.kick.module.overlay.core.store.OverlayStore
 
 @OptIn(ExperimentalMaterial3Api::class)

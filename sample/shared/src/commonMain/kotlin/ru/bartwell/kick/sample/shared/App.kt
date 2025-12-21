@@ -10,7 +10,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.data.Theme
 import ru.bartwell.kick.core.data.platformContext
+import ru.bartwell.kick.core.ui.ExposedDropdownMenuBox
 import ru.bartwell.kick.module.controlpanel.controlPanel
 
 @Composable
