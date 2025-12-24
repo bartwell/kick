@@ -82,3 +82,8 @@ include(":overlay")
 project(":overlay").projectDir = file("module/logging/overlay")
 include(":overlay-stub")
 project(":overlay-stub").projectDir = file("module/logging/overlay-stub")
+// Firebase Cloud Messaging
+include(":firebase-cloud-messaging")
+project(":firebase-cloud-messaging").projectDir = file("module/firebase/firebase-cloud-messaging")
+include(":firebase-cloud-messaging-stub")
+project(":firebase-cloud-messaging-stub").projectDir = file("module/firebase/firebase-cloud-messaging-stub")
