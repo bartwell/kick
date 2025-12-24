@@ -5,7 +5,6 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
@@ -53,7 +52,7 @@ public fun ExposedDropdownMenuBox(
 }
 
 public interface ExposedDropdownMenuBoxScope {
-    public fun Modifier.menuAnchor(type: MenuAnchorType = MenuAnchorType.PrimaryNotEditable): Modifier
+    public fun Modifier.menuAnchor(type: Any? = null): Modifier
 
     @Composable
     public fun DropdownMenu(
@@ -83,7 +82,7 @@ private class ExposedDropdownMenuBoxScopeImpl : ExposedDropdownMenuBoxScope {
     var onAnchorPositioned: ((androidx.compose.ui.layout.LayoutCoordinates) -> Unit)? = null
     lateinit var density: androidx.compose.ui.unit.Density
 
-    override fun Modifier.menuAnchor(type: MenuAnchorType): Modifier = composed {
+    override fun Modifier.menuAnchor(type: Any?): Modifier = composed {
         this
             .onGloballyPositioned { onAnchorPositioned?.invoke(it) }
             .pointerInput(Unit) {
