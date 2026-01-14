@@ -1,5 +1,7 @@
 package ru.bartwell.kick.module.controlpanel.feature.presentation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,7 +37,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.ui.ExposedDropdownMenuBox
 import ru.bartwell.kick.module.controlpanel.core.actions.ControlPanelActions
@@ -92,17 +97,27 @@ internal fun ControlPanelContent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .background(
+                                color = Color.White.copy(alpha = 0.08f),
+                                shape = RoundedCornerShape(8.dp)
+                            )
                             .clickable { component.onCategoryToggle(category) }
-                            .padding(vertical = 8.dp),
+                            .padding(horizontal = 12.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(category, modifier = Modifier.weight(1f))
+                        Text(
+                            text = category,
+                            modifier = Modifier.weight(1f),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
                         Icon(
                             imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
                             contentDescription = if (expanded) "Collapse" else "Expand",
                             modifier = Modifier.testTag("category_" + category)
                         )
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
                 if (expanded) {
                     items(itemsInCategory) { cpItem ->
