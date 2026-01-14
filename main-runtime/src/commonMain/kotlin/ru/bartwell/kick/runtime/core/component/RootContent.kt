@@ -3,6 +3,7 @@ package ru.bartwell.kick.runtime.core.component
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
@@ -21,7 +22,14 @@ internal fun RootContent(
     component: RootComponent,
     modifier: Modifier = Modifier,
 ) {
-    val environment = AppUiEnvironment(screenCloser = screenCloser())
+    val closeHandler = screenCloser()
+    val environment = AppUiEnvironment(screenCloser = closeHandler)
+
+    // Set close handler on the component so it can close when back is pressed at root level
+    LaunchedEffect(component, closeHandler) {
+        component.onCloseRequested = closeHandler
+    }
+
     CompositionLocalProvider(LocalAppUiEnvironment provides environment) {
         Children(
             stack = component.stack,

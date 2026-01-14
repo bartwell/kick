@@ -36,6 +36,18 @@ internal class DefaultRootComponent(
         modules.firstOrNull { module -> module.description == desc }
     }
 
+    override var onCloseRequested: (() -> Unit)? = null
+
+    /**
+     * Wrapper around nav that intercepts pop() calls when at root level with startScreen.
+     * Calls onCloseRequested instead of doing nothing.
+     */
+    private val navWrapper = CloseAwareStackNavigation(
+        delegate = nav,
+        shouldCloseInsteadOfPop = { stack.value.items.size <= 1 && startScreen != null },
+        onCloseRequested = { onCloseRequested?.invoke() }
+    )
+
     private val configModule = SerializersModule {
         polymorphic(Config::class) {
             subclass(ModulesListConfig::class, ModulesListConfig.serializer())
@@ -47,7 +59,7 @@ internal class DefaultRootComponent(
 
     @OptIn(ExperimentalSerializationApi::class, ExperimentalStateKeeperApi::class)
     override val stack: Value<ChildStack<*, Child<*>>> = childStack(
-        source = nav,
+        source = navWrapper, // Use wrapper to intercept back navigation
         serializer = polymorphicSerializer(configModule),
         initialConfiguration = startScreen?.config ?: ModulesListConfig,
         handleBackButton = true,
@@ -91,7 +103,7 @@ internal class DefaultRootComponent(
                 StubChild(
                     component = DefaultStubComponent(
                         componentContext = componentContext,
-                        onFinished = { nav.pop() },
+                        onFinished = { navWrapper.pop() },
                         moduleDescription = config.moduleDescription,
                     )
                 )
@@ -100,7 +112,7 @@ internal class DefaultRootComponent(
             else -> {
                 val component = currentModule?.getComponent(
                     componentContext = componentContext,
-                    nav = nav,
+                    nav = navWrapper,
                     config = config,
                 )
                 component ?: error("Unknown config")

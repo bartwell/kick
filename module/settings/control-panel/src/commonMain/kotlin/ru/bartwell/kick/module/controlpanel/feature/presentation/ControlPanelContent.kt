@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.arkivanov.essenty.backhandler.BackCallback
 import ru.bartwell.kick.core.ui.ExposedDropdownMenuBox
 import ru.bartwell.kick.module.controlpanel.core.actions.ControlPanelActions
 import ru.bartwell.kick.module.controlpanel.data.ActionType
@@ -51,6 +53,17 @@ internal fun ControlPanelContent(
     modifier: Modifier = Modifier,
 ) {
     val state by component.model.subscribeAsState()
+
+    // Handle system back button press
+    DisposableEffect(component) {
+        val callback = BackCallback(isEnabled = true) {
+            component.onBackPressed()
+        }
+        component.backHandler.register(callback)
+        onDispose {
+            component.backHandler.unregister(callback)
+        }
+    }
 
     Column(modifier = modifier) {
         TopAppBar(
