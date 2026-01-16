@@ -28,8 +28,8 @@ import kotlin.time.Duration.Companion.hours
 
 public class LoggingModule(
     platformContext: PlatformContext,
-    private val expireDelay: Duration = 1.hours,
-    private val labelExtractor: LabelExtractor? = null,
+    private val expireDelay: Duration,
+    private val labelExtractor: LabelExtractor?,
 ) : Module {
 
     override val description: ModuleDescription = ModuleDescription.LOGGING

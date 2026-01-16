@@ -26,7 +26,11 @@ public interface Kick {
             this.instance = impl
         }
 
-        public fun launch(context: PlatformContext, startScreen: StartScreen? = null) {
+        public fun launch(context: PlatformContext) {
+            instance?.launch(context, null)
+        }
+
+        public fun launch(context: PlatformContext, startScreen: StartScreen?) {
             instance?.launch(context, startScreen)
         }
 

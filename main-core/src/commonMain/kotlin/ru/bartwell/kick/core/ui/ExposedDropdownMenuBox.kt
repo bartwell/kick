@@ -93,6 +93,7 @@ private class ExposedDropdownMenuBoxScopeImpl : ExposedDropdownMenuBoxScope {
                     )
 
                     var upHappened = false
+                    @Suppress("LoopWithTooManyJumpStatements")
                     while (true) {
                         val event = awaitPointerEvent(pass = PointerEventPass.Initial)
                         val change = event.changes.firstOrNull { it.id == down.id } ?: break
@@ -112,6 +113,7 @@ private class ExposedDropdownMenuBoxScopeImpl : ExposedDropdownMenuBoxScope {
             }
     }
 
+    @Suppress("ComposableParametersOrdering")
     @Composable
     override fun DropdownMenu(
         expanded: Boolean,
@@ -132,6 +134,7 @@ private class ExposedDropdownMenuBoxScopeImpl : ExposedDropdownMenuBoxScope {
         )
     }
 
+    @Suppress("ComposableParametersOrdering")
     @Composable
     override fun ExposedDropdownMenu(
         expanded: Boolean,

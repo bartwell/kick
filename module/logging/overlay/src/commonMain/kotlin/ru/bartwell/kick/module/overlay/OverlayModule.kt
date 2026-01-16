@@ -29,7 +29,7 @@ import ru.bartwell.kick.module.overlay.feature.settings.presentation.OverlayCont
 
 public class OverlayModule(
     context: PlatformContext,
-    private val providers: List<OverlayProvider> = listOf(PerformanceOverlayProvider()),
+    private val providers: List<OverlayProvider>,
 ) : Module {
     override val description: ModuleDescription = ModuleDescription.OVERLAY
     override val startConfig: Config = OverlayConfig
@@ -45,6 +45,11 @@ public class OverlayModule(
             KickOverlay.show()
         }
     }
+
+    public constructor(context: PlatformContext) : this(
+        context = context,
+        providers = listOf(PerformanceOverlayProvider()),
+    )
 
     private fun observeFloatingWindowState() {
         combine(OverlaySettings.observeEnabled(), OverlayStore.selectedCategory) { isWindowEnabled, currentCategory ->

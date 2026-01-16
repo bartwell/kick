@@ -27,13 +27,15 @@ private const val NOT_AVAILABLE_VALUE: String = "—"
 private val BYTE_UNITS = arrayOf("B", "KB", "MB", "GB", "TB", "PB")
 
 public class PerformanceOverlayProvider(
-    private val updateIntervalMillis: Duration = 1.seconds,
+    private val updateIntervalMillis: Duration,
 ) : OverlayProvider {
 
     override val categories: Set<String> = setOf(CATEGORY)
     override val isAvailable: Boolean
         get() = PlatformUtils.getPlatform() != Platform.WEB
     private var job: Job? = null
+
+    public constructor() : this(1.seconds)
 
     override fun start(scope: CoroutineScope) {
         Kick.overlay.set(CPU_USAGE_KEY, NOT_AVAILABLE_VALUE, CATEGORY)
