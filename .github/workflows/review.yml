@@ -3,7 +3,7 @@ name: Review PR with Danger
 on:
   pull_request:
     branches: ["develop"]
-    types: [opened, synchronize, closed]
+    types: [opened, synchronize, reopened, edited, closed]
 
 jobs:
   build:
