@@ -16,12 +16,14 @@ import ru.bartwell.kick.module.controlpanel.core.component.child.ControlPanelChi
 import ru.bartwell.kick.module.controlpanel.core.component.config.ControlPanelConfig
 import ru.bartwell.kick.module.controlpanel.core.persists.ControlPanelSettings
 import ru.bartwell.kick.module.controlpanel.data.ControlPanelItem
+import ru.bartwell.kick.module.controlpanel.data.InputType
 import ru.bartwell.kick.module.controlpanel.feature.presentation.ControlPanelContent
 import ru.bartwell.kick.module.controlpanel.feature.presentation.DefaultControlPanelComponent
 
 public class ControlPanelModule(
     context: PlatformContext,
     private val items: List<ControlPanelItem>,
+    private val onSave: ((Map<String, InputType>) -> Unit)? = null,
 ) : Module {
 
     override val description: ModuleDescription = ModuleDescription.CONTROL_PANEL
@@ -41,6 +43,7 @@ public class ControlPanelModule(
                 componentContext = componentContext,
                 items = items,
                 onFinished = { nav.pop() },
+                onSave = onSave,
             )
         )
     } else {

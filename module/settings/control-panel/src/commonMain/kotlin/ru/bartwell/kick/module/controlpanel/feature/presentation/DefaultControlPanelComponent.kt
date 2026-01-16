@@ -12,6 +12,7 @@ internal class DefaultControlPanelComponent(
     componentContext: ComponentContext,
     private val items: List<ControlPanelItem>,
     private val onFinished: () -> Unit,
+    private val onSave: ((Map<String, InputType>) -> Unit)? = null,
 ) : ControlPanelComponent, ComponentContext by componentContext {
 
     private val _model = MutableValue(ControlPanelState(items, loadValues(), expanded = emptyMap()))
@@ -25,6 +26,7 @@ internal class DefaultControlPanelComponent(
         for ((name, value) in model.value.values) {
             ControlPanelSettings.put(name, value)
         }
+        onSave?.invoke(model.value.values)
         _model.value = model.value.copy(values = loadValues())
     }
 
