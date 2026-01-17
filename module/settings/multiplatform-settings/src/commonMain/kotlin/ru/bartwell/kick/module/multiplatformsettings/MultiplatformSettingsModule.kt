@@ -23,11 +23,13 @@ import ru.bartwell.kick.module.multiplatformsettings.feature.list.presentation.D
 import ru.bartwell.kick.module.multiplatformsettings.feature.list.presentation.SettingsListContent
 
 public class MultiplatformSettingsModule(
-    private val settingsList: List<Pair<String, Settings>> = emptyList()
+    private val settingsList: List<Pair<String, Settings>>
 ) : Module {
 
     override val description: ModuleDescription = ModuleDescription.MULTIPLATFORM_SETTINGS
     override val startConfig: Config = SettingsListConfig
+
+    public constructor() : this(emptyList())
 
     override fun getComponent(
         componentContext: ComponentContext,

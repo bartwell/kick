@@ -32,7 +32,7 @@ import kotlin.time.Duration.Companion.hours
 
 public class Ktor3Module(
     platformContext: PlatformContext,
-    private val expireDelay: Duration = 1.hours,
+    private val expireDelay: Duration,
 ) : Module {
 
     override val description: ModuleDescription = ModuleDescription.KTOR3
@@ -47,6 +47,11 @@ public class Ktor3Module(
             )
         }
     }
+
+    public constructor(platformContext: PlatformContext) : this(
+        platformContext = platformContext,
+        expireDelay = 1.hours,
+    )
 
     override fun getComponent(
         componentContext: ComponentContext,

@@ -13,11 +13,13 @@ import ru.bartwell.kick.core.data.ModuleDescription
 
 @Suppress("UnusedPrivateProperty", "EmptyFunctionBlock", "unused")
 public class MultiplatformSettingsModule(
-    private val settingsList: List<Pair<String, Settings>> = emptyList()
+    private val settingsList: List<Pair<String, Settings>>
 ) : Module {
 
     override val description: ModuleDescription = ModuleDescription.MULTIPLATFORM_SETTINGS
     override val startConfig: Config = StubConfig(description)
+
+    public constructor() : this(emptyList())
 
     override fun getComponent(
         componentContext: ComponentContext,

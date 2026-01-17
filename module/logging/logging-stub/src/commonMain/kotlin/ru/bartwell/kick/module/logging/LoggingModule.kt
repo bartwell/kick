@@ -17,14 +17,13 @@ import kotlin.time.Duration.Companion.hours
 @Suppress("UnusedPrivateProperty", "EmptyFunctionBlock", "unused")
 public class LoggingModule(
     platformContext: PlatformContext,
-    private val expireDelay: Duration = 1.hours,
-    private val labelExtractor: LabelExtractor? = null,
+    private val expireDelay: Duration,
+    private val labelExtractor: LabelExtractor?,
 ) : Module {
 
     override val description: ModuleDescription = ModuleDescription.LOGGING
     override val startConfig: Config = StubConfig(description)
 
-    // Secondary constructors should be declared before methods
     public constructor(platformContext: PlatformContext) : this(
         platformContext = platformContext,
         expireDelay = 1.hours,
