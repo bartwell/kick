@@ -1,10 +1,12 @@
 package ru.bartwell.kick.module.controlpanel.data
 
+import kotlinx.coroutines.flow.Flow
 import ru.bartwell.kick.module.controlpanel.core.actions.ControlPanelActions
 import ru.bartwell.kick.module.controlpanel.core.persists.ControlPanelSettings
 
 @Suppress("TooManyFunctions")
 public class ControlPanelAccessor internal constructor() {
+    public val event: Flow<ControlPanelEvent> = ControlPanelActions.events
 
     public fun getBoolean(key: String): Boolean = ControlPanelSettings.get<InputType.Boolean>(key).value
     public fun getBooleanOrNull(key: String): Boolean? = ControlPanelSettings.getOrNull<InputType.Boolean>(key)?.value

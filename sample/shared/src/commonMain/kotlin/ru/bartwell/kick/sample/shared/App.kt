@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collect
 import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.data.Theme
 import ru.bartwell.kick.core.data.platformContext
@@ -40,7 +41,12 @@ fun App() {
     LaunchedEffect(selectedTheme) {
         Kick.theme = selectedTheme.toLibraryTheme()
         println("Configuration test: featureEnabled=" + Kick.controlPanel.getBoolean("featureEnabled"))
-        Kick.controlPanel.onButtonClick { id -> println("Button clicked: $id") }
+    }
+
+    LaunchedEffect(Unit) {
+        Kick.controlPanel.event.collect { event ->
+            println("Control panel event: $event")
+        }
     }
 
     MaterialTheme(colorScheme = selectedTheme.getColorScheme()) {

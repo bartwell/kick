@@ -10,4 +10,5 @@ internal interface ControlPanelComponent : Component {
     fun onSavePressed()
     fun onValueChange(name: String, value: InputType)
     fun onCategoryToggle(category: String)
+    fun onActionButtonClick(id: String)
 }

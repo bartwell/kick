@@ -27,4 +27,5 @@ internal class FakeControlPanelComponent(
         val updated = _model.value.expanded.toMutableMap().apply { put(category, !current) }
         _model.value = _model.value.copy(expanded = updated)
     }
+    override fun onActionButtonClick(id: String) = Unit
 }
