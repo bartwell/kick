@@ -17,5 +17,4 @@ internal object ControlPanelActions {
     fun emitEvent(event: ControlPanelEvent) {
         _events.tryEmit(event)
     }
-
 }
