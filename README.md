@@ -282,13 +282,15 @@ Kick.controlPanel.getString("list")
 
 #### Actions
 
-You can also add action buttons to trigger code in your app. Register an action listener and handle button IDs you defined in `ControlPanelItem(type = ActionType.Button("id"))`:
+You can also add action buttons to trigger code in your app. Collect control panel events and handle button IDs you defined in `ControlPanelItem(type = ActionType.Button("id"))`:
 
 ```
-Kick.controlPanel.onButtonClick { id ->
-    when (id) {
-        "refresh_cache" -> refreshCache()
-        // handle other actions
+Kick.controlPanel.event.collect { event ->
+    when (event) {
+        is ControlPanelEvent.ButtonClicked -> when (event.id) {
+            "refresh_cache" -> refreshCache()
+        }
+        else -> Unit
     }
 }
 ```

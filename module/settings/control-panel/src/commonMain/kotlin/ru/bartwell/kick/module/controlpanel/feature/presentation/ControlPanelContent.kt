@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.ui.ExposedDropdownMenuBox
-import ru.bartwell.kick.module.controlpanel.core.actions.ControlPanelActions
 import ru.bartwell.kick.module.controlpanel.data.ActionType
 import ru.bartwell.kick.module.controlpanel.data.ControlPanelItem
 import ru.bartwell.kick.module.controlpanel.data.Editor
@@ -78,9 +77,12 @@ internal fun ControlPanelContent(
         ) {
             // Ungrouped items first
             items(state.items.filter { it.category.isNullOrBlank() }) { item ->
-                RenderItemRow(item = item, value = state.values[item.name]) { name, newValue ->
-                    component.onValueChange(name, newValue)
-                }
+                RenderItemRow(
+                    item = item,
+                    value = state.values[item.name],
+                    onValueChange = component::onValueChange,
+                    onActionButtonClick = component::onActionButtonClick,
+                )
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
@@ -103,9 +105,12 @@ internal fun ControlPanelContent(
                 }
                 if (expanded) {
                     items(itemsInCategory) { cpItem ->
-                        RenderItemRow(item = cpItem, value = state.values[cpItem.name]) { name, newValue ->
-                            component.onValueChange(name, newValue)
-                        }
+                        RenderItemRow(
+                            item = cpItem,
+                            value = state.values[cpItem.name],
+                            onValueChange = component::onValueChange,
+                            onActionButtonClick = component::onActionButtonClick,
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
@@ -146,6 +151,7 @@ private fun RenderItemRow(
     item: ControlPanelItem,
     value: InputType?,
     onValueChange: (String, InputType) -> Unit,
+    onActionButtonClick: (String) -> Unit,
 ) {
     when (val t = item.type) {
         is InputType.Boolean -> BooleanItem(item, value, t) {
@@ -163,7 +169,7 @@ private fun RenderItemRow(
             onValueChange(name, vt)
         }
 
-        is ActionType.Button -> ActionItem(item.name, t.id)
+        is ActionType.Button -> ActionItem(item.name, t.id, onActionButtonClick)
     }
 }
 
@@ -353,10 +359,10 @@ private fun InputType.toValueType(d: Double): InputType = when (this) {
 }
 
 @Composable
-private fun ActionItem(label: String, id: String) {
+private fun ActionItem(label: String, id: String, onActionButtonClick: (String) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(label, modifier = Modifier.weight(1f))
-        Button(onClick = { ControlPanelActions.emitButtonClick(id) }, modifier = Modifier.testTag("action_" + id)) {
+        Button(onClick = { onActionButtonClick(id) }, modifier = Modifier.testTag("action_" + id)) {
             Text("Run")
         }
     }
