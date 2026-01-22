@@ -4,6 +4,9 @@ import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.create
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import platform.UIKit.UIApplication
 import platform.UIKit.UIModalPresentationFullScreen
 import platform.UIKit.UINavigationController
@@ -23,6 +26,8 @@ internal object IosSceneController {
     private var _viewerViewControllerInstance: WeakReference<UIViewController>? = null
     private val viewerViewControllerInstance: UIViewController?
         get() = _viewerViewControllerInstance?.get()
+    private val closeScope = MainScope()
+    private var closeJob: Job? = null
 
     fun present(
         modules: List<Module>,
@@ -33,6 +38,12 @@ internal object IosSceneController {
         }
 
         WindowStateManager.getInstance()?.setWindowOpen()
+        closeJob?.cancel()
+        closeJob = closeScope.launch {
+            ViewerCommands.closeRequests.collect {
+                dismiss()
+            }
+        }
         val lifecycle = LifecycleRegistry()
         val componentContext = DefaultComponentContext(lifecycle)
         val rootComponent = DefaultRootComponent(
@@ -69,6 +80,8 @@ internal object IosSceneController {
     fun dismiss() {
         viewerViewControllerInstance?.dismissViewControllerAnimated(true, completion = null)
         _viewerViewControllerInstance = null
+        closeJob?.cancel()
+        closeJob = null
 
         WindowStateManager.getInstance()?.setWindowClosed()
     }

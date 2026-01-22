@@ -175,6 +175,11 @@ class TestDataInitializer(context: PlatformContext) {
             category = "Actions",
             type = ActionType.Button("bbbbbb"),
         ),
+        ControlPanelItem(
+            name = "Close viewer",
+            category = "Actions",
+            type = ActionType.Button(CONTROL_PANEL_CLOSE_BUTTON_ID),
+        ),
     )
 }
 

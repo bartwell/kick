@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenuItem
@@ -32,11 +33,13 @@ import ru.bartwell.kick.core.data.Theme
 import ru.bartwell.kick.core.data.platformContext
 import ru.bartwell.kick.core.ui.ExposedDropdownMenuBox
 import ru.bartwell.kick.module.controlpanel.controlPanel
+import ru.bartwell.kick.module.controlpanel.data.ControlPanelEvent
 
 @Composable
 fun App() {
     val context = platformContext()
     var selectedTheme by remember { mutableStateOf(AppTheme.Auto) }
+    var showButtonAlert by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedTheme) {
         Kick.theme = selectedTheme.toLibraryTheme()
@@ -46,6 +49,10 @@ fun App() {
     LaunchedEffect(Unit) {
         Kick.controlPanel.event.collect { event ->
             println("Control panel event: $event")
+            if (event is ControlPanelEvent.ButtonClicked && event.id == CONTROL_PANEL_CLOSE_BUTTON_ID) {
+                Kick.close()
+                showButtonAlert = true
+            }
         }
     }
 
@@ -67,6 +74,17 @@ fun App() {
                     )
                 }
             }
+        }
+        if (showButtonAlert) {
+            AlertDialog(
+                onDismissRequest = { showButtonAlert = false },
+                confirmButton = {
+                    Button(onClick = { showButtonAlert = false }) {
+                        Text("OK")
+                    }
+                },
+                text = { Text("Вы кликнули кнопку") },
+            )
         }
     }
 }

@@ -1,6 +1,7 @@
 package ru.bartwell.kick.runtime.core.util
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import com.arkivanov.decompose.DefaultComponentContext
@@ -50,6 +51,13 @@ internal actual object LaunchManager {
         )
 
         ComposeViewport(root) {
+            LaunchedEffect(Unit) {
+                ViewerCommands.closeRequests.collect {
+                    val el = document.getElementById(ROOT_ID)
+                    el?.parentElement?.removeChild(el)
+                    WindowStateManager.getInstance()?.setWindowClosed()
+                }
+            }
             CompositionLocalProvider(LocalOverlayRoot provides root) {
                 App(rootComponent)
             }

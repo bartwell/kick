@@ -1,6 +1,7 @@
 package ru.bartwell.kick.runtime.core.util
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.awt.ComposeWindow
 import com.arkivanov.decompose.DefaultComponentContext
@@ -55,6 +56,12 @@ internal actual object LaunchManager {
             })
 
             setContent {
+                LaunchedEffect(Unit) {
+                    ViewerCommands.closeRequests.collect {
+                        window.dispose()
+                        WindowStateManager.getInstance()?.setWindowClosed()
+                    }
+                }
                 CompositionLocalProvider(LocalComposeWindow provides window) {
                     App(rootComponent)
                 }
