@@ -46,7 +46,7 @@ internal class DefaultControlPanelComponent(
     }
 
     override fun onActionButtonClick(id: String) {
-        ControlPanelActions.emitButtonClick(id)
+        ControlPanelActions.emitEvent(ControlPanelEvent.ButtonClicked(id))
     }
 
     private fun loadValues(): Map<String, InputType> =

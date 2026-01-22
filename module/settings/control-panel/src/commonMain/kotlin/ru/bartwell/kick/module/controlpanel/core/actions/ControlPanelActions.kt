@@ -18,7 +18,4 @@ internal object ControlPanelActions {
         _events.tryEmit(event)
     }
 
-    fun emitButtonClick(id: String) {
-        emitEvent(ControlPanelEvent.ButtonClicked(id))
-    }
 }
