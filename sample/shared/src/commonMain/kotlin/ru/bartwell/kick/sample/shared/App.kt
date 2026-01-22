@@ -74,17 +74,17 @@ fun App() {
                     )
                 }
             }
-        }
-        if (showButtonAlert) {
-            AlertDialog(
-                onDismissRequest = { showButtonAlert = false },
-                confirmButton = {
-                    Button(onClick = { showButtonAlert = false }) {
-                        Text("OK")
-                    }
-                },
-                text = { Text("Вы кликнули кнопку") },
-            )
+            if (showButtonAlert) {
+                AlertDialog(
+                    onDismissRequest = { showButtonAlert = false },
+                    confirmButton = {
+                        Button(onClick = { showButtonAlert = false }) {
+                            Text("OK")
+                        }
+                    },
+                    text = { Text("Вы кликнули кнопку") },
+                )
+            }
         }
     }
 }
