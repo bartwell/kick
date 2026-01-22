@@ -82,7 +82,7 @@ fun App() {
                             Text("OK")
                         }
                     },
-                    text = { Text("Вы кликнули кнопку") },
+                    text = { Text("You clicked the button") },
                 )
             }
         }
