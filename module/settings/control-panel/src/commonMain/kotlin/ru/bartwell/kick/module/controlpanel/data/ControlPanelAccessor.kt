@@ -25,8 +25,4 @@ public class ControlPanelAccessor internal constructor() {
 
     public fun getString(key: String): String = ControlPanelSettings.get<InputType.String>(key).value
     public fun getStringOrNull(key: String): String? = ControlPanelSettings.getOrNull<InputType.String>(key)?.value
-
-    public fun onButtonClick(listener: (id: String) -> Unit) {
-        ControlPanelActions.onButtonClick = listener
-    }
 }

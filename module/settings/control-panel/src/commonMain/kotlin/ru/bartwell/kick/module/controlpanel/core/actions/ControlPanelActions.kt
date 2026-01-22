@@ -14,14 +14,11 @@ internal object ControlPanelActions {
     )
     val events: SharedFlow<ControlPanelEvent> = _events.asSharedFlow()
 
-    var onButtonClick: ((id: String) -> Unit)? = null
-
     fun emitEvent(event: ControlPanelEvent) {
         _events.tryEmit(event)
     }
 
     fun emitButtonClick(id: String) {
         emitEvent(ControlPanelEvent.ButtonClicked(id))
-        onButtonClick?.invoke(id)
     }
 }

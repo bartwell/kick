@@ -80,7 +80,7 @@ internal fun ControlPanelContent(
                 RenderItemRow(
                     item = item,
                     value = state.values[item.name],
-                    onValueChange = { name, newValue -> component.onValueChange(name, newValue) },
+                    onValueChange = component::onValueChange,
                     onActionButtonClick = component::onActionButtonClick,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -108,7 +108,7 @@ internal fun ControlPanelContent(
                         RenderItemRow(
                             item = cpItem,
                             value = state.values[cpItem.name],
-                            onValueChange = { name, newValue -> component.onValueChange(name, newValue) },
+                            onValueChange = component::onValueChange,
                             onActionButtonClick = component::onActionButtonClick,
                         )
                         Spacer(modifier = Modifier.height(16.dp))

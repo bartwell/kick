@@ -6,8 +6,8 @@ import com.arkivanov.decompose.value.Value
 import ru.bartwell.kick.module.controlpanel.core.actions.ControlPanelActions
 import ru.bartwell.kick.module.controlpanel.core.persists.ControlPanelSettings
 import ru.bartwell.kick.module.controlpanel.data.ActionType
-import ru.bartwell.kick.module.controlpanel.data.ControlPanelItem
 import ru.bartwell.kick.module.controlpanel.data.ControlPanelEvent
+import ru.bartwell.kick.module.controlpanel.data.ControlPanelItem
 import ru.bartwell.kick.module.controlpanel.data.InputType
 
 internal class DefaultControlPanelComponent(
