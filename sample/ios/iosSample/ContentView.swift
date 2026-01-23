@@ -10,6 +10,9 @@ enum DatabaseType: String, CaseIterable, Identifiable {
 
 struct ContentView: View {
     @State private var selectedTheme: AppTheme = .auto
+    @State private var showButtonAlert = false
+    @State private var isCollectingEvents = false
+    @State private var controlPanelCollector: ControlPanelEventCollector?
     
     var body: some View {
         VStack(spacing: 20) {
@@ -34,6 +37,29 @@ struct ContentView: View {
         .preferredColorScheme(colorScheme(for: selectedTheme))
         .onAppear {
             KickKt.shared.theme = selectedTheme.toLibraryTheme()
+            startControlPanelEventCollection()
+        }
+        .alert("You clicked the button", isPresented: $showButtonAlert) {
+            Button("OK", role: .cancel) { }
+        }
+    }
+
+    private func startControlPanelEventCollection() {
+        guard !isCollectingEvents else { return }
+        isCollectingEvents = true
+        let collector = ControlPanelEventCollector { event in
+            print("Control panel event: \(event)")
+            if let clicked = event as? ControlPanelEventButtonClicked,
+               clicked.id == ControlPanelBridgeKt.controlPanelCloseButtonId() {
+                KickKt.shared.close()
+                showButtonAlert = true
+            }
+        }
+        controlPanelCollector = collector
+        ControlPanelBridgeKt.controlPanelEvents().collect(collector: collector) { error in
+            if let error = error {
+                print("Control panel event collection error: \(error)")
+            }
         }
     }
     
@@ -46,5 +72,18 @@ struct ContentView: View {
         case .light:
             return .light
         }
+    }
+}
+
+final class ControlPanelEventCollector: Kotlinx_coroutines_coreFlowCollector {
+    private let onEvent: (Any?) -> Void
+
+    init(onEvent: @escaping (Any?) -> Void) {
+        self.onEvent = onEvent
+    }
+
+    func emit(value: Any?, completionHandler: @escaping (Error?) -> Void) {
+        onEvent(value)
+        completionHandler(nil)
     }
 }
