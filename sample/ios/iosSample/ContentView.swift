@@ -56,7 +56,7 @@ struct ContentView: View {
             }
         }
         controlPanelCollector = collector
-        KickCompanion.shared.controlPanel.event.collect(collector: collector) { error in
+        KickCompanion.shared.controlPanel.events.collect(collector: collector) { error in
             if let error = error {
                 print("Control panel event collection error: \(error)")
             }

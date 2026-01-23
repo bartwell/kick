@@ -47,7 +47,7 @@ fun App() {
     }
 
     LaunchedEffect(Unit) {
-        Kick.controlPanel.event.collect { event ->
+        Kick.controlPanel.events.collect { event ->
             println("Control panel event: $event")
             if (event is ControlPanelEvent.ButtonClicked && event.id == "show_alert") {
                 Kick.close()
