@@ -4,7 +4,7 @@ import shared
 enum DatabaseType: String, CaseIterable, Identifiable {
     case sqlDelight = "SqlDelight"
     case room = "Room"
-    
+
     var id: String { self.rawValue }
 }
 
@@ -13,7 +13,7 @@ struct ContentView: View {
     @State private var showButtonAlert = false
     @State private var isCollectingEvents = false
     @State private var controlPanelCollector: ControlPanelEventCollector?
-    
+
     var body: some View {
         VStack(spacing: 20) {
             Picker("Select theme", selection: $selectedTheme) {
@@ -23,7 +23,7 @@ struct ContentView: View {
             }
             .pickerStyle(SegmentedPickerStyle())
             .padding()
-            
+
             Button("Launch viewer") {
                 KickKt.shared.launch(context: PlatformContextKt.getPlatformContext())
             }
@@ -49,20 +49,20 @@ struct ContentView: View {
         isCollectingEvents = true
         let collector = ControlPanelEventCollector { event in
             print("Control panel event: \(event)")
-            if let clicked = event as? ControlPanelEventButtonClicked,
-               clicked.id == ControlPanelBridgeKt.controlPanelCloseButtonId() {
+            if let clicked = event as? ControlPanelEvent.ButtonClicked,
+               clicked.id == "show_alert" {
                 KickKt.shared.close()
                 showButtonAlert = true
             }
         }
         controlPanelCollector = collector
-        ControlPanelBridgeKt.controlPanelEvents().collect(collector: collector) { error in
+        KickCompanion.shared.controlPanel.event.collect(collector: collector) { error in
             if let error = error {
                 print("Control panel event collection error: \(error)")
             }
         }
     }
-    
+
     private func colorScheme(for theme: AppTheme) -> ColorScheme? {
         switch theme {
         case .auto:
