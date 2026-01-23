@@ -1,5 +1,6 @@
 package ru.bartwell.kick.runtime.core.util
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
@@ -41,6 +42,11 @@ internal object IosSceneController {
             startScreen = startScreen,
         )
         val uiViewController = ComposeUIViewController(configure = { enforceStrictPlistSanityCheck = false }) {
+            LaunchedEffect(Unit) {
+                ViewerCommands.closeRequests.collect {
+                    dismiss()
+                }
+            }
             App(rootComponent)
         }
         lifecycle.create()

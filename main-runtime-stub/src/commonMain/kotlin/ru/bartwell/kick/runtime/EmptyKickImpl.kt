@@ -22,5 +22,12 @@ internal class EmptyKickImpl : Kick {
         )
     }
 
+    override fun close() {
+        println(
+            "Kick: Unable to close the viewer because a stub module has been added. " +
+                "Please ensure that both the `main-core` and `main-runtime` modules are correctly configured"
+        )
+    }
+
     override fun getShortcutId(): String = ""
 }

@@ -10,6 +10,7 @@ public interface Kick {
     public val modules: List<Module>
     public fun launch(context: PlatformContext)
     public fun launch(context: PlatformContext, startScreen: StartScreen?)
+    public fun close()
     public fun getShortcutId(): String
 
     public companion object Companion {
@@ -32,6 +33,10 @@ public interface Kick {
 
         public fun launch(context: PlatformContext, startScreen: StartScreen?) {
             instance?.launch(context, startScreen)
+        }
+
+        public fun close() {
+            instance?.close()
         }
 
         public fun getShortcutId(): String = instance?.getShortcutId() ?: ""

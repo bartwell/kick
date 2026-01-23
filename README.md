@@ -285,7 +285,7 @@ Kick.controlPanel.getString("list")
 You can also add action buttons to trigger code in your app. Collect control panel events and handle button IDs you defined in `ControlPanelItem(type = ActionType.Button("id"))`:
 
 ```
-Kick.controlPanel.event.collect { event ->
+Kick.controlPanel.events.collect { event ->
     when (event) {
         is ControlPanelEvent.ButtonClicked -> when (event.id) {
             "refresh_cache" -> refreshCache()
@@ -415,6 +415,20 @@ In Swift:
 Button("Kick") {
     KickKt.shared.launch(context: PlatformContextKt.getPlatformContext())
 }
+```
+
+To close the viewer programmatically, call `Kick.close()`:
+
+In Kotlin:
+
+```kotlin
+Kick.close()
+```
+
+In Swift:
+
+```swift
+KickKt.shared.close()
 ```
 
 ## Shortcuts

@@ -46,8 +46,10 @@ kotlin {
             export(projects.mainCore)
             if (isRelease) {
                 export(projects.mainRuntimeStub)
+                export(projects.controlPanelStub)
             } else {
                 export(projects.mainRuntime)
+                export(projects.controlPanel)
             }
         }
     }

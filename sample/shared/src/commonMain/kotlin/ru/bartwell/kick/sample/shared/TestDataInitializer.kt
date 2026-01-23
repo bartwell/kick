@@ -171,9 +171,9 @@ class TestDataInitializer(context: PlatformContext) {
             type = ActionType.Button("aaaaaa"),
         ),
         ControlPanelItem(
-            name = "Log B",
+            name = "Show alert",
             category = "Actions",
-            type = ActionType.Button("bbbbbb"),
+            type = ActionType.Button("show_alert"),
         ),
     )
 }

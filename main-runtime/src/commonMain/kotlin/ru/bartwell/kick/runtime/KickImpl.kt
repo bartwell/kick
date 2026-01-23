@@ -8,6 +8,7 @@ import ru.bartwell.kick.core.data.Theme
 import ru.bartwell.kick.core.util.WindowStateManager
 import ru.bartwell.kick.runtime.core.util.LaunchManager
 import ru.bartwell.kick.runtime.core.util.ShortcutManager
+import ru.bartwell.kick.runtime.core.util.ViewerCommands
 import ru.bartwell.kick.runtime.core.util.WindowStateManagerImpl
 import ru.bartwell.kick.runtime.core.util.id
 
@@ -32,6 +33,10 @@ internal class KickImpl(
 
     override fun launch(context: PlatformContext, startScreen: StartScreen?) {
         LaunchManager.launch(context, modules, startScreen)
+    }
+
+    override fun close() {
+        ViewerCommands.requestClose()
     }
 
     override fun getShortcutId(): String = ShortcutManager.id
