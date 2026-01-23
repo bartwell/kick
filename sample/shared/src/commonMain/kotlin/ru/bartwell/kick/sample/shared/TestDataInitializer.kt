@@ -176,7 +176,7 @@ class TestDataInitializer(context: PlatformContext) {
             type = ActionType.Button("bbbbbb"),
         ),
         ControlPanelItem(
-            name = "Close viewer",
+            name = "Show alert",
             category = "Actions",
             type = ActionType.Button(CONTROL_PANEL_CLOSE_BUTTON_ID),
         ),
