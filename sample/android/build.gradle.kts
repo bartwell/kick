@@ -41,5 +41,7 @@ android {
 
 dependencies {
     implementation(projects.shared)
+    implementation(projects.firebaseCloudMessaging)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.firebase.messaging)
 }

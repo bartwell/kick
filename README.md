@@ -16,6 +16,7 @@ Less complexity, faster development, total visibility. That's Kick.
     - [Ktor3](#ktor3)
     - [SQLite](#sqlite)
     - [Logging](#logging)
+    - [Firebase Cloud Messaging](#firebase-cloud-messaging)
     - [Multiplatform Settings](#multiplatform-settings)
     - [Control Panel](#control-panel)
     - [File Explorer](#file-explorer)
@@ -73,6 +74,7 @@ kotlin {
                 implementation("ru.bartwell.kick:multiplatform-settings-stub:1.0.0")
                 implementation("ru.bartwell.kick:file-explorer-stub:1.0.0")
                 implementation("ru.bartwell.kick:layout-stub:1.0.0")
+                implementation("ru.bartwell.kick:firebase-cloud-messaging-stub:1.0.0")
             } else {
                 implementation("ru.bartwell.kick:main-runtime:1.0.0")
                 implementation("ru.bartwell.kick:ktor3:1.0.0")
@@ -84,6 +86,7 @@ kotlin {
                 implementation("ru.bartwell.kick:multiplatform-settings:1.0.0")
                 implementation("ru.bartwell.kick:file-explorer:1.0.0")
                 implementation("ru.bartwell.kick:layout:1.0.0")
+                implementation("ru.bartwell.kick:firebase-cloud-messaging:1.0.0")
             }
         }
     }
@@ -107,6 +110,7 @@ Kick.init(context) {
     module(MultiplatformSettingsModule(listOf("MySettings1" to settings1, "MySettings2" to settings2)))
     module(FileExplorerModule())
     module(LayoutModule(context))
+    module(FirebaseCloudMessagingModule(context))
 }
 ```
 
@@ -208,6 +212,63 @@ Kick.init(context) {
 ```
 
 If no extractor is provided, label chips are hidden and only text filtering is available.
+
+### Firebase Cloud Messaging
+
+Capture and inspect push notifications (FCM on Android, APNS on iOS) inside Kick.
+
+**Enable the module:** add `FirebaseCloudMessagingModule(context)` to your `Kick.init { ... }` module list.
+
+**Platforms:** supported on Android and iOS. Not supported on JVM and Web.
+
+**Android (FCM):** call `Kick.firebaseCloudMessaging.handleFcm(message)` from your `FirebaseMessagingService.onMessageReceived`.
+
+```kotlin
+class MyMessagingService : FirebaseMessagingService() {
+    override fun onMessageReceived(message: RemoteMessage) {
+        // your app logic...
+        Kick.firebaseCloudMessaging.handleFcm(message)
+    }
+}
+```
+
+**iOS (APNS):** call the appropriate handler when a push is received.
+Use one of the two `handleApnsPayload` overloads depending on the payload type you have (`NSDictionary` or Swift `[AnyHashable: Any]`),
+or call `handleApnsNotification` if you already have a `UNNotification`.
+
+```swift
+import UserNotifications
+import shared
+
+final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo)
+        completionHandler(.noData)
+    }
+
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: NSDictionary,
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo)
+        completionHandler(.noData)
+    }
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        KickCompanion.shared.firebaseCloudMessaging.handleApnsNotification(notification: response.notification)
+        completionHandler()
+    }
+}
+```
 
 ### Multiplatform Settings
 

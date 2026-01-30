@@ -8,3 +8,5 @@ actual fun createRoomModule(context: PlatformContext): Module? = null
 
 @Suppress(names = ["EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING"])
 actual fun createLayoutModule(context: PlatformContext): Module? = null
+
+actual fun createFirebaseCloudMessagingModule(context: PlatformContext): Module? = null
