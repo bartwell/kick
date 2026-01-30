@@ -94,6 +94,7 @@ class TestDataInitializer(context: PlatformContext) {
             module(ControlPanelModule(context, createControlPanelItems()))
             module(OverlayModule(context))
             createFirebaseCloudMessagingModule(context)?.let { module(it) }
+            createFirebaseAnalyticsModule(context)?.let { module(it) }
         }
 
         startTestLogging()
@@ -183,3 +184,4 @@ class TestDataInitializer(context: PlatformContext) {
 expect fun createRoomModule(context: PlatformContext): Module?
 expect fun createLayoutModule(context: PlatformContext): Module?
 expect fun createFirebaseCloudMessagingModule(context: PlatformContext): Module?
+expect fun createFirebaseAnalyticsModule(context: PlatformContext): Module?
