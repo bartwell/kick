@@ -1,0 +1,60 @@
+import kotlin.collections.Map;
+import kotlin.String;
+
+CREATE TABLE fcmMessage (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT,
+  body TEXT,
+  dataPayload TEXT AS Map<String, String> NOT NULL,
+  fromAddress TEXT,
+  toAddress TEXT,
+  messageId TEXT,
+  sentTimeMillis INTEGER,
+  collapseKey TEXT,
+  channelId TEXT,
+  category TEXT,
+  threadId TEXT,
+  badge TEXT,
+  sound TEXT,
+  tag TEXT,
+  imageUrl TEXT,
+  priority TEXT,
+  ttlSeconds INTEGER,
+  rawPayload TEXT AS Map<String, String> NOT NULL,
+  receivedAtMillis INTEGER NOT NULL
+);
+
+selectAll:
+SELECT * FROM fcmMessage ORDER BY receivedAtMillis DESC;
+
+insertMessage:
+INSERT INTO fcmMessage (
+  title,
+  body,
+  dataPayload,
+  fromAddress,
+  toAddress,
+  messageId,
+  sentTimeMillis,
+  collapseKey,
+  channelId,
+  category,
+  threadId,
+  badge,
+  sound,
+  tag,
+  imageUrl,
+  priority,
+  ttlSeconds,
+  rawPayload,
+  receivedAtMillis
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+deleteAll:
+DELETE FROM fcmMessage;
+
+trimToSize:
+DELETE FROM fcmMessage
+WHERE id NOT IN (
+  SELECT id FROM fcmMessage ORDER BY receivedAtMillis DESC LIMIT ?
+);

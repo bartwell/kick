@@ -16,8 +16,8 @@ import ru.bartwell.kick.module.controlpanel.core.component.child.ControlPanelChi
 import ru.bartwell.kick.module.controlpanel.core.component.config.ControlPanelConfig
 import ru.bartwell.kick.module.controlpanel.core.persists.ControlPanelSettings
 import ru.bartwell.kick.module.controlpanel.data.ControlPanelItem
-import ru.bartwell.kick.module.controlpanel.feature.presentation.ControlPanelContent
-import ru.bartwell.kick.module.controlpanel.feature.presentation.DefaultControlPanelComponent
+import ru.bartwell.kick.module.controlpanel.feature.main.presentation.ControlPanelContent
+import ru.bartwell.kick.module.controlpanel.feature.main.presentation.DefaultControlPanelComponent
 
 public class ControlPanelModule(
     context: PlatformContext,
