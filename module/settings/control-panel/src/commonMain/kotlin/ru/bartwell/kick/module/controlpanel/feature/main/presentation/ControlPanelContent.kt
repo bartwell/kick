@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Save
@@ -42,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import ru.bartwell.kick.core.presentation.BackOrCloseButton
 import ru.bartwell.kick.core.ui.ExposedDropdownMenuBox
 import ru.bartwell.kick.module.controlpanel.data.ActionType
 import ru.bartwell.kick.module.controlpanel.data.ControlPanelItem
@@ -60,9 +60,7 @@ internal fun ControlPanelContent(
         TopAppBar(
             title = { Text("Control Panel") },
             navigationIcon = {
-                IconButton(onClick = component::onBackPressed, modifier = Modifier.testTag("back")) {
-                    Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
-                }
+                BackOrCloseButton(onBack = component::onBackPressed)
             },
             actions = {
                 IconButton(onClick = component::onSavePressed, modifier = Modifier.testTag("save")) {
