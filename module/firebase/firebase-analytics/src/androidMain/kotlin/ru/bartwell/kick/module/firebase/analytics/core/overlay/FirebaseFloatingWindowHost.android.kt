@@ -8,14 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.isVisible
+import ru.bartwell.kick.Kick
+import ru.bartwell.kick.core.data.ModuleDescription
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.core.data.StartScreen
 import ru.bartwell.kick.core.data.get
+import ru.bartwell.kick.module.firebase.analytics.core.component.config.FirebaseAnalyticsConfig
 import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
-import ru.bartwell.kick.module.firebase.analytics.core.util.FirebaseFloatingWindowState
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 
@@ -25,21 +27,33 @@ private const val INITIAL_Y = 144f
 
 internal actual object FirebaseFloatingWindowHost {
     private var callbacks: FloatingWindowCallbacks? = null
+    private var platformContext: PlatformContext? = null
 
     actual fun init(context: PlatformContext) {
+        platformContext = context
         val app = context.get().applicationContext as? Application ?: return
         if (callbacks != null) return
-        callbacks = FloatingWindowCallbacks(app)
+        callbacks = FloatingWindowCallbacks(app) { openAnalyticsModule() }
         app.registerActivityLifecycleCallbacks(callbacks)
     }
 
     actual fun setVisible(enabled: Boolean) {
         callbacks?.setVisible(enabled)
     }
+
+    private fun openAnalyticsModule() {
+        platformContext?.let { context ->
+            Kick.launch(
+                context = context,
+                startScreen = StartScreen(FirebaseAnalyticsConfig, ModuleDescription.FIREBASE_ANALYTICS),
+            )
+        }
+    }
 }
 
 private class FloatingWindowCallbacks(
     private val app: Application,
+    private val onClick: () -> Unit,
 ) : Application.ActivityLifecycleCallbacks {
 
     private val overlays = WeakHashMap<Activity, DraggableContainer>()
@@ -119,9 +133,7 @@ private class FloatingWindowCallbacks(
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
             setContent {
                 MaterialTheme {
-                    FirebaseFloatingWindowContent(onClose = {
-                        FirebaseFloatingWindowState.setVisible(false)
-                    })
+                    FirebaseFloatingWindowContent(onClick = onClick)
                 }
             }
             isClickable = true

@@ -3,7 +3,6 @@ package ru.bartwell.kick.module.firebase.analytics.feature.main.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,7 +30,6 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.presentation.ErrorBox
 import ru.bartwell.kick.core.util.DateUtils
 import ru.bartwell.kick.module.firebase.analytics.core.data.AnalyticsEvent
-import ru.bartwell.kick.module.firebase.analytics.core.data.UserProperty
 import ru.bartwell.kick.module.firebase.analytics.core.util.FirebaseFloatingWindowState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,10 +57,6 @@ internal fun FirebaseAnalyticsContent(
                 }
             }
         )
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            UserIdBlock(userId = state.userId)
-            PropertyPreview(properties = state.properties)
-        }
         FloatingWindowToggle(visible = floatingVisible, onToggle = FirebaseFloatingWindowState::setVisible)
         ErrorBox(modifier = Modifier.fillMaxSize(), error = state.error) {
             LazyColumn(
@@ -97,42 +91,6 @@ private fun FloatingWindowToggle(visible: Boolean, onToggle: (Boolean) -> Unit) 
     ) {
         Text("Floating window", style = MaterialTheme.typography.bodyLarge)
         Switch(checked = visible, onCheckedChange = onToggle)
-    }
-}
-
-@Composable
-private fun UserIdBlock(userId: String?) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
-            Text(
-                text = "User id",
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Spacer(modifier = Modifier.padding(top = 4.dp))
-            Text(
-                text = userId ?: "Not set",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
-}
-
-@Composable
-private fun PropertyPreview(properties: List<UserProperty>) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(text = "Properties", style = MaterialTheme.typography.titleMedium)
-            if (properties.isEmpty()) {
-                Text(text = "No properties", style = MaterialTheme.typography.bodyMedium)
-            } else {
-                properties.forEach { property ->
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(text = property.name, style = MaterialTheme.typography.bodySmall)
-                        Text(text = property.value, style = MaterialTheme.typography.bodyMedium)
-                    }
-                }
-            }
-        }
     }
 }
 

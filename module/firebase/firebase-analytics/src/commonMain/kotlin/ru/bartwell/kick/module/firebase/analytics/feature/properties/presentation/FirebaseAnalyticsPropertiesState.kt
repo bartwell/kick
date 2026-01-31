@@ -4,5 +4,6 @@ import ru.bartwell.kick.module.firebase.analytics.core.data.UserProperty
 
 internal data class FirebaseAnalyticsPropertiesState(
     val properties: List<UserProperty> = emptyList(),
+    val userId: String? = null,
     val error: String? = null,
 )

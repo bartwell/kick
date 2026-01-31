@@ -1,17 +1,13 @@
 package ru.bartwell.kick.module.firebase.analytics.core.overlay
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,13 +20,15 @@ import androidx.compose.ui.unit.dp
 import ru.bartwell.kick.module.firebase.analytics.core.util.FirebaseFloatingWindowState
 
 @Composable
-internal fun FirebaseFloatingWindowContent(onClose: () -> Unit) {
+internal fun FirebaseFloatingWindowContent(onClick: () -> Unit) {
     val lines by FirebaseFloatingWindowState.lines.collectAsState()
     Surface(
         tonalElevation = 8.dp,
         shadowElevation = 12.dp,
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        modifier = Modifier.clickable(onClick = onClick),
     ) {
         Box(
             modifier = Modifier
@@ -43,12 +41,12 @@ internal fun FirebaseFloatingWindowContent(onClose: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 if (lines.isEmpty()) {
-                    Text(
-                        text = "No analytics data",
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                } else {
-                    lines.forEach { line ->
+                Text(
+                    text = "No analytics data",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            } else {
+                lines.forEach { line ->
                         Text(
                             text = line,
                             style = MaterialTheme.typography.bodySmall,
@@ -58,18 +56,6 @@ internal fun FirebaseFloatingWindowContent(onClose: () -> Unit) {
                 }
             }
 
-            IconButton(
-                onClick = onClose,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(24.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close analytics overlay",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
         }
     }
 }

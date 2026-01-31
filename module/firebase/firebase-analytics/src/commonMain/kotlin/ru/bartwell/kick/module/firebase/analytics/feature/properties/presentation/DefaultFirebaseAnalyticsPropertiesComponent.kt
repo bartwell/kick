@@ -22,6 +22,7 @@ internal class DefaultFirebaseAnalyticsPropertiesComponent(
 
     init {
         subscribeProperties()
+        subscribeUserId()
     }
 
     override fun onBackPressed() = onFinished()
@@ -30,6 +31,14 @@ internal class DefaultFirebaseAnalyticsPropertiesComponent(
         database.getPropertyDao()
             .getAllAsFlow()
             .onEach { updateState { copy(properties = it, error = null) } }
+            .catch { updateState { copy(error = it.toString()) } }
+            .launchIn(uiScope)
+    }
+
+    private fun subscribeUserId() {
+        database.getUserIdDao()
+            .getLatestAsFlow()
+            .onEach { updateState { copy(userId = it?.value) } }
             .catch { updateState { copy(error = it.toString()) } }
             .launchIn(uiScope)
     }
