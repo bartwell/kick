@@ -3,10 +3,12 @@ package ru.bartwell.kick.runtime.core.component
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.component.RootComponent
 import ru.bartwell.kick.core.presentation.AppUiEnvironment
 import ru.bartwell.kick.core.presentation.LocalAppUiEnvironment
@@ -21,7 +23,11 @@ internal fun RootContent(
     component: RootComponent,
     modifier: Modifier = Modifier,
 ) {
-    val environment = AppUiEnvironment(screenCloser = screenCloser())
+    val stack by component.stack.subscribeAsState()
+    val environment = AppUiEnvironment(
+        screenCloser = screenCloser(),
+        canNavigateBack = stack.backStack.isNotEmpty(),
+    )
     CompositionLocalProvider(LocalAppUiEnvironment provides environment) {
         Children(
             stack = component.stack,
