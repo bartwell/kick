@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.isVisible
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.core.data.get
+import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
 import ru.bartwell.kick.module.firebase.analytics.core.util.FirebaseFloatingWindowState
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
@@ -41,13 +42,16 @@ private class FloatingWindowCallbacks(
     private val app: Application,
 ) : Application.ActivityLifecycleCallbacks {
 
-    private val overlays = WeakHashMap<Activity, FrameLayout>()
+    private val overlays = WeakHashMap<Activity, DraggableContainer>()
     private var currentActivity: WeakReference<Activity> = WeakReference(null)
     private var visible = false
 
     fun setVisible(enabled: Boolean) {
         visible = enabled
-        overlays.values.forEach { it.isVisible = enabled }
+        overlays.values.forEach { container ->
+            container.isVisible = enabled
+            applyStoredTranslation(container.dragTarget)
+        }
         if (enabled) {
             currentActivity.get()?.let { attach(it) }
         }
@@ -63,7 +67,10 @@ private class FloatingWindowCallbacks(
 
     override fun onActivityResumed(activity: Activity) {
         currentActivity = WeakReference(activity)
-        overlays[activity]?.isVisible = visible
+        overlays[activity]?.let { container ->
+            container.isVisible = visible
+            applyStoredTranslation(container.dragTarget)
+        }
     }
 
     override fun onActivityPaused(activity: Activity) = Unit
@@ -80,8 +87,9 @@ private class FloatingWindowCallbacks(
 
     private fun attach(activity: Activity) {
         if (!visible) return
-        overlays[activity]?.let {
-            it.isVisible = true
+        overlays[activity]?.let { container ->
+            container.isVisible = true
+            applyStoredTranslation(container.dragTarget)
             return
         }
 
@@ -89,13 +97,16 @@ private class FloatingWindowCallbacks(
 
         root.findViewWithTag<View>(TAG)?.let { existing ->
             existing.isVisible = true
-            if (existing is FrameLayout) {
+            if (existing is DraggableContainer) {
                 overlays[activity] = existing
+                applyStoredTranslation(existing.dragTarget)
             }
             return
         }
 
-        val container = DraggableContainer(activity).apply {
+        val container = DraggableContainer(activity) { x, y ->
+            FirebaseFloatingWindowSettings.setPosition(x, y)
+        }.apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -114,8 +125,8 @@ private class FloatingWindowCallbacks(
                 }
             }
             isClickable = true
-            translationX = INITIAL_X
-            translationY = INITIAL_Y
+            translationX = FirebaseFloatingWindowSettings.getPositionX().takeIf { it.isValid() } ?: INITIAL_X
+            translationY = FirebaseFloatingWindowSettings.getPositionY().takeIf { it.isValid() } ?: INITIAL_Y
         }
 
         container.dragTarget = composeView
@@ -139,4 +150,15 @@ private class FloatingWindowCallbacks(
             runCatching { root.removeView(view) }
         }
     }
+
+    private fun applyStoredTranslation(target: View?) {
+        val x = FirebaseFloatingWindowSettings.getPositionX()
+        val y = FirebaseFloatingWindowSettings.getPositionY()
+        target?.let {
+            if (x.isValid()) it.translationX = x
+            if (y.isValid()) it.translationY = y
+        }
+    }
 }
+
+private fun Float.isValid(): Boolean = !this.isNaN() && this.isFinite()

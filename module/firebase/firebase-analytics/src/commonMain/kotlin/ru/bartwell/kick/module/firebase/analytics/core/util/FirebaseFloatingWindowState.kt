@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 import ru.bartwell.kick.module.firebase.analytics.core.overlay.FirebaseFloatingWindowHost
+import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
 
 private data class FloatingEntry(val text: String)
 
@@ -27,9 +28,16 @@ internal object FirebaseFloatingWindowState {
         .map { entries -> entries.map { it.text } }
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
+    internal fun initialize() {
+        val enabled = FirebaseFloatingWindowSettings.isEnabled()
+        _visible.value = enabled
+        FirebaseFloatingWindowHost.setVisible(enabled)
+    }
+
     fun setVisible(enabled: Boolean) {
         _visible.value = enabled
         FirebaseFloatingWindowHost.setVisible(enabled)
+        FirebaseFloatingWindowSettings.setEnabled(enabled)
         if (!enabled) {
             _entries.value = emptyList()
         }

@@ -47,6 +47,7 @@ import platform.UIKit.setContentEdgeInsets
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
 import ru.bartwell.kick.module.firebase.analytics.core.util.FirebaseFloatingWindowState
 import kotlin.math.max
 import kotlin.math.min
@@ -70,6 +71,7 @@ internal actual object FirebaseFloatingWindowHost {
     private var overlayWindow: FirebasePassThroughWindow? = null
     private var panel: UIView? = null
     private var label: UILabel? = null
+    private var closeButton: UIButton? = null
     private var scope: CoroutineScope? = null
     private var panTarget: FirebasePanTarget? = null
     private var closeTarget: FirebaseButtonTarget? = null
@@ -110,6 +112,8 @@ internal actual object FirebaseFloatingWindowHost {
         if (window != null) {
             window.setHidden(false)
             window.makeKeyAndVisible()
+            panel?.let { applyStoredOrigin(it) }
+            panel?.let { relayout(it, label, closeButton ?: return) }
             return
         }
 
@@ -143,7 +147,9 @@ internal actual object FirebaseFloatingWindowHost {
         }
         val viewController = UIViewController().apply { setView(root) }
 
-        val mainView = UIView(frame = CGRectMake(0.0, 0.0, PANEL_WIDTH, PANEL_MIN_HEIGHT)).apply {
+        val originX = FirebaseFloatingWindowSettings.getPositionX().takeIf { !it.isNaN() } ?: INITIAL_X
+        val originY = FirebaseFloatingWindowSettings.getPositionY().takeIf { !it.isNaN() } ?: INITIAL_Y
+        val mainView = UIView(frame = CGRectMake(originX, originY, PANEL_WIDTH, PANEL_MIN_HEIGHT)).apply {
             setBackgroundColor(UIColor.whiteColor.colorWithAlphaComponent(BACKGROUND_ALPHA))
             setUserInteractionEnabled(true)
             layer?.setCornerRadius(CORNER)
@@ -174,6 +180,7 @@ internal actual object FirebaseFloatingWindowHost {
         panel = mainView
         label = textLabel
         panTarget = panGR.target as? FirebasePanTarget
+        closeButton = closeBtn
         label?.let { relayout(mainView, it, closeBtn) }
 
         scope = MainScope().also { sc ->
@@ -199,6 +206,7 @@ internal actual object FirebaseFloatingWindowHost {
         overlayWindow = null
         panel = null
         label = null
+        closeButton = null
         scope?.cancel()
         scope = null
         panTarget = null
@@ -216,6 +224,16 @@ internal actual object FirebaseFloatingWindowHost {
         panel.setFrame(CGRectMake(originX, originY, contentWidth, contentHeight))
         label.setFrame(CGRectMake(H_PADDING, CLOSE_MARGIN, contentWidth - H_PADDING * 2, contentHeight - CLOSE_MARGIN - H_PADDING))
         closeBtn.setFrame(CGRectMake(contentWidth - CLOSE_SIZE - CLOSE_MARGIN, CLOSE_MARGIN, CLOSE_SIZE, CLOSE_SIZE))
+        FirebaseFloatingWindowSettings.setPosition(originX.toFloat(), originY.toFloat())
+    }
+
+    private fun applyStoredOrigin(panel: UIView) {
+        val x = FirebaseFloatingWindowSettings.getPositionX()
+        val y = FirebaseFloatingWindowSettings.getPositionY()
+        if (!x.isNaN() && !y.isNaN()) {
+            val frame = panel.frame
+            panel.setFrame(CGRectMake(x.toDouble(), y.toDouble(), frame.size.width, frame.size.height))
+        }
     }
 
     private fun createCloseButton(): UIButton {
@@ -247,6 +265,8 @@ internal actual object FirebaseFloatingWindowHost {
             val nx = center.useContents { x } + dx
             val ny = center.useContents { y } + dy
             mainView.setCenter(CGPointMake(nx, ny))
+            val origin = mainView.frame.origin
+            FirebaseFloatingWindowSettings.setPosition(origin.useContents { x }.toFloat(), origin.useContents { y }.toFloat())
         }
         val panGR = UIPanGestureRecognizer(target = pan, action = NSSelectorFromString("onPan:"))
         panGR.setCancelsTouchesInView(false)

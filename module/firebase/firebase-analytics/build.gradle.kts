@@ -25,11 +25,6 @@ kotlin {
         }
     }
 
-    @Suppress("OPT_IN_USAGE")
-    wasmJs {
-        browser()
-    }
-
     listOf(
         iosX64(),
         iosArm64(),
@@ -41,22 +36,24 @@ kotlin {
         }
     }
 
-    jvm()
-
     sourceSets {
         commonMain.dependencies {
             implementation(projects.mainCore)
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(libs.decompose)
-            implementation(libs.decompose.extensions.compose)
-            implementation(libs.decompose.essenty.lifecycle.coroutines)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.sqldelight.coroutines.extensions)
-            implementation(libs.sqldelight.async.extensions)
-        }
+        implementation(compose.runtime)
+        implementation(compose.foundation)
+        implementation(compose.material3)
+        implementation(compose.materialIconsExtended)
+        implementation(libs.decompose)
+        implementation(libs.decompose.extensions.compose)
+        implementation(libs.decompose.essenty.lifecycle.coroutines)
+        implementation(libs.settings)
+        implementation(libs.settings.make.observable)
+        implementation(libs.settings.coroutines)
+        implementation(libs.settings.noArg)
+        implementation(libs.kotlinx.serialization.json)
+        implementation(libs.sqldelight.coroutines.extensions)
+        implementation(libs.sqldelight.async.extensions)
+    }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
@@ -67,19 +64,7 @@ kotlin {
         appleMain.dependencies {
             implementation(libs.sqldelight.native.driver)
         }
-        jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.sqldelight.driver.sqlite)
-        }
-        wasmJsMain.dependencies {
-            implementation(libs.sqldelight.web.worker.driver.wasm)
-        }
         iosTest.dependencies {
-            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-            implementation(compose.uiTest)
-            implementation(libs.kotlin.test)
-        }
-        wasmJsTest.dependencies {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
             implementation(libs.kotlin.test)

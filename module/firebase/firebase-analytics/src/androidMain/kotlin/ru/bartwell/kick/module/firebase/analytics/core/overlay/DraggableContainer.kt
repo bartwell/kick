@@ -1,6 +1,7 @@
 package ru.bartwell.kick.module.firebase.analytics.core.overlay
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -9,7 +10,8 @@ import kotlin.math.abs
 
 @Suppress("ReturnCount")
 internal class DraggableContainer(
-    context: android.content.Context
+    context: Context,
+    private val onPositionChanged: ((Float, Float) -> Unit)? = null,
 ) : FrameLayout(context) {
 
     var dragTarget: View? = null
@@ -70,6 +72,7 @@ internal class DraggableContainer(
                 lastY = event.rawY
                 t.translationX += dx
                 t.translationY += dy
+                onPositionChanged?.invoke(t.translationX, t.translationY)
                 return true
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
