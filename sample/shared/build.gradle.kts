@@ -48,10 +48,12 @@ kotlin {
                 export(projects.mainRuntimeStub)
                 export(projects.controlPanelStub)
                 export(projects.firebaseCloudMessagingStub)
+                export(projects.firebaseAnalyticsStub)
             } else {
                 export(projects.mainRuntime)
                 export(projects.controlPanel)
                 export(projects.firebaseCloudMessaging)
+                export(projects.firebaseAnalytics)
             }
         }
     }
@@ -127,18 +129,22 @@ kotlin {
             implementation(libs.sqldelight.android.driver)
             implementation(libs.ktor.client.okhttp)
             if (isRelease) {
-                implementation(projects.firebaseCloudMessaging)
+                api(projects.firebaseCloudMessagingStub)
+                api(projects.firebaseAnalyticsStub)
             } else {
-                implementation(projects.firebaseCloudMessaging)
+                api(projects.firebaseCloudMessaging)
+                api(projects.firebaseAnalytics)
             }
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
             implementation(libs.ktor.client.darwin)
             if (isRelease) {
-                implementation(projects.firebaseCloudMessagingStub)
+                api(projects.firebaseCloudMessagingStub)
+                api(projects.firebaseAnalyticsStub)
             } else {
                 api(projects.firebaseCloudMessaging)
+                api(projects.firebaseAnalytics)
             }
         }
         nonWasmMain.dependencies {

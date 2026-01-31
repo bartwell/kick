@@ -18,10 +18,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
@@ -29,6 +32,7 @@ import ru.bartwell.kick.core.presentation.ErrorBox
 import ru.bartwell.kick.core.util.DateUtils
 import ru.bartwell.kick.module.firebase.analytics.core.data.AnalyticsEvent
 import ru.bartwell.kick.module.firebase.analytics.core.data.UserProperty
+import ru.bartwell.kick.module.firebase.analytics.core.util.FirebaseFloatingWindowState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +41,7 @@ internal fun FirebaseAnalyticsContent(
     modifier: Modifier = Modifier,
 ) {
     val state by component.model.subscribeAsState()
-
+    val floatingVisible by FirebaseFloatingWindowState.visible.collectAsState()
     Column(modifier = modifier) {
         TopAppBar(
             title = { Text("Firebase Analytics") },
@@ -59,6 +63,7 @@ internal fun FirebaseAnalyticsContent(
             UserIdBlock(userId = state.userId)
             PropertyPreview(properties = state.properties)
         }
+        FloatingWindowToggle(visible = floatingVisible, onToggle = FirebaseFloatingWindowState::setVisible)
         ErrorBox(modifier = Modifier.fillMaxSize(), error = state.error) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
@@ -78,6 +83,20 @@ internal fun FirebaseAnalyticsContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun FloatingWindowToggle(visible: Boolean, onToggle: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text("Floating window", style = MaterialTheme.typography.bodyLarge)
+        Switch(checked = visible, onCheckedChange = onToggle)
     }
 }
 

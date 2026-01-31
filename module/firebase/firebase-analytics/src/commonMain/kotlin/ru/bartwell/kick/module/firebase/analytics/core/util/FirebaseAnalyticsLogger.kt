@@ -11,6 +11,7 @@ import ru.bartwell.kick.module.firebase.analytics.core.data.AnalyticsEvent
 import ru.bartwell.kick.module.firebase.analytics.core.data.UserId
 import ru.bartwell.kick.module.firebase.analytics.core.data.UserProperty
 import ru.bartwell.kick.module.firebase.analytics.core.persist.toEntity
+import ru.bartwell.kick.module.firebase.analytics.core.util.FirebaseFloatingWindowState
 
 private const val MAX_BUFFER = 1_000
 
@@ -79,6 +80,7 @@ internal object FirebaseAnalyticsLogger {
             name = name,
             params = params,
         )
+        FirebaseFloatingWindowState.append(buildEventLine(name, params))
         loggerScope.launch { eventFlow.emit(event) }
     }
 
@@ -87,6 +89,7 @@ internal object FirebaseAnalyticsLogger {
             value = id,
             timestamp = DateUtils.currentTimeMillis(),
         )
+        FirebaseFloatingWindowState.append(buildUserIdLine(id))
         loggerScope.launch { userIdFlow.emit(userId) }
     }
 
@@ -97,6 +100,18 @@ internal object FirebaseAnalyticsLogger {
             value = value,
             timestamp = DateUtils.currentTimeMillis(),
         )
+        FirebaseFloatingWindowState.append(buildPropertyLine(name, value))
         loggerScope.launch { propertyFlow.emit(property) }
     }
 }
+
+private fun buildEventLine(name: String, params: Map<String, String>): String {
+    val suffix = if (params.isEmpty()) "" else params.entries.joinToString(prefix = " {", postfix = "}") { "${it.key}=${it.value}" }
+    return "Event $name$suffix"
+}
+
+private fun buildUserIdLine(id: String?): String =
+    if (id.isNullOrBlank()) "User ID cleared" else "User ID $id"
+
+private fun buildPropertyLine(name: String, value: String): String =
+    "Property $name=$value"

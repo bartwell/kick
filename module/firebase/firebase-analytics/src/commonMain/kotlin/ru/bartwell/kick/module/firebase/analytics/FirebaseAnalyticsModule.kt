@@ -22,6 +22,7 @@ import ru.bartwell.kick.module.firebase.analytics.core.component.config.Firebase
 import ru.bartwell.kick.module.firebase.analytics.core.component.config.FirebaseAnalyticsPropertiesConfig
 import ru.bartwell.kick.module.firebase.analytics.core.persist.DatabaseBuilder
 import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseAnalyticsDatabase
+import ru.bartwell.kick.module.firebase.analytics.core.overlay.FirebaseFloatingWindowHost
 import ru.bartwell.kick.module.firebase.analytics.core.util.DatabaseHolder
 import ru.bartwell.kick.module.firebase.analytics.feature.main.presentation.DefaultFirebaseAnalyticsComponent
 import ru.bartwell.kick.module.firebase.analytics.feature.main.presentation.FirebaseAnalyticsContent
@@ -37,6 +38,7 @@ public class FirebaseAnalyticsModule(
     private val database: FirebaseAnalyticsDatabase = DatabaseBuilder().createDatabase(platformContext)
 
     init {
+        FirebaseFloatingWindowHost.init(platformContext)
         DatabaseHolder.database = database
         CoroutineScope(Dispatchers.Default).launch {
             database.getPropertyDao().deleteAll()
