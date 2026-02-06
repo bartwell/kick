@@ -1,6 +1,7 @@
 package ru.bartwell.kick.module.firebase.analytics.core.overlay
 
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.useContents
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -17,18 +18,13 @@ import platform.Foundation.NSSelectorFromString
 import platform.UIKit.NSLineBreakByWordWrapping
 import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationDidBecomeActiveNotification
-import platform.UIKit.UIButton
-import platform.UIKit.UIButtonTypeSystem
 import platform.UIKit.UIColor
-import platform.UIKit.UIControlEventTouchUpInside
-import platform.UIKit.UIControlStateNormal
-import platform.UIKit.UIEdgeInsetsMake
 import platform.UIKit.UIFont
 import platform.UIKit.UIFontWeightRegular
-import platform.UIKit.UIImage
 import platform.UIKit.UILabel
 import platform.UIKit.UIPanGestureRecognizer
 import platform.UIKit.UIScreen
+import platform.UIKit.UITapGestureRecognizer
 import platform.UIKit.UIView
 import platform.UIKit.UIViewAutoresizingFlexibleBottomMargin
 import platform.UIKit.UIViewAutoresizingFlexibleHeight
@@ -39,17 +35,20 @@ import platform.UIKit.UIViewAutoresizingFlexibleWidth
 import platform.UIKit.UIViewController
 import platform.UIKit.UIWindowDidBecomeKeyNotification
 import platform.UIKit.UIWindowLevelAlert
-import platform.UIKit.UIWindowScene
 import platform.UIKit.UIScene
 import platform.UIKit.UISceneActivationStateForegroundActive
+import platform.UIKit.UIWindowScene
 import platform.UIKit.frame
-import platform.UIKit.setContentEdgeInsets
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
+import platform.darwin.NSObject
+import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.data.PlatformContext
-import ru.bartwell.kick.core.presentation.overlay.ButtonTarget
 import ru.bartwell.kick.core.presentation.overlay.PanTarget
 import ru.bartwell.kick.core.presentation.overlay.PassThroughWindow
+import ru.bartwell.kick.core.data.StartScreen
+import ru.bartwell.kick.core.data.ModuleDescription
+import ru.bartwell.kick.module.firebase.analytics.core.component.config.FirebaseAnalyticsConfig
 import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
 import ru.bartwell.kick.module.firebase.analytics.core.util.FirebaseFloatingWindowState
 import kotlin.math.max
@@ -75,16 +74,17 @@ internal actual object FirebaseFloatingWindowHost {
     private var overlayWindow: PassThroughWindow? = null
     private var panel: UIView? = null
     private var label: UILabel? = null
-    private var closeButton: UIButton? = null
     private var scope: CoroutineScope? = null
     private var panTarget: PanTarget? = null
-    private var closeTarget: ButtonTarget? = null
+    private var tapTarget: FirebaseTapTarget? = null
     private var windowObserver: platform.darwin.NSObjectProtocol? = null
     private var appActiveObserver: platform.darwin.NSObjectProtocol? = null
     private var visible = false
     private var initialized = false
+    private var platformContext: PlatformContext? = null
 
     actual fun init(context: PlatformContext) {
+        platformContext = context
         dispatch_async(dispatch_get_main_queue()) {
             if (initialized) return@dispatch_async
             initialized = true
@@ -117,8 +117,7 @@ internal actual object FirebaseFloatingWindowHost {
             window.setHidden(false)
             window.makeKeyAndVisible()
             panel?.let { applyStoredOrigin(it) }
-            val close = closeButton ?: return
-            panel?.let { pnl -> label?.let { lbl -> relayout(pnl, lbl, close) } }
+            panel?.let { pnl -> label?.let { lbl -> relayout(pnl, lbl) } }
             return
         }
 
@@ -167,12 +166,12 @@ internal actual object FirebaseFloatingWindowHost {
             )
         }
 
-        val closeBtn = createCloseButton()
         val textLabel = createTextLabel()
         val panGR = createPanTarget(mainView)
+        val tapGR = createTapTarget(mainView)
         mainView.addGestureRecognizer(panGR)
+        mainView.addGestureRecognizer(tapGR)
         mainView.addSubview(textLabel)
-        mainView.addSubview(closeBtn)
 
         root.addSubview(mainView)
 
@@ -182,12 +181,11 @@ internal actual object FirebaseFloatingWindowHost {
         overlayWindow = overlay
         panel = mainView
         label = textLabel
-        closeButton = closeBtn
 
         overlay.setHidden(false)
         overlay.makeKeyAndVisible()
 
-        label?.let { relayout(mainView, it, closeBtn) }
+        label?.let { relayout(mainView, it) }
 
         scope = MainScope().also { sc ->
             sc.launch {
@@ -196,7 +194,7 @@ internal actual object FirebaseFloatingWindowHost {
                     label?.setText(text)
                     panel?.let { pn ->
                         label?.let { lb ->
-                            relayout(pn, lb, closeBtn)
+                            relayout(pn, lb)
                         }
                     }
                 }
@@ -213,21 +211,20 @@ internal actual object FirebaseFloatingWindowHost {
         overlayWindow = null
         panel = null
         label = null
-        closeButton = null
         scope?.cancel()
         scope = null
         panTarget = null
-        closeTarget = null
+        tapTarget = null
     }
 
-    private fun relayout(panel: UIView, label: UILabel, closeBtn: UIButton) {
+    private fun relayout(panel: UIView, label: UILabel) {
         val contentWidth = min(
             PANEL_WIDTH,
             max(label.intrinsicContentSize.useContents { width } + H_PADDING * 2, PANEL_MIN_HEIGHT)
         )
         val contentHeight = min(
             PANEL_MAX_HEIGHT,
-            max(label.intrinsicContentSize.useContents { height } + CLOSE_MARGIN + CLOSE_SIZE, PANEL_MIN_HEIGHT)
+            max(label.intrinsicContentSize.useContents { height } + CLOSE_MARGIN, PANEL_MIN_HEIGHT)
         )
 
         var originX = 0.0
@@ -241,7 +238,6 @@ internal actual object FirebaseFloatingWindowHost {
 
         panel.setFrame(CGRectMake(originX, originY, contentWidth, contentHeight))
         label.setFrame(CGRectMake(H_PADDING, CLOSE_MARGIN, contentWidth - H_PADDING * 2, contentHeight - CLOSE_MARGIN - H_PADDING))
-        closeBtn.setFrame(CGRectMake(contentWidth - CLOSE_SIZE - CLOSE_MARGIN, CLOSE_MARGIN, CLOSE_SIZE, CLOSE_SIZE))
         FirebaseFloatingWindowSettings.setPosition(originX.toFloat(), originY.toFloat())
     }
 
@@ -253,18 +249,6 @@ internal actual object FirebaseFloatingWindowHost {
                 panel.setFrame(CGRectMake(x.toDouble(), y.toDouble(), size.width, size.height))
             }
         }
-    }
-
-    private fun createCloseButton(): UIButton {
-        val button = UIButton.buttonWithType(UIButtonTypeSystem)
-        button.setTintColor(UIColor.whiteColor.colorWithAlphaComponent(BACKGROUND_ALPHA))
-        button.setTitle("", forState = UIControlStateNormal)
-        button.setImage(UIImage.systemImageNamed("xmark"), forState = UIControlStateNormal)
-        button.setContentEdgeInsets(UIEdgeInsetsMake(0.0, 0.0, 0.0, 0.0))
-        button.setAutoresizingMask(UIViewAutoresizingFlexibleLeftMargin)
-        closeTarget = ButtonTarget { FirebaseFloatingWindowState.setVisible(false) }
-        button.addTarget(closeTarget, NSSelectorFromString("invoke:"), UIControlEventTouchUpInside)
-        return button
     }
 
     private fun createTextLabel(): UILabel {
@@ -294,6 +278,23 @@ internal actual object FirebaseFloatingWindowHost {
         return panGR
     }
 
+    private fun createTapTarget(mainView: UIView): UITapGestureRecognizer {
+        val tap = FirebaseTapTarget { openAnalyticsModule() }
+        tapTarget = tap
+        val tapGR = UITapGestureRecognizer(target = tap, action = NSSelectorFromString("onTap:"))
+        tapGR.setCancelsTouchesInView(false)
+        return tapGR
+    }
+
+    private fun openAnalyticsModule() {
+        platformContext?.let { ctx ->
+            Kick.launch(
+                context = ctx,
+                startScreen = StartScreen(FirebaseAnalyticsConfig, ModuleDescription.FIREBASE_ANALYTICS)
+            )
+        }
+    }
+
     private fun activeForegroundScene(): UIWindowScene? {
         val scenes = UIApplication.sharedApplication.connectedScenes
         scenes.iterator().forEach { scene ->
@@ -303,5 +304,13 @@ internal actual object FirebaseFloatingWindowHost {
             }
         }
         return null
+    }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal class FirebaseTapTarget(private val onTap: () -> Unit) : NSObject() {
+    @ObjCAction
+    fun onTap(recognizer: UITapGestureRecognizer?) {
+        onTap()
     }
 }
