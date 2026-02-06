@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import ru.bartwell.kick.core.presentation.BackOrCloseButton
 import ru.bartwell.kick.core.presentation.ErrorBox
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,9 +36,7 @@ internal fun TablesListContent(
         TopAppBar(
             title = { Text("Tables") },
             navigationIcon = {
-                IconButton(onClick = component::onBackPressed) {
-                    Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
-                }
+                BackOrCloseButton(onBack = component::onBackPressed)
             },
             actions = {
                 IconButton(onClick = component::onQueryClick) {

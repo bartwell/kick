@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.ClearAll
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.FilterList
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.data.Platform
 import ru.bartwell.kick.core.data.platformContext
+import ru.bartwell.kick.core.presentation.BackOrCloseButton
 import ru.bartwell.kick.core.presentation.ErrorBox
 import ru.bartwell.kick.core.util.PlatformUtils
 import ru.bartwell.kick.module.logging.core.data.LogLevel
@@ -52,9 +52,7 @@ internal fun LogViewerContent(
         TopAppBar(
             title = { Text("Logging") },
             navigationIcon = {
-                IconButton(onClick = component::onBackPressed) {
-                    Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
-                }
+                BackOrCloseButton(onBack = component::onBackPressed)
             },
             actions = {
                 IconButton(onClick = component::onFilterClick, modifier = Modifier.testTag("filter_toggle")) {

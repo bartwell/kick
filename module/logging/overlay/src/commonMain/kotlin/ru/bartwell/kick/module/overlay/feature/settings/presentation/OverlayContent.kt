@@ -7,14 +7,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -33,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.data.platformContext
+import ru.bartwell.kick.core.presentation.BackOrCloseButton
 import ru.bartwell.kick.core.ui.ExposedDropdownMenuBox
 import ru.bartwell.kick.module.overlay.core.store.OverlayStore
 
@@ -61,12 +58,7 @@ internal fun OverlayContent(
             TopAppBar(
                 title = { Text("Overlay") },
                 navigationIcon = {
-                    IconButton(onClick = { component.onBackClick() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
+                    BackOrCloseButton(onBack = component::onBackClick)
                 }
             )
         }

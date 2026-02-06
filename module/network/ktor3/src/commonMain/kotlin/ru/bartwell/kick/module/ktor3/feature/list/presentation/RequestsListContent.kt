@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.ClearAll
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
@@ -40,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import ru.bartwell.kick.core.presentation.BackOrCloseButton
 import ru.bartwell.kick.core.presentation.ErrorBox
 import ru.bartwell.kick.module.ktor3.core.persist.RequestEntity
 import ru.bartwell.kick.module.ktor3.feature.detail.extension.formatDuration
@@ -60,9 +60,7 @@ internal fun RequestsListContent(
         TopAppBar(
             title = { Text("Network Requests") },
             navigationIcon = {
-                IconButton(onClick = component::onBackPressed) {
-                    Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
-                }
+                BackOrCloseButton(onBack = component::onBackPressed)
             },
             actions = {
                 IconButton(onClick = component::onSearchClick, modifier = Modifier.testTag("search_toggle")) {

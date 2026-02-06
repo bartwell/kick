@@ -9,4 +9,5 @@ public val LocalAppUiEnvironment: ProvidableCompositionLocal<AppUiEnvironment> =
 
 public class AppUiEnvironment(
     public val screenCloser: () -> Unit,
+    public val canNavigateBack: Boolean,
 )

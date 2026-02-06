@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.History
@@ -38,6 +37,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.data.platformContext
+import ru.bartwell.kick.core.presentation.BackOrCloseButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,9 +63,7 @@ internal fun FirebaseCloudMessagingContent(
         TopAppBar(
             title = { Text("Firebase Cloud Messaging") },
             navigationIcon = {
-                IconButton(onClick = component::onBackPressed, modifier = Modifier.testTag("back")) {
-                    Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
-                }
+                BackOrCloseButton(onBack = component::onBackPressed)
             },
             actions = {
                 IconButton(onClick = { isMenuExpanded = true }, modifier = Modifier.testTag("menu_button")) {
