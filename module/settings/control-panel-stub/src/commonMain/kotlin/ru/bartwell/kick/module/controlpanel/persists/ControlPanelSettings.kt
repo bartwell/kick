@@ -17,23 +17,19 @@ internal object ControlPanelSettings {
     inline fun <reified V : InputType> put(key: String, value: V) {}
 
     inline fun <reified V : InputType> get(key: String): V {
+        val default = defaults[key]
+        if (default is V) return default
+
         return when (V::class) {
-            InputType.Boolean::class -> InputType.Boolean(getDefault<InputType.Boolean>(key).value)
-            InputType.Int::class -> InputType.Int(getDefault<InputType.Int>(key).value)
-            InputType.Long::class -> InputType.Long(getDefault<InputType.Long>(key).value)
-            InputType.Float::class -> InputType.Float(getDefault<InputType.Float>(key).value)
-            InputType.Double::class -> InputType.Double(getDefault<InputType.Double>(key).value)
-            InputType.String::class -> InputType.String(getDefault<InputType.String>(key).value)
+            InputType.Boolean::class -> InputType.Boolean(false)
+            InputType.Int::class -> InputType.Int(0)
+            InputType.Long::class -> InputType.Long(0)
+            InputType.Float::class -> InputType.Float(0f)
+            InputType.Double::class -> InputType.Double(0.0)
+            InputType.String::class -> InputType.String("")
             else -> error("Unsupported type: ${V::class.simpleName}")
         } as V
     }
 
     inline fun <reified V : InputType> getOrNull(key: String): V? = null
-
-    private inline fun <reified T : InputType> getDefault(key: String): T {
-        val default = defaults[key]
-            ?: error("Key \"$key\" is not defined in configuration")
-        return default as? T
-            ?: error("Requested ${T::class.simpleName} but default is ${default::class.simpleName}")
-    }
 }
