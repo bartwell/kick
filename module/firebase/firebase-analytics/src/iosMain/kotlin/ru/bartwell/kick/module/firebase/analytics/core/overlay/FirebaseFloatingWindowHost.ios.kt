@@ -68,6 +68,7 @@ private const val BORDER_WIDTH: Double = 1.0
 private const val BACKGROUND_ALPHA: Double = 0.82
 private const val BORDER_ALPHA: Double = 0.35
 private const val FONT_SIZE: Double = 12.0
+private const val EMPTY_TEXT: String = "No events"
 
 @OptIn(ExperimentalForeignApi::class)
 internal actual object FirebaseFloatingWindowHost {
@@ -177,19 +178,22 @@ internal actual object FirebaseFloatingWindowHost {
 
         overlay.setRootViewController(viewController)
         overlay.panel = mainView
-        overlay.setHidden(false)
-        overlay.makeKeyAndVisible()
 
         overlayWindow = overlay
         panel = mainView
         label = textLabel
         closeButton = closeBtn
+
+        overlay.setHidden(false)
+        overlay.makeKeyAndVisible()
+
         label?.let { relayout(mainView, it, closeBtn) }
 
         scope = MainScope().also { sc ->
             sc.launch {
                 FirebaseFloatingWindowState.lines.collect { currentLines ->
-                    label?.setText(currentLines.joinToString("\n"))
+                    val text = if (currentLines.isEmpty()) EMPTY_TEXT else currentLines.joinToString("\n")
+                    label?.setText(text)
                     panel?.let { pn ->
                         label?.let { lb ->
                             relayout(pn, lb, closeBtn)

@@ -41,12 +41,12 @@ internal fun FirebaseFloatingWindowContent(onClick: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 if (lines.isEmpty()) {
-                Text(
-                    text = "No analytics data",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            } else {
-                lines.forEach { line ->
+                    Text(
+                        text = "No events",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                } else {
+                    lines.forEach { line ->
                         Text(
                             text = line,
                             style = MaterialTheme.typography.bodySmall,
