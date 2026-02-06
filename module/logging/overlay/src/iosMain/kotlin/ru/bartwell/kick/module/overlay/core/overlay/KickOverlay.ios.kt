@@ -45,6 +45,9 @@ import platform.UIKit.setContentEdgeInsets
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.core.presentation.overlay.ButtonTarget
+import ru.bartwell.kick.core.presentation.overlay.PanTarget
+import ru.bartwell.kick.core.presentation.overlay.PassThroughWindow
 import ru.bartwell.kick.module.overlay.core.persists.OverlaySettings
 import ru.bartwell.kick.module.overlay.core.store.OverlayStore
 import kotlin.math.max

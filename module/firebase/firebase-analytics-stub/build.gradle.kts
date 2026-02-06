@@ -24,10 +24,6 @@ kotlin {
         }
     }
 
-    wasmJs {
-        browser()
-    }
-
     listOf(
         iosX64(),
         iosArm64(),
@@ -38,8 +34,6 @@ kotlin {
             isStatic = true
         }
     }
-
-    jvm()
 
     sourceSets {
         commonMain.dependencies {
@@ -59,9 +53,6 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         appleMain.dependencies {
-        }
-        jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
         }
         iosTest.dependencies {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)

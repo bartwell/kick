@@ -1,4 +1,4 @@
-package ru.bartwell.kick.module.overlay.core.overlay
+package ru.bartwell.kick.core.presentation.overlay
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
@@ -8,11 +8,12 @@ import platform.UIKit.UIPanGestureRecognizer
 import platform.darwin.NSObject
 
 @OptIn(ExperimentalForeignApi::class)
-internal class PanTarget(
+@kotlinx.cinterop.BetaInteropApi
+public class PanTarget public constructor(
     private val onDelta: (dx: Double, dy: Double) -> Unit
 ) : NSObject() {
     @ObjCAction
-    fun onPan(gr: UIPanGestureRecognizer) {
+    public fun onPan(gr: UIPanGestureRecognizer) {
         val v = gr.view ?: return
         val container = v.superview ?: return
         val t = gr.translationInView(container)

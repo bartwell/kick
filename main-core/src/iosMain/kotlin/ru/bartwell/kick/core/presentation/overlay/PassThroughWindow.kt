@@ -1,4 +1,4 @@
-package ru.bartwell.kick.module.overlay.core.overlay
+package ru.bartwell.kick.core.presentation.overlay
 
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -11,14 +11,14 @@ import platform.UIKit.UIWindow
 import platform.UIKit.UIWindowScene
 
 @OptIn(ExperimentalForeignApi::class)
-internal class PassThroughWindow : UIWindow {
+public class PassThroughWindow : UIWindow {
 
-    var panel: UIView? = null
+    public var panel: UIView? = null
 
-    constructor(frame: CValue<CGRect>) : super(frame)
-    constructor(windowScene: UIWindowScene) : super(windowScene = windowScene)
+    public constructor(frame: CValue<CGRect>) : super(frame)
+    public constructor(windowScene: UIWindowScene) : super(windowScene = windowScene)
 
-    override fun pointInside(point: CValue<CGPoint>, withEvent: UIEvent?): Boolean {
+    public override fun pointInside(point: CValue<CGPoint>, withEvent: UIEvent?): Boolean {
         val p = panel ?: return false
         val rectInWindow = p.convertRect(p.bounds, toView = null)
         return CGRectContainsPoint(rectInWindow, point)

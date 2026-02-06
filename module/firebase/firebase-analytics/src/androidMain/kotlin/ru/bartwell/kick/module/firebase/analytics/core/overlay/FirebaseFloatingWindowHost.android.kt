@@ -17,6 +17,7 @@ import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.core.data.StartScreen
 import ru.bartwell.kick.core.data.get
 import ru.bartwell.kick.module.firebase.analytics.core.component.config.FirebaseAnalyticsConfig
+import ru.bartwell.kick.core.presentation.overlay.DraggableContainer
 import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
