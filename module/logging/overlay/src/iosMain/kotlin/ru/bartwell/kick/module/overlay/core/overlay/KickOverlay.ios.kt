@@ -182,7 +182,7 @@ public actual object KickOverlay {
 
     private fun createTextView(): UILabel {
         return UILabel(frame = CGRectMake(0.0, 0.0, 0.0, 0.0)).apply {
-            setTextColor(UIColor.whiteColor)
+            setTextColor(UIColor.blackColor)
             setFont(UIFont.monospacedSystemFontOfSize(FONT_SIZE, UIFontWeightRegular))
             setNumberOfLines(0)
             setLineBreakMode(NSLineBreakByWordWrapping)
@@ -193,7 +193,7 @@ public actual object KickOverlay {
 
     private fun createCloseButton(): UIButton {
         val button = UIButton.buttonWithType(UIButtonTypeSystem)
-        button.setTintColor(UIColor.whiteColor.colorWithAlphaComponent(BACKGROUND_ALPHA))
+        button.setTintColor(UIColor.blackColor.colorWithAlphaComponent(BACKGROUND_ALPHA))
         button.setTitle("", forState = UIControlStateNormal)
         button.setImage(UIImage.systemImageNamed("xmark"), forState = UIControlStateNormal)
         button.setContentEdgeInsets(UIEdgeInsetsMake(0.0, 0.0, 0.0, 0.0))
@@ -205,10 +205,10 @@ public actual object KickOverlay {
 
     private fun createMainView(): UIView {
         return UIView(frame = CGRectMake(INITIAL_X, INITIAL_Y, PANEL_WIDTH, PANEL_MIN_HEIGHT)).apply {
-            setBackgroundColor(UIColor.blackColor.colorWithAlphaComponent(BACKGROUND_ALPHA))
+            setBackgroundColor(UIColor.whiteColor.colorWithAlphaComponent(BACKGROUND_ALPHA))
             layer.cornerRadius = CORNER
             layer.borderWidth = BORDER_WIDTH
-            layer.borderColor = UIColor.whiteColor.colorWithAlphaComponent(BORDER_ALPHA).CGColor
+            layer.borderColor = UIColor.blackColor.colorWithAlphaComponent(BORDER_ALPHA).CGColor
             setClipsToBounds(true)
             setUserInteractionEnabled(true)
             setAutoresizingMask(

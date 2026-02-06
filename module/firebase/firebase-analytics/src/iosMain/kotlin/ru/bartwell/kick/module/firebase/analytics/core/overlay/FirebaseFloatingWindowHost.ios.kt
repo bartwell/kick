@@ -218,13 +218,13 @@ internal actual object FirebaseFloatingWindowHost {
     }
 
     private fun relayout(panel: UIView, label: UILabel) {
-        val contentWidth = min(
-            PANEL_WIDTH,
-            max(label.intrinsicContentSize.useContents { width } + H_PADDING * 2, PANEL_MIN_HEIGHT)
-        )
+        val textWidth = PANEL_WIDTH - H_PADDING * 2
+        val measured = label.sizeThatFits(CGSizeMake(textWidth, Double.MAX_VALUE))
+        val textHeight = measured.useContents { height }
+        val contentWidth = PANEL_WIDTH
         val contentHeight = min(
             PANEL_MAX_HEIGHT,
-            max(label.intrinsicContentSize.useContents { height } + CLOSE_MARGIN, PANEL_MIN_HEIGHT)
+            max(PANEL_MIN_HEIGHT, textHeight + CLOSE_MARGIN + H_PADDING)
         )
 
         var originX = 0.0
@@ -237,7 +237,7 @@ internal actual object FirebaseFloatingWindowHost {
         }
 
         panel.setFrame(CGRectMake(originX, originY, contentWidth, contentHeight))
-        label.setFrame(CGRectMake(H_PADDING, CLOSE_MARGIN, contentWidth - H_PADDING * 2, contentHeight - CLOSE_MARGIN - H_PADDING))
+        label.setFrame(CGRectMake(H_PADDING, CLOSE_MARGIN, textWidth, contentHeight - CLOSE_MARGIN - H_PADDING))
         FirebaseFloatingWindowSettings.setPosition(originX.toFloat(), originY.toFloat())
     }
 
