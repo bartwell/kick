@@ -1,10 +1,10 @@
 package ru.bartwell.kick.sample.shared.runner
 
-import java.awt.Color
-import java.awt.image.BufferedImage
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import ru.bartwell.kick.module.runner.core.data.PlatformImage
 import ru.bartwell.kick.module.runner.core.data.fromImageBitmap
+import java.awt.Color
+import java.awt.image.BufferedImage
 
 internal actual fun createSamplePlatformImage(): PlatformImage? {
     val image = BufferedImage(96, 96, BufferedImage.TYPE_INT_ARGB)

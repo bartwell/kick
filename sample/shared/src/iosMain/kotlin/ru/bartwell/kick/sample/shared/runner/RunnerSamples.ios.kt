@@ -1,14 +1,14 @@
 package ru.bartwell.kick.sample.shared.runner
 
+import androidx.compose.ui.graphics.toImageBitmap
 import platform.CoreGraphics.CGContextFillRect
 import platform.CoreGraphics.CGContextSetFillColorWithColor
 import platform.CoreGraphics.CGRectMake
-import platform.UIKit.UIGraphicsBeginImageContextWithOptions
-import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
-import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIColor
+import platform.UIKit.UIGraphicsBeginImageContextWithOptions
+import platform.UIKit.UIGraphicsEndImageContext
+import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import ru.bartwell.kick.module.runner.core.data.PlatformImage
-import androidx.compose.ui.graphics.toImageBitmap
 import ru.bartwell.kick.module.runner.core.data.fromImageBitmap
 
 internal actual fun createSamplePlatformImage(): PlatformImage? {

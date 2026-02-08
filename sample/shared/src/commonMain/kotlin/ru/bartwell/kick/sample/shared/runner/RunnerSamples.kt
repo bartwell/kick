@@ -2,8 +2,9 @@ package ru.bartwell.kick.sample.shared.runner
 
 import ru.bartwell.kick.Kick
 import ru.bartwell.kick.core.util.DateUtils
-import ru.bartwell.kick.module.runner.RunnerModule
 import ru.bartwell.kick.module.runner.core.data.PlatformImage
+import ru.bartwell.kick.module.runner.core.params.RunnerParameter
+import ru.bartwell.kick.module.runner.core.params.RunnerParameterType
 import ru.bartwell.kick.module.runner.core.renderer.ImageRunnerRenderer
 import ru.bartwell.kick.module.runner.core.renderer.JsonRunnerRenderer
 import ru.bartwell.kick.module.runner.core.renderer.ObjectRunnerRenderer
@@ -32,6 +33,41 @@ internal fun registerRunnerSamples() {
         renderer = ImageRunnerRenderer(),
     ) {
         createSamplePlatformImage()
+    }
+
+    Kick.runner.addCall(
+        title = "Parameterized sample",
+        description = "Shows how to run with typed params",
+        params = listOf(
+            RunnerParameter(
+                id = "count",
+                title = "Count",
+                description = "1..5",
+                required = true,
+                type = RunnerParameterType.IntType(min = 1, max = 5),
+                defaultValue = 1,
+            ),
+            RunnerParameter(
+                id = "label",
+                title = "Label",
+                description = "Any text",
+                type = RunnerParameterType.StringType(),
+                defaultValue = "demo",
+            ),
+            RunnerParameter(
+                id = "flags",
+                title = "Flags",
+                description = "Select multiple",
+                type = RunnerParameterType.MultiChoice(options = listOf("A", "B", "C")),
+                defaultValue = setOf("A"),
+            ),
+        ),
+        renderer = ObjectRunnerRenderer(),
+    ) { args ->
+        val count: Int = args.get("count") ?: 0
+        val label: String = args.get("label") ?: ""
+        val flags: Set<String> = args.get("flags") ?: emptySet()
+        "label=$label count=$count flags=${flags.joinToString()}"
     }
 }
 

@@ -22,6 +22,7 @@ Less complexity, faster development, total visibility. That's Kick.
     - [File Explorer](#file-explorer)
     - [Layout (Beta)](#layout)
     - [Overlay](#overlay)
+    - [Runner](#runner)
 - [Advanced Module Configuration](#advanced-module-configuration)
 - [Shortcuts](#shortcuts)
 - [Launching Kick](#launching-kick)
@@ -432,6 +433,48 @@ Kick.init(context) {
 ```
 
 Implement `OverlayProvider` to decide when your provider should run, which categories it contributes to, and how it updates values via `Kick.overlay.set` inside the supplied coroutine scope.
+
+### Runner
+
+Run ad‑hoc debug actions from inside Kick and render their results with pluggable renderers.
+
+Built-in renderers:
+- `JsonRunnerRenderer` — pretty-prints `String?` JSON (lenient, indented).
+- `ImageRunnerRenderer` — shows `PlatformImage?` (Bitmap/UIImage/BufferedImage/ImageBitmap wrapper).
+- `ObjectRunnerRenderer` — displays `Any?` via `toString()`.
+
+Add dependencies:
+```kotlin
+// debug
+implementation("ru.bartwell.kick:runner:1.0.0")
+// release (no-op)
+implementation("ru.bartwell.kick:runner-stub:1.0.0")
+```
+
+Initialize:
+```kotlin
+Kick.init(context) {
+    module(RunnerModule(context))
+}
+```
+
+Register actions:
+```kotlin
+Kick.runner.addCall(
+    title = "Show JSON",
+    description = "Pretty print payload",
+    renderer = JsonRunnerRenderer()
+) {
+    """{"status":"ok","ts":${System.currentTimeMillis()}}"""
+}
+```
+
+Platform images:
+- Create with `PlatformImage.fromImageBitmap(imageBitmap)` or `PlatformImage.fromNative(native)` (Bitmap/UIImage/BufferedImage).
+- Render via `ImageRunnerRenderer`.
+
+Custom renderers:
+implement `RunnerRenderer<T>` with `setResult(T)` and `@Composable fun getContent(...)`; register with matching `T` in `addCall`.
 
 ### Advanced Module Configuration
 

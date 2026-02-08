@@ -12,8 +12,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.bartwell.kick.module.runner.core.data.PlatformImage
 import ru.bartwell.kick.module.runner.core.data.Content
+import ru.bartwell.kick.module.runner.core.data.PlatformImage
 import ru.bartwell.kick.module.runner.core.data.RunnerRenderer
 
 /**

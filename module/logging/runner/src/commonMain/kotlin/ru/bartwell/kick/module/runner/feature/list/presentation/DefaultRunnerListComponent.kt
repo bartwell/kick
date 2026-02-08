@@ -17,6 +17,7 @@ internal class DefaultRunnerListComponent(
     componentContext: ComponentContext,
     private val onFinished: () -> Unit,
     private val onCallReady: (String) -> Unit,
+    private val onCallRequiresParams: (String) -> Unit,
 ) : RunnerListComponent, ComponentContext by componentContext {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -46,10 +47,19 @@ internal class DefaultRunnerListComponent(
             return
         }
 
+        if (call.params.isNotEmpty()) {
+            onCallRequiresParams(callId)
+            return
+        }
+
         scope.launch {
             _model.value = _model.value.copy(runningCallId = callId, error = null)
             try {
-                val renderer = call.execute(callDispatcher = Dispatchers.Default, resultDispatcher = Dispatchers.Main)
+                val renderer = call.execute(
+                    callDispatcher = Dispatchers.Default,
+                    resultDispatcher = Dispatchers.Main,
+                    args = null,
+                )
                 RunnerStore.setRenderer(callId, renderer)
                 _model.value = _model.value.copy(runningCallId = null)
                 onCallReady(callId)
