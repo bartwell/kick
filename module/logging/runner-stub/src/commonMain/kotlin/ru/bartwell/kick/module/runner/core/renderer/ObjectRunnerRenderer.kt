@@ -22,7 +22,7 @@ public class ObjectRunnerRenderer : RunnerRenderer<Any?> {
     }
 
     @Composable
-    override fun getContent(modifier: Modifier) {
+    override fun RenderContent(modifier: Modifier) {
         val text = value?.toString() ?: "null"
         Box(
             modifier = modifier.fillMaxSize(),

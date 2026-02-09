@@ -442,6 +442,7 @@ Built-in renderers:
 - `JsonRunnerRenderer` — pretty-prints `String?` JSON (lenient, indented).
 - `ImageRunnerRenderer` — shows `PlatformImage?` (Bitmap/UIImage/BufferedImage/ImageBitmap wrapper).
 - `ObjectRunnerRenderer` — displays `Any?` via `toString()`.
+You can plug in your own renderer by implementing `RunnerRenderer<T>` (with `setResult(T)` and `@Composable fun RenderContent(...)`) and passing it to `addCall` with the matching `T`.
 
 Add dependencies:
 ```kotlin
@@ -454,7 +455,7 @@ implementation("ru.bartwell.kick:runner-stub:1.0.0")
 Initialize:
 ```kotlin
 Kick.init(context) {
-    module(RunnerModule(context))
+    module(RunnerModule())
 }
 ```
 
@@ -472,9 +473,6 @@ Kick.runner.addCall(
 Platform images:
 - Create with `PlatformImage.fromImageBitmap(imageBitmap)` or `PlatformImage.fromNative(native)` (Bitmap/UIImage/BufferedImage).
 - Render via `ImageRunnerRenderer`.
-
-Custom renderers:
-implement `RunnerRenderer<T>` with `setResult(T)` and `@Composable fun getContent(...)`; register with matching `T` in `addCall`.
 
 ### Advanced Module Configuration
 

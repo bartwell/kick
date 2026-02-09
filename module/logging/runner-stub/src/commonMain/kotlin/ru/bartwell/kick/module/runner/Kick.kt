@@ -6,7 +6,7 @@ import ru.bartwell.kick.module.runner.core.data.RunnerRenderer
 public val Kick.Companion.runner: RunnerAccessor
     get() = RunnerAccessor
 
-@Suppress("TooManyFunctions", "UnusedParameter", "EmptyFunctionBlock")
+@Suppress("UnusedParameter", "EmptyFunctionBlock")
 public object RunnerAccessor {
     public fun clear() {}
     public fun <T> addCall(

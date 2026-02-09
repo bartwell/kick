@@ -1,7 +1,6 @@
 package ru.bartwell.kick.module.runner
 
 import ru.bartwell.kick.Kick
-import ru.bartwell.kick.core.util.DateUtils
 import ru.bartwell.kick.module.runner.core.data.RunnerCall
 import ru.bartwell.kick.module.runner.core.data.RunnerCallNoArgs
 import ru.bartwell.kick.module.runner.core.data.RunnerRenderer
@@ -13,7 +12,6 @@ import kotlin.random.Random
 public val Kick.Companion.runner: RunnerAccessor
     get() = RunnerAccessor
 
-@Suppress("TooManyFunctions")
 public object RunnerAccessor {
     public fun clear() {
         RunnerStore.clear()
@@ -55,6 +53,22 @@ public object RunnerAccessor {
         )
     }
 
-    private fun generateId(): String =
-        "runner-${DateUtils.currentTimeMillis()}-${Random.nextInt(0, 10_000_000)}"
+    private fun generateId(): String = "runner-${randomUuid()}"
+}
+
+private fun randomUuid(): String {
+    val bytes = Random.nextBytes(16)
+    val hexChars = "0123456789abcdef"
+    var hexCount = 0
+    return buildString(36) {
+        bytes.forEach { byte ->
+            val value = byte.toInt() and 0xFF
+            append(hexChars[value ushr 4])
+            append(hexChars[value and 0x0F])
+            hexCount += 2
+            if (hexCount == 8 || hexCount == 12 || hexCount == 16 || hexCount == 20) {
+                append('-')
+            }
+        }
+    }
 }

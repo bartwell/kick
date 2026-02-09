@@ -3,11 +3,14 @@ package ru.bartwell.kick.module.runner.feature.params.presentation
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import ru.bartwell.kick.module.runner.core.CALL_NOT_FOUND_ERROR
+import ru.bartwell.kick.module.runner.core.MAX_PREFIX
+import ru.bartwell.kick.module.runner.core.MIN_PREFIX
+import ru.bartwell.kick.module.runner.core.REQUIRED_ERROR
 import ru.bartwell.kick.module.runner.core.params.RunnerParameter
 import ru.bartwell.kick.module.runner.core.params.RunnerParameterType
 import ru.bartwell.kick.module.runner.core.params.RunnerParameters
@@ -59,28 +62,26 @@ internal class DefaultRunnerParamsComponent(
 
         val call = RunnerStore.get(callId)
         if (call == null) {
-            _model.value = _model.value.copy(errorMessage = "Call not found")
+            _model.value = _model.value.copy(errorMessage = CALL_NOT_FOUND_ERROR)
             return
         }
 
         scope.launch {
             _model.value = _model.value.copy(isSubmitting = true, errorMessage = null)
-            try {
-                val renderer = call.execute(
+            runCatching {
+                call.execute(
                     callDispatcher = Dispatchers.Default,
                     resultDispatcher = Dispatchers.Main,
                     args = args,
                 )
+            }.onSuccess { renderer ->
                 RunnerStore.setRenderer(callId, renderer)
                 _model.value = _model.value.copy(isSubmitting = false)
                 onReadyToShowResult(callId)
-            } catch (e: CancellationException) {
-                _model.value = _model.value.copy(isSubmitting = false)
-                throw e
-            } catch (e: Exception) {
+            }.onFailure { throwable ->
                 _model.value = _model.value.copy(
                     isSubmitting = false,
-                    errorMessage = e.message ?: e.toString(),
+                    errorMessage = throwable.message ?: throwable.toString(),
                 )
             }
         }
@@ -90,37 +91,40 @@ internal class DefaultRunnerParamsComponent(
         params: List<RunnerParameter<*>>,
         values: Map<String, Any?>,
     ): Map<String, String?> {
-        val result = mutableMapOf<String, String?>()
-        params.forEach { param ->
+        return params.mapNotNull { param ->
             val value = values[param.id]
-            if (param.required && (value == null || (value is String && value.isBlank()))) {
-                result[param.id] = "Required"
-                return@forEach
-            }
-            when (val type = param.type) {
-                is RunnerParameterType.IntType -> {
-                    val v = value as? Int ?: return@forEach
-                    if (type.min != null && v < type.min) result[param.id] = "Min ${type.min}"
-                    if (type.max != null && v > type.max) result[param.id] = "Max ${type.max}"
-                }
-                is RunnerParameterType.LongType -> {
-                    val v = value as? Long ?: return@forEach
-                    if (type.min != null && v < type.min) result[param.id] = "Min ${type.min}"
-                    if (type.max != null && v > type.max) result[param.id] = "Max ${type.max}"
-                }
-                is RunnerParameterType.FloatType -> {
-                    val v = value as? Float ?: return@forEach
-                    if (type.min != null && v < type.min) result[param.id] = "Min ${type.min}"
-                    if (type.max != null && v > type.max) result[param.id] = "Max ${type.max}"
-                }
-                is RunnerParameterType.DoubleType -> {
-                    val v = value as? Double ?: return@forEach
-                    if (type.min != null && v < type.min) result[param.id] = "Min ${type.min}"
-                    if (type.max != null && v > type.max) result[param.id] = "Max ${type.max}"
-                }
-                else -> Unit
-            }
+            requiredError(param, value)
+                ?: numericError(param, value)
+        }.toMap()
+    }
+
+    private fun requiredError(param: RunnerParameter<*>, value: Any?): Pair<String, String?>? {
+        val isMissing = param.required && (value == null || value is String && value.isBlank())
+        return if (isMissing) param.id to REQUIRED_ERROR else null
+    }
+
+    private fun numericError(
+        param: RunnerParameter<*>,
+        value: Any?,
+    ): Pair<String, String?>? {
+        return when (val type = param.type) {
+            is RunnerParameterType.IntType -> boundsError(param.id, value as? Int, type.min, type.max)
+            is RunnerParameterType.LongType -> boundsError(param.id, value as? Long, type.min, type.max)
+            is RunnerParameterType.FloatType -> boundsError(param.id, value as? Float, type.min, type.max)
+            is RunnerParameterType.DoubleType -> boundsError(param.id, value as? Double, type.min, type.max)
+            else -> null
         }
-        return result
+    }
+
+    private fun <T : Comparable<T>> boundsError(
+        id: String,
+        value: T?,
+        min: T?,
+        max: T?,
+    ): Pair<String, String?>? {
+        val v = value ?: return null
+        if (min != null && v < min) return id to "$MIN_PREFIX$min"
+        if (max != null && v > max) return id to "$MAX_PREFIX$max"
+        return null
     }
 }

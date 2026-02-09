@@ -12,7 +12,6 @@ import ru.bartwell.kick.core.component.Child
 import ru.bartwell.kick.core.component.Config
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.ModuleDescription
-import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.runner.core.component.child.RunnerListChild
 import ru.bartwell.kick.module.runner.core.component.child.RunnerParamsChild
 import ru.bartwell.kick.module.runner.core.component.child.RunnerResultChild
@@ -26,10 +25,7 @@ import ru.bartwell.kick.module.runner.feature.params.presentation.RunnerParamsCo
 import ru.bartwell.kick.module.runner.feature.result.presentation.DefaultRunnerResultComponent
 import ru.bartwell.kick.module.runner.feature.result.presentation.RunnerResultContent
 
-public class RunnerModule(
-    @Suppress("UnusedParameter")
-    context: PlatformContext,
-) : Module {
+public class RunnerModule : Module {
 
     override val description: ModuleDescription = ModuleDescription.RUNNER
     override val startConfig: Config = RunnerListConfig

@@ -23,7 +23,7 @@ public class ImageRunnerRenderer : ru.bartwell.kick.module.runner.core.data.Runn
     }
 
     @Composable
-    override fun getContent(modifier: Modifier) {
+    override fun RenderContent(modifier: Modifier) {
         val current = image
         Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             if (current != null) {

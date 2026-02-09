@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -102,171 +103,131 @@ private fun ParamItem(
 ) {
     val focusManager = LocalFocusManager.current
     when (val type = param.type) {
-        RunnerParameterType.BooleanType -> {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Checkbox(
-                    checked = (value as? Boolean) ?: param.defaultValue as? Boolean ?: false,
-                    onCheckedChange = { onValueChange(param.id, it) },
-                )
-                Column(modifier = Modifier.padding(start = 8.dp)) {
-                    Text(param.title)
-                    param.description?.let {
-                        Text(it, style = androidx.compose.material3.MaterialTheme.typography.bodySmall)
-                    }
-                }
-            }
-        }
-        is RunnerParameterType.StringType -> {
-            OutlinedTextField(
-                value = (value as? String) ?: param.defaultValue as? String ?: "",
-                onValueChange = { onValueChange(param.id, it) },
-                label = { Text(param.title) },
-                supportingText = param.description?.let {
-                    {
-                        Text(it, style = androidx.compose.material3.MaterialTheme.typography.bodySmall)
-                    }
-                },
-                isError = error != null,
-                singleLine = !type.multiline,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next,
-                ),
-                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-                modifier = Modifier.fillMaxWidth()
-            )
-            error?.let { Text(it, color = androidx.compose.material3.MaterialTheme.colorScheme.error) }
-        }
-        is RunnerParameterType.IntType -> NumberField(
+        RunnerParameterType.BooleanType -> BooleanParam(param, value, onValueChange)
+        is RunnerParameterType.StringType -> StringParam(
             param = param,
             value = value,
             error = error,
-            onValueChange = { onValueChange(param.id, it.toIntOrNull()) },
+            onValueChange = onValueChange,
+            focusManager = focusManager,
+            multiline = type.multiline,
+        )
+        is RunnerParameterType.IntType -> NumberParam(
+            param = param,
+            value = value,
+            error = error,
             keyboardType = KeyboardType.Number,
             focusManager = focusManager,
-        )
-        is RunnerParameterType.LongType -> NumberField(
+        ) { text ->
+            onValueChange(param.id, text.toIntOrNull())
+        }
+        is RunnerParameterType.LongType -> NumberParam(
             param = param,
             value = value,
             error = error,
-            onValueChange = { onValueChange(param.id, it.toLongOrNull()) },
             keyboardType = KeyboardType.Number,
             focusManager = focusManager,
-        )
-        is RunnerParameterType.FloatType -> NumberField(
-            param = param,
-            value = value,
-            error = error,
-            onValueChange = { onValueChange(param.id, it.toFloatOrNull()) },
-            keyboardType = KeyboardType.Decimal,
-            focusManager = focusManager,
-        )
-        is RunnerParameterType.DoubleType -> NumberField(
-            param = param,
-            value = value,
-            error = error,
-            onValueChange = { onValueChange(param.id, it.toDoubleOrNull()) },
-            keyboardType = KeyboardType.Decimal,
-            focusManager = focusManager,
-        )
-        is RunnerParameterType.SingleChoice<*> -> {
-            var expanded by remember { mutableStateOf(false) }
-            val items = type.options
-            val selected = value ?: param.defaultValue ?: items.firstOrNull()
-            Column {
-                OutlinedTextField(
-                    value = selected?.toString() ?: "",
-                    onValueChange = { },
-                    readOnly = true,
-                    label = { Text(param.title) },
-                    supportingText = param.description?.let {
-                        {
-                            Text(it, style = androidx.compose.material3.MaterialTheme.typography.bodySmall)
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 4.dp)
-                        .clickable { expanded = true },
-                    trailingIcon = {
-                        Icon(Icons.Outlined.Check, contentDescription = null)
-                    }
-                )
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                ) {
-                    items.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option.toString()) },
-                            onClick = {
-                                expanded = false
-                                onValueChange(param.id, option)
-                            }
-                        )
-                    }
-                }
-            }
+        ) { text ->
+            onValueChange(param.id, text.toLongOrNull())
         }
-        is RunnerParameterType.MultiChoice<*> -> {
-            Column {
-                Text(param.title)
-                Spacer(modifier = Modifier.height(4.dp))
-                val selected: Set<Any> = (value as? Set<*>)?.filterNotNull()?.toSet()
-                    ?: param.defaultValue as? Set<Any> ?: emptySet()
-                type.options.forEach { option ->
-                    val checked = selected.contains(option)
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .clickable {
-                                val next = if (checked) selected - option else selected + option
-                                onValueChange(param.id, next)
-                            },
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Checkbox(
-                            checked = checked,
-                            onCheckedChange = {
-                                val next = if (checked) selected - option else selected + option
-                                onValueChange(param.id, next)
-                            }
-                        )
-                        Text(text = option.toString(), modifier = Modifier.padding(start = 8.dp))
-                    }
-                }
-                param.description?.let {
-                    Text(
-                        it,
-                        modifier = Modifier.padding(top = 4.dp),
-                        style = androidx.compose.material3.MaterialTheme.typography.bodySmall
-                    )
-                }
+        is RunnerParameterType.FloatType -> NumberParam(
+            param = param,
+            value = value,
+            error = error,
+            keyboardType = KeyboardType.Decimal,
+            focusManager = focusManager,
+        ) { text ->
+            onValueChange(param.id, text.toFloatOrNull())
+        }
+        is RunnerParameterType.DoubleType -> NumberParam(
+            param = param,
+            value = value,
+            error = error,
+            keyboardType = KeyboardType.Decimal,
+            focusManager = focusManager,
+        ) { text ->
+            onValueChange(param.id, text.toDoubleOrNull())
+        }
+        is RunnerParameterType.SingleChoice<*> -> SingleChoiceParam(param, value, type, onValueChange)
+        is RunnerParameterType.MultiChoice<*> -> MultiChoiceParam(param, value, type, onValueChange)
+    }
+}
+
+@Composable
+private fun BooleanParam(
+    param: RunnerParameter<*>,
+    value: Any?,
+    onValueChange: (String, Any?) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(
+            checked = value as? Boolean ?: param.defaultValue as? Boolean ?: false,
+            onCheckedChange = { onValueChange(param.id, it) },
+        )
+        Column(modifier = Modifier.padding(start = 8.dp)) {
+            Text(param.title)
+            param.description?.let {
+                Text(it, style = androidx.compose.material3.MaterialTheme.typography.bodySmall)
             }
         }
     }
 }
 
 @Composable
-private fun NumberField(
+private fun StringParam(
     param: RunnerParameter<*>,
     value: Any?,
     error: String?,
-    onValueChange: (String) -> Unit,
-    keyboardType: KeyboardType,
-    focusManager: androidx.compose.ui.focus.FocusManager,
+    onValueChange: (String, Any?) -> Unit,
+    focusManager: FocusManager,
+    multiline: Boolean,
 ) {
     OutlinedTextField(
-        value = (value as? String) ?: value?.toString() ?: "",
+        value = value as? String ?: param.defaultValue as? String ?: "",
+        onValueChange = { onValueChange(param.id, it) },
+        label = { Text(param.title) },
+        supportingText = param.description?.let { description ->
+            {
+                Text(
+                    description,
+                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                )
+            }
+        },
+        isError = error != null,
+        singleLine = !multiline,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next,
+        ),
+        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+        modifier = Modifier.fillMaxWidth()
+    )
+    error?.let { Text(it, color = androidx.compose.material3.MaterialTheme.colorScheme.error) }
+}
+
+@Composable
+private fun NumberParam(
+    param: RunnerParameter<*>,
+    value: Any?,
+    error: String?,
+    keyboardType: KeyboardType,
+    focusManager: FocusManager,
+    onValueChange: (String) -> Unit,
+) {
+    OutlinedTextField(
+        value = value as? String ?: value?.toString() ?: "",
         onValueChange = onValueChange,
         label = { Text(param.title) },
-        supportingText = param.description?.let {
+        supportingText = param.description?.let { description ->
             {
-                Text(it, style = androidx.compose.material3.MaterialTheme.typography.bodySmall)
+                Text(
+                    description,
+                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                )
             }
         },
         isError = error != null,
@@ -275,4 +236,97 @@ private fun NumberField(
         modifier = Modifier.fillMaxWidth()
     )
     error?.let { Text(it, color = androidx.compose.material3.MaterialTheme.colorScheme.error) }
+}
+
+@Composable
+private fun SingleChoiceParam(
+    param: RunnerParameter<*>,
+    value: Any?,
+    type: RunnerParameterType.SingleChoice<*>,
+    onValueChange: (String, Any?) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val items = type.options
+    val selected = value ?: param.defaultValue ?: items.firstOrNull()
+    Column {
+        OutlinedTextField(
+            value = selected?.toString() ?: "",
+            onValueChange = { },
+            readOnly = true,
+            label = { Text(param.title) },
+            supportingText = param.description?.let { description ->
+                {
+                    Text(
+                        description,
+                        style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                    )
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 4.dp)
+                .clickable { expanded = true },
+            trailingIcon = {
+                Icon(Icons.Outlined.Check, contentDescription = null)
+            }
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            items.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option.toString()) },
+                    onClick = {
+                        expanded = false
+                        onValueChange(param.id, option)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MultiChoiceParam(
+    param: RunnerParameter<*>,
+    value: Any?,
+    type: RunnerParameterType.MultiChoice<*>,
+    onValueChange: (String, Any?) -> Unit,
+) {
+    Column {
+        Text(param.title)
+        Spacer(modifier = Modifier.height(4.dp))
+        val selected: Set<Any> = (value as? Set<*>)?.filterNotNull()?.toSet()
+            ?: param.defaultValue as? Set<Any> ?: emptySet()
+        type.options.forEach { option ->
+            val checked = selected.contains(option)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable {
+                        val next = if (checked) selected - option else selected + option
+                        onValueChange(param.id, next)
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Checkbox(
+                    checked = checked,
+                    onCheckedChange = {
+                        val next = if (checked) selected - option else selected + option
+                        onValueChange(param.id, next)
+                    }
+                )
+                Text(text = option.toString(), modifier = Modifier.padding(start = 8.dp))
+            }
+        }
+        param.description?.let {
+            Text(
+                it,
+                modifier = Modifier.padding(top = 4.dp),
+                style = androidx.compose.material3.MaterialTheme.typography.bodySmall
+            )
+        }
+    }
 }

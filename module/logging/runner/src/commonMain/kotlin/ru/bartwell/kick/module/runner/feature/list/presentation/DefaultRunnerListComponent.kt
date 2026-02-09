@@ -4,13 +4,13 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import ru.bartwell.kick.module.runner.core.CALL_NOT_FOUND_ERROR
 import ru.bartwell.kick.module.runner.core.store.RunnerStore
 
 internal class DefaultRunnerListComponent(
@@ -43,7 +43,7 @@ internal class DefaultRunnerListComponent(
 
         val call = RunnerStore.get(callId)
         if (call == null) {
-            _model.value = _model.value.copy(error = "Call not found")
+            _model.value = _model.value.copy(error = CALL_NOT_FOUND_ERROR)
             return
         }
 
@@ -54,22 +54,20 @@ internal class DefaultRunnerListComponent(
 
         scope.launch {
             _model.value = _model.value.copy(runningCallId = callId, error = null)
-            try {
-                val renderer = call.execute(
+            runCatching {
+                call.execute(
                     callDispatcher = Dispatchers.Default,
                     resultDispatcher = Dispatchers.Main,
                     args = null,
                 )
+            }.onSuccess { renderer ->
                 RunnerStore.setRenderer(callId, renderer)
                 _model.value = _model.value.copy(runningCallId = null)
                 onCallReady(callId)
-            } catch (e: CancellationException) {
-                _model.value = _model.value.copy(runningCallId = null)
-                throw e
-            } catch (e: Exception) {
+            }.onFailure { throwable ->
                 _model.value = _model.value.copy(
                     runningCallId = null,
-                    error = e.message ?: e.toString(),
+                    error = throwable.message ?: throwable.toString(),
                 )
             }
         }

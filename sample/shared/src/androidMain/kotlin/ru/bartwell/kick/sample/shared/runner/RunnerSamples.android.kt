@@ -6,8 +6,10 @@ import androidx.core.graphics.createBitmap
 import ru.bartwell.kick.module.runner.core.data.PlatformImage
 import ru.bartwell.kick.module.runner.core.data.fromImageBitmap
 
+private const val SAMPLE_IMAGE_SIZE = 96
+
 internal actual fun createSamplePlatformImage(): PlatformImage? {
-    val bmp = createBitmap(96, 96)
+    val bmp = createBitmap(SAMPLE_IMAGE_SIZE, SAMPLE_IMAGE_SIZE)
     bmp.eraseColor(Color.MAGENTA)
     return PlatformImage.fromImageBitmap(bmp.asImageBitmap())
 }

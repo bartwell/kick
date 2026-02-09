@@ -9,12 +9,9 @@ import ru.bartwell.kick.core.component.Config
 import ru.bartwell.kick.core.component.StubConfig
 import ru.bartwell.kick.core.data.Module
 import ru.bartwell.kick.core.data.ModuleDescription
-import ru.bartwell.kick.core.data.PlatformContext
 
-@Suppress("UnusedPrivateProperty", "EmptyFunctionBlock", "unused")
-public class RunnerModule(
-    context: PlatformContext,
-) : Module {
+@Suppress("EmptyFunctionBlock", "unused")
+public class RunnerModule : Module {
 
     override val description: ModuleDescription = ModuleDescription.RUNNER
     override val startConfig: Config = StubConfig(description)

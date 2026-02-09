@@ -31,7 +31,7 @@ internal fun RunnerResultContent(
         ErrorBox(error = state.error, modifier = Modifier.fillMaxSize()) {
             val renderer = state.renderer
             if (renderer != null) {
-                renderer.getContent(modifier = Modifier.fillMaxSize())
+                renderer.RenderContent(modifier = Modifier.fillMaxSize())
             } else {
                 Text("No result available")
             }

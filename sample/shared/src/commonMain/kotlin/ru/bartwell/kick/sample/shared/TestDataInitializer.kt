@@ -95,7 +95,7 @@ class TestDataInitializer(context: PlatformContext) {
             createLayoutModule(context)?.let { module(it) }
             module(ControlPanelModule(context, createControlPanelItems()))
             module(OverlayModule(context))
-            module(RunnerModule(context))
+            module(RunnerModule())
             createFirebaseCloudMessagingModule(context)?.let { module(it) }
         }
 

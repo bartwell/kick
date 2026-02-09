@@ -20,7 +20,7 @@ public class JsonRunnerRenderer : RunnerRenderer<String?> {
     }
 
     @Composable
-    override fun getContent(modifier: Modifier) {
+    override fun RenderContent(modifier: Modifier) {
         Box(
             modifier = modifier
                 .fillMaxSize()

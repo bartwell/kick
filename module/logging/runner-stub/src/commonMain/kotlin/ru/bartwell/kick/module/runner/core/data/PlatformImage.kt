@@ -25,4 +25,4 @@ public fun PlatformImage.Content(modifier: Modifier = Modifier) {
 public fun PlatformImage.Companion.fromImageBitmap(image: ImageBitmap?): PlatformImage? =
     image?.let { PlatformImage { BitmapPainter(it) } }
 
-public fun PlatformImage.Companion.fromNative(native: Any?): PlatformImage? = null
+public fun PlatformImage.Companion.fromNative(native: Any?): PlatformImage? = native as? PlatformImage

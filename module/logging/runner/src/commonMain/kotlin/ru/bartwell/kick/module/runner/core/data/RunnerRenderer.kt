@@ -7,5 +7,5 @@ public interface RunnerRenderer<T> {
     public fun setResult(result: T)
 
     @Composable
-    public fun getContent(modifier: Modifier = Modifier)
+    public fun RenderContent(modifier: Modifier = Modifier)
 }

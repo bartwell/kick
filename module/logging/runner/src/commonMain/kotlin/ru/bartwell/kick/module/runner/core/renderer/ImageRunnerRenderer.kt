@@ -28,7 +28,7 @@ public class ImageRunnerRenderer : RunnerRenderer<PlatformImage?> {
     }
 
     @Composable
-    override fun getContent(modifier: Modifier) {
+    override fun RenderContent(modifier: Modifier) {
         val current = image
         Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             if (current != null) {
