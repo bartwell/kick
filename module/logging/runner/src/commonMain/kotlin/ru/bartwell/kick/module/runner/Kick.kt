@@ -56,6 +56,7 @@ public object RunnerAccessor {
     private fun generateId(): String = "runner-${randomUuid()}"
 }
 
+@Suppress("MagicNumber")
 private fun randomUuid(): String {
     val bytes = Random.nextBytes(16)
     val hexChars = "0123456789abcdef"
@@ -66,8 +67,8 @@ private fun randomUuid(): String {
             append(hexChars[value ushr 4])
             append(hexChars[value and 0x0F])
             hexCount += 2
-            if (hexCount == 8 || hexCount == 12 || hexCount == 16 || hexCount == 20) {
-                append('-')
+            when (hexCount) {
+                8, 12, 16, 20 -> append('-')
             }
         }
     }
