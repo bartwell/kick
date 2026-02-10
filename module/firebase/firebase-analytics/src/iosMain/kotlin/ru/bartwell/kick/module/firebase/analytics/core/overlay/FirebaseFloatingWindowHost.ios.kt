@@ -23,6 +23,7 @@ import platform.UIKit.UIFont
 import platform.UIKit.UIFontWeightRegular
 import platform.UIKit.UILabel
 import platform.UIKit.UIPanGestureRecognizer
+import platform.UIKit.UISceneActivationStateForegroundActive
 import platform.UIKit.UIScreen
 import platform.UIKit.UITapGestureRecognizer
 import platform.UIKit.UIView
@@ -35,19 +36,17 @@ import platform.UIKit.UIViewAutoresizingFlexibleWidth
 import platform.UIKit.UIViewController
 import platform.UIKit.UIWindowDidBecomeKeyNotification
 import platform.UIKit.UIWindowLevelAlert
-import platform.UIKit.UIScene
-import platform.UIKit.UISceneActivationStateForegroundActive
 import platform.UIKit.UIWindowScene
 import platform.UIKit.frame
+import platform.darwin.NSObject
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
-import platform.darwin.NSObject
 import ru.bartwell.kick.Kick
+import ru.bartwell.kick.core.data.ModuleDescription
 import ru.bartwell.kick.core.data.PlatformContext
+import ru.bartwell.kick.core.data.StartScreen
 import ru.bartwell.kick.core.presentation.overlay.PanTarget
 import ru.bartwell.kick.core.presentation.overlay.PassThroughWindow
-import ru.bartwell.kick.core.data.StartScreen
-import ru.bartwell.kick.core.data.ModuleDescription
 import ru.bartwell.kick.module.firebase.analytics.core.component.config.FirebaseAnalyticsConfig
 import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
 import ru.bartwell.kick.module.firebase.analytics.core.util.FirebaseFloatingWindowState
@@ -60,7 +59,6 @@ private const val PANEL_WIDTH: Double = 280.0
 private const val PANEL_MIN_HEIGHT: Double = 44.0
 private const val PANEL_MAX_HEIGHT: Double = 360.0
 private const val H_PADDING: Double = 6.0
-private const val CLOSE_SIZE: Double = 20.0
 private const val CLOSE_MARGIN: Double = 4.0
 private const val CORNER: Double = 8.0
 private const val BORDER_WIDTH: Double = 1.0
@@ -112,70 +110,19 @@ internal actual object FirebaseFloatingWindowHost {
     }
 
     private fun show() {
-        val window = overlayWindow
-        if (window != null) {
-            window.setHidden(false)
-            window.makeKeyAndVisible()
-            panel?.let { applyStoredOrigin(it) }
-            panel?.let { pnl -> label?.let { lbl -> relayout(pnl, lbl) } }
+        if (showExistingOverlay()) return
+
+        val scene: UIWindowScene = activeForegroundScene() ?: run {
+            registerWindowObserver()
             return
         }
 
-        val scene: UIWindowScene? = activeForegroundScene()
-        if (scene == null) {
-            if (windowObserver == null) {
-                windowObserver = NSNotificationCenter.defaultCenter.addObserverForName(
-                    name = UIWindowDidBecomeKeyNotification,
-                    `object` = null,
-                    queue = NSOperationQueue.mainQueue
-                ) { _: NSNotification? ->
-                    if (overlayWindow == null && visible) {
-                        show()
-                    }
-                    windowObserver?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
-                    windowObserver = null
-                }
-            }
-            return
-        }
+        val overlay = buildOverlay(scene)
+        val root = buildRootView(overlay)
+        overlay.setRootViewController(UIViewController().apply { setView(root) })
 
-        val overlay = PassThroughWindow(windowScene = scene)
-        overlay.setFrame(UIScreen.mainScreen.bounds)
-        overlay.setWindowLevel(UIWindowLevelAlert)
-        overlay.setBackgroundColor(UIColor.clearColor)
-
-        val root = UIView(frame = overlay.bounds).apply {
-            setBackgroundColor(UIColor.clearColor)
-            setUserInteractionEnabled(true)
-            setAutoresizingMask(UIViewAutoresizingFlexibleWidth or UIViewAutoresizingFlexibleHeight)
-        }
-        val viewController = UIViewController().apply { setView(root) }
-
-        val originX = (FirebaseFloatingWindowSettings.getPositionX().takeIf { !it.isNaN() } ?: INITIAL_X.toFloat()).toDouble()
-        val originY = (FirebaseFloatingWindowSettings.getPositionY().takeIf { !it.isNaN() } ?: INITIAL_Y.toFloat()).toDouble()
-        val mainView = UIView(frame = CGRectMake(originX, originY, PANEL_WIDTH, PANEL_MIN_HEIGHT)).apply {
-            setBackgroundColor(UIColor.whiteColor.colorWithAlphaComponent(BACKGROUND_ALPHA))
-            setUserInteractionEnabled(true)
-            layer?.setCornerRadius(CORNER)
-            layer?.setBorderWidth(BORDER_WIDTH)
-            layer?.setBorderColor(UIColor.blackColor.colorWithAlphaComponent(BORDER_ALPHA).CGColor)
-            setAutoresizingMask(
-                UIViewAutoresizingFlexibleWidth or UIViewAutoresizingFlexibleHeight or
-                    UIViewAutoresizingFlexibleLeftMargin or UIViewAutoresizingFlexibleRightMargin or
-                    UIViewAutoresizingFlexibleTopMargin or UIViewAutoresizingFlexibleBottomMargin
-            )
-        }
-
-        val textLabel = createTextLabel()
-        val panGR = createPanTarget(mainView)
-        val tapGR = createTapTarget(mainView)
-        mainView.addGestureRecognizer(panGR)
-        mainView.addGestureRecognizer(tapGR)
-        mainView.addSubview(textLabel)
-
+        val (mainView, textLabel) = createPanelWithLabel()
         root.addSubview(mainView)
-
-        overlay.setRootViewController(viewController)
         overlay.panel = mainView
 
         overlayWindow = overlay
@@ -185,21 +132,8 @@ internal actual object FirebaseFloatingWindowHost {
         overlay.setHidden(false)
         overlay.makeKeyAndVisible()
 
-        label?.let { relayout(mainView, it) }
-
-        scope = MainScope().also { sc ->
-            sc.launch {
-                FirebaseFloatingWindowState.lines.collect { currentLines ->
-                    val text = if (currentLines.isEmpty()) EMPTY_TEXT else currentLines.joinToString("\n")
-                    label?.setText(text)
-                    panel?.let { pn ->
-                        label?.let { lb ->
-                            relayout(pn, lb)
-                        }
-                    }
-                }
-            }
-        }
+        relayout(mainView, textLabel)
+        startCollectingLines(mainView, textLabel)
     }
 
     private fun hide() {
@@ -241,6 +175,89 @@ internal actual object FirebaseFloatingWindowHost {
         FirebaseFloatingWindowSettings.setPosition(originX.toFloat(), originY.toFloat())
     }
 
+    private fun showExistingOverlay(): Boolean {
+        val window = overlayWindow ?: return false
+        window.setHidden(false)
+        window.makeKeyAndVisible()
+        panel?.let { applyStoredOrigin(it) }
+        panel?.let { pnl -> label?.let { lbl -> relayout(pnl, lbl) } }
+        return true
+    }
+
+    private fun registerWindowObserver() {
+        if (windowObserver != null) return
+        windowObserver = NSNotificationCenter.defaultCenter.addObserverForName(
+            name = UIWindowDidBecomeKeyNotification,
+            `object` = null,
+            queue = NSOperationQueue.mainQueue
+        ) { _: NSNotification? ->
+            if (overlayWindow == null && visible) {
+                show()
+            }
+            windowObserver?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
+            windowObserver = null
+        }
+    }
+
+    private fun buildOverlay(scene: UIWindowScene): PassThroughWindow {
+        return PassThroughWindow(windowScene = scene).apply {
+            setFrame(UIScreen.mainScreen.bounds)
+            setWindowLevel(UIWindowLevelAlert)
+            setBackgroundColor(UIColor.clearColor)
+        }
+    }
+
+    private fun buildRootView(overlay: PassThroughWindow): UIView {
+        return UIView(frame = overlay.bounds).apply {
+            setBackgroundColor(UIColor.clearColor)
+            setUserInteractionEnabled(true)
+            setAutoresizingMask(UIViewAutoresizingFlexibleWidth or UIViewAutoresizingFlexibleHeight)
+        }
+    }
+
+    private fun createPanelWithLabel(): Pair<UIView, UILabel> {
+        val (originX, originY) = initialOrigin()
+        val mainView = UIView(frame = CGRectMake(originX, originY, PANEL_WIDTH, PANEL_MIN_HEIGHT)).apply {
+            setBackgroundColor(UIColor.whiteColor.colorWithAlphaComponent(BACKGROUND_ALPHA))
+            setUserInteractionEnabled(true)
+            layer?.setCornerRadius(CORNER)
+            layer?.setBorderWidth(BORDER_WIDTH)
+            layer?.setBorderColor(UIColor.blackColor.colorWithAlphaComponent(BORDER_ALPHA).CGColor)
+            setAutoresizingMask(
+                UIViewAutoresizingFlexibleWidth or UIViewAutoresizingFlexibleHeight or
+                    UIViewAutoresizingFlexibleLeftMargin or UIViewAutoresizingFlexibleRightMargin or
+                    UIViewAutoresizingFlexibleTopMargin or UIViewAutoresizingFlexibleBottomMargin
+            )
+        }
+
+        val textLabel = createTextLabel()
+        mainView.addGestureRecognizer(createPanTarget(mainView))
+        mainView.addGestureRecognizer(createTapTarget())
+        mainView.addSubview(textLabel)
+
+        return mainView to textLabel
+    }
+
+    private fun initialOrigin(): Pair<Double, Double> {
+        val storedX = FirebaseFloatingWindowSettings.getPositionX()
+        val storedY = FirebaseFloatingWindowSettings.getPositionY()
+        val originX = storedX.takeIf { !it.isNaN() } ?: INITIAL_X.toFloat()
+        val originY = storedY.takeIf { !it.isNaN() } ?: INITIAL_Y.toFloat()
+        return originX.toDouble() to originY.toDouble()
+    }
+
+    private fun startCollectingLines(panel: UIView, label: UILabel) {
+        scope = MainScope().also { sc ->
+            sc.launch {
+                FirebaseFloatingWindowState.lines.collect { currentLines ->
+                    val text = if (currentLines.isEmpty()) EMPTY_TEXT else currentLines.joinToString("\n")
+                    label.setText(text)
+                    relayout(panel, label)
+                }
+            }
+        }
+    }
+
     private fun applyStoredOrigin(panel: UIView) {
         val x = FirebaseFloatingWindowSettings.getPositionX()
         val y = FirebaseFloatingWindowSettings.getPositionY()
@@ -278,7 +295,7 @@ internal actual object FirebaseFloatingWindowHost {
         return panGR
     }
 
-    private fun createTapTarget(mainView: UIView): UITapGestureRecognizer {
+    private fun createTapTarget(): UITapGestureRecognizer {
         val tap = FirebaseTapTarget { openAnalyticsModule() }
         tapTarget = tap
         val tapGR = UITapGestureRecognizer(target = tap, action = NSSelectorFromString("onTap:"))
@@ -290,7 +307,10 @@ internal actual object FirebaseFloatingWindowHost {
         platformContext?.let { ctx ->
             Kick.launch(
                 context = ctx,
-                startScreen = StartScreen(FirebaseAnalyticsConfig, ModuleDescription.FIREBASE_ANALYTICS)
+                startScreen = StartScreen(
+                    FirebaseAnalyticsConfig,
+                    ModuleDescription.FIREBASE_ANALYTICS
+                )
             )
         }
     }
@@ -311,6 +331,7 @@ internal actual object FirebaseFloatingWindowHost {
 internal class FirebaseTapTarget(private val onTap: () -> Unit) : NSObject() {
     @ObjCAction
     fun onTap(recognizer: UITapGestureRecognizer?) {
+        recognizer?.let { _ -> }
         onTap()
     }
 }

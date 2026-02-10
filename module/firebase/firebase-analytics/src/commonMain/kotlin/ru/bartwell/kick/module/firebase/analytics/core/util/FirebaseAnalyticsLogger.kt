@@ -11,7 +11,6 @@ import ru.bartwell.kick.module.firebase.analytics.core.data.AnalyticsEvent
 import ru.bartwell.kick.module.firebase.analytics.core.data.UserId
 import ru.bartwell.kick.module.firebase.analytics.core.data.UserProperty
 import ru.bartwell.kick.module.firebase.analytics.core.persist.toEntity
-import ru.bartwell.kick.module.firebase.analytics.core.util.FirebaseFloatingWindowState
 
 private const val MAX_BUFFER = 1_000
 
@@ -40,35 +39,29 @@ internal object FirebaseAnalyticsLogger {
     init {
         loggerScope.launch {
             eventFlow.collect { entry ->
-                try {
+                runCatching {
                     DatabaseHolder.database
                         ?.getEventDao()
                         ?.insert(entry.toEntity())
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                }.onFailure { it.printStackTrace() }
             }
         }
         loggerScope.launch {
             userIdFlow.collect { entry ->
-                try {
+                runCatching {
                     DatabaseHolder.database
                         ?.getUserIdDao()
                         ?.insert(entry.toEntity())
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                }.onFailure { it.printStackTrace() }
             }
         }
         loggerScope.launch {
             propertyFlow.collect { entry ->
-                try {
+                runCatching {
                     DatabaseHolder.database
                         ?.getPropertyDao()
                         ?.upsert(entry.toEntity())
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                }.onFailure { it.printStackTrace() }
             }
         }
     }
@@ -106,7 +99,14 @@ internal object FirebaseAnalyticsLogger {
 }
 
 private fun buildEventLine(name: String, params: Map<String, String>): String {
-    val suffix = if (params.isEmpty()) "" else params.entries.joinToString(prefix = " {", postfix = "}") { "${it.key}=${it.value}" }
+    val suffix = if (params.isEmpty()) {
+        ""
+    } else {
+        params.entries.joinToString(
+            prefix = " {",
+            postfix = "}"
+        ) { "${it.key}=${it.value}" }
+    }
     return "Event $name$suffix"
 }
 

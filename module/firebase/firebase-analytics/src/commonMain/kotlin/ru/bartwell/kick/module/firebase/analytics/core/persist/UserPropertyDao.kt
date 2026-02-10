@@ -6,8 +6,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import ru.bartwell.kick.module.firebase.analytics.db.FirebaseAnalyticsDb
 import ru.bartwell.kick.module.firebase.analytics.core.data.UserProperty
+import ru.bartwell.kick.module.firebase.analytics.db.FirebaseAnalyticsDb
 
 internal class UserPropertyDao(private val db: FirebaseAnalyticsDb) {
 

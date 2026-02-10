@@ -12,11 +12,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.seconds
 import ru.bartwell.kick.module.firebase.analytics.core.overlay.FirebaseFloatingWindowHost
 import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
+import kotlin.time.Duration.Companion.seconds
 
 private data class FloatingEntry(val text: String)
+private const val MAX_VISIBLE_ENTRIES = 3
+private const val ENTRY_LIFETIME_SECONDS = 3
 
 internal object FirebaseFloatingWindowState {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -47,10 +49,10 @@ internal object FirebaseFloatingWindowState {
         if (!_visible.value) return
         val entry = FloatingEntry(text = text)
         _entries.update { entries ->
-            (entries + entry).takeLast(3)
+            (entries + entry).takeLast(MAX_VISIBLE_ENTRIES)
         }
         scope.launch {
-            delay(3.seconds)
+            delay(ENTRY_LIFETIME_SECONDS.seconds)
             _entries.update { entries -> entries.filterNot { it === entry } }
         }
     }
@@ -58,5 +60,4 @@ internal object FirebaseFloatingWindowState {
     fun clear() {
         _entries.value = emptyList()
     }
-
 }

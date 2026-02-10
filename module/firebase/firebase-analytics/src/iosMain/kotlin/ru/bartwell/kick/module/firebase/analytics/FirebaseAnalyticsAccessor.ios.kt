@@ -20,16 +20,18 @@ public fun FirebaseAnalyticsAccessor.setUserProperty(name: String, value: String
 }
 
 private fun NSDictionary?.toParameterMap(): Map<String, String> {
-    if (this == null) return emptyMap()
-    val map = mutableMapOf<String, String>()
-    val enumerator = keyEnumerator() ?: return emptyMap()
-    while (true) {
-        val key = enumerator.nextObject() ?: break
-        val keyString = key.toString()
-        val value = objectForKey(key)?.toString() ?: continue
-        map[keyString] = value
+    val source = this ?: return emptyMap()
+    val enumerator = source.keyEnumerator() ?: return emptyMap()
+
+    return buildMap {
+        generateSequence { enumerator.nextObject() }
+            .forEach { key ->
+                val value = source.objectForKey(key)?.toString()
+                if (value != null) {
+                    put(key.toString(), value)
+                }
+            }
     }
-    return map
 }
 
 private fun Map<Any?, *>?.toParameterMap(): Map<String, String> {

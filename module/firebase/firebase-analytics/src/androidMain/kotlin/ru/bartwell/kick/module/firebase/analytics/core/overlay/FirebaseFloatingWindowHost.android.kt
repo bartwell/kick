@@ -16,8 +16,8 @@ import ru.bartwell.kick.core.data.ModuleDescription
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.core.data.StartScreen
 import ru.bartwell.kick.core.data.get
-import ru.bartwell.kick.module.firebase.analytics.core.component.config.FirebaseAnalyticsConfig
 import ru.bartwell.kick.core.presentation.overlay.DraggableContainer
+import ru.bartwell.kick.module.firebase.analytics.core.component.config.FirebaseAnalyticsConfig
 import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
@@ -101,24 +101,50 @@ private class FloatingWindowCallbacks(
     }
 
     private fun attach(activity: Activity) {
-        if (!visible) return
+        if (!visible) {
+            overlays[activity]?.isVisible = false
+            return
+        }
+
         overlays[activity]?.let { container ->
             container.isVisible = true
             applyStoredTranslation(container.dragTarget)
-            return
-        }
-
-        val root = (activity.window?.decorView as? ViewGroup) ?: return
-
-        root.findViewWithTag<View>(TAG)?.let { existing ->
-            existing.isVisible = true
-            if (existing is DraggableContainer) {
-                overlays[activity] = existing
-                applyStoredTranslation(existing.dragTarget)
+        } ?: run {
+            val root = activity.window?.decorView as? ViewGroup ?: return
+            val existing = root.findViewWithTag<View>(TAG)
+            when (existing) {
+                is DraggableContainer -> {
+                    existing.isVisible = true
+                    overlays[activity] = existing
+                    applyStoredTranslation(existing.dragTarget)
+                }
+                null -> {
+                    val container = createDraggableContainer(activity)
+                    root.addView(container)
+                    overlays[activity] = container
+                }
+                else -> existing.isVisible = true
             }
-            return
         }
+    }
 
+    private fun detach(activity: Activity) {
+        val root = activity.window?.decorView as? ViewGroup ?: return
+        overlays.remove(activity)?.let { view ->
+            runCatching { root.removeView(view) }
+        }
+    }
+
+    private fun applyStoredTranslation(target: View?) {
+        val x = FirebaseFloatingWindowSettings.getPositionX()
+        val y = FirebaseFloatingWindowSettings.getPositionY()
+        target?.let {
+            if (x.isValid()) it.translationX = x
+            if (y.isValid()) it.translationY = y
+        }
+    }
+
+    private fun createDraggableContainer(activity: Activity): DraggableContainer {
         val container = DraggableContainer(activity) { x, y ->
             FirebaseFloatingWindowSettings.setPosition(x, y)
         }.apply {
@@ -152,25 +178,7 @@ private class FloatingWindowCallbacks(
                 Gravity.TOP or Gravity.START,
             )
         )
-
-        root.addView(container)
-        overlays[activity] = container
-    }
-
-    private fun detach(activity: Activity) {
-        val root = activity.window?.decorView as? ViewGroup ?: return
-        overlays.remove(activity)?.let { view ->
-            runCatching { root.removeView(view) }
-        }
-    }
-
-    private fun applyStoredTranslation(target: View?) {
-        val x = FirebaseFloatingWindowSettings.getPositionX()
-        val y = FirebaseFloatingWindowSettings.getPositionY()
-        target?.let {
-            if (x.isValid()) it.translationX = x
-            if (y.isValid()) it.translationY = y
-        }
+        return container
     }
 }
 

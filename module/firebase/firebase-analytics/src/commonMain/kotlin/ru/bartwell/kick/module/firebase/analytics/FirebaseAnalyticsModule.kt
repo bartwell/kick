@@ -20,9 +20,9 @@ import ru.bartwell.kick.module.firebase.analytics.core.component.child.FirebaseA
 import ru.bartwell.kick.module.firebase.analytics.core.component.child.FirebaseAnalyticsPropertiesChild
 import ru.bartwell.kick.module.firebase.analytics.core.component.config.FirebaseAnalyticsConfig
 import ru.bartwell.kick.module.firebase.analytics.core.component.config.FirebaseAnalyticsPropertiesConfig
+import ru.bartwell.kick.module.firebase.analytics.core.overlay.FirebaseFloatingWindowHost
 import ru.bartwell.kick.module.firebase.analytics.core.persist.DatabaseBuilder
 import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseAnalyticsDatabase
-import ru.bartwell.kick.module.firebase.analytics.core.overlay.FirebaseFloatingWindowHost
 import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
 import ru.bartwell.kick.module.firebase.analytics.core.util.DatabaseHolder
 import ru.bartwell.kick.module.firebase.analytics.core.util.FirebaseFloatingWindowState
