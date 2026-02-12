@@ -10,3 +10,4 @@ actual fun createRoomModule(context: PlatformContext): Module? = null
 actual fun createLayoutModule(context: PlatformContext): Module? = null
 
 actual fun createFirebaseCloudMessagingModule(context: PlatformContext): Module? = null
+actual fun createFirebaseAnalyticsModule(context: PlatformContext): Module? = null

@@ -1,6 +1,7 @@
-package ru.bartwell.kick.module.overlay.core.overlay
+package ru.bartwell.kick.core.presentation.overlay
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -8,11 +9,12 @@ import android.widget.FrameLayout
 import kotlin.math.abs
 
 @Suppress("ReturnCount")
-internal class DraggableContainer(
-    context: android.content.Context
+public class DraggableContainer public constructor(
+    context: Context,
+    private val onPositionChanged: ((Float, Float) -> Unit)? = null,
 ) : FrameLayout(context) {
 
-    var dragTarget: View? = null
+    public var dragTarget: View? = null
 
     private var downX = 0f
     private var downY = 0f
@@ -22,9 +24,9 @@ internal class DraggableContainer(
     private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
 
     @Suppress("EmptyFunctionBlock")
-    override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+    public override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
 
-    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+    public override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         val t = dragTarget ?: return false
 
         val hit = ev.x >= t.x && ev.x <= t.x + t.width &&
@@ -39,8 +41,8 @@ internal class DraggableContainer(
                 return false
             }
             MotionEvent.ACTION_MOVE -> {
-                val dx = abs(ev.rawX - downX)
-                val dy = abs(ev.rawY - downY)
+                val dx = kotlin.math.abs(ev.rawX - downX)
+                val dy = kotlin.math.abs(ev.rawY - downY)
                 if (dx > touchSlop || dy > touchSlop) {
                     dragging = true
                     lastX = ev.rawX
@@ -58,7 +60,7 @@ internal class DraggableContainer(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent): Boolean {
+    public override fun onTouchEvent(event: MotionEvent): Boolean {
         val t = dragTarget ?: return false
         if (!dragging) return false
 
@@ -70,6 +72,7 @@ internal class DraggableContainer(
                 lastY = event.rawY
                 t.translationX += dx
                 t.translationY += dy
+                onPositionChanged?.invoke(t.translationX, t.translationY)
                 return true
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {

@@ -44,6 +44,10 @@ public enum class ModuleDescription(
         title = "Firebase Cloud Messaging",
         description = "Inspect FCM tokens, installation id, and delivered pushes."
     ),
+    FIREBASE_ANALYTICS(
+        title = "Firebase Analytics",
+        description = "Watch Firebase Analytics events, user ids, and properties as they happen."
+    ),
     RUNNER(
         title = "Runner",
         description = "Register debug actions and view their rendered results."
