@@ -1,6 +1,7 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     repositories {
+        mavenLocal()
         google()
         gradlePluginPortal()
         mavenCentral()
@@ -9,6 +10,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
     }
@@ -17,6 +19,9 @@ dependencyResolutionManagement {
 rootProject.name = "Kick"
 
 includeBuild("maven-publishing")
+
+include(":gradle-plugin")
+project(":gradle-plugin").projectDir = file("gradle-plugin")
 
 // Core
 include(":main-runtime-stub")
@@ -31,6 +36,11 @@ include("shared")
 project(":shared").projectDir = file("sample/shared")
 include("web")
 project(":web").projectDir = file("sample/web")
+// Plugin sample: included only when -PincludePluginSample=true (after publishToMavenLocal)
+if (providers.gradleProperty("includePluginSample").orElse("false").get().toBoolean()) {
+    include("samplePluginApp")
+    project(":samplePluginApp").projectDir = file("sample/plugin-sample")
+}
 // Modules
 // SQLite
 include(":sqlite-core")
