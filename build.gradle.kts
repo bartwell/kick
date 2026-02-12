@@ -69,6 +69,12 @@ allprojects {
     configureDetektTask("detektCheckAll", project.hasProperty("detektAutoFix"))
     configureDetektTask("detektFixAll", true)
 
+    tasks.named("detektCheckAll").configure { mustRunAfter("detektFixAll") }
+    tasks.register("detektFixThenCheckAll") {
+        description = "Run detektFixAll then detektCheckAll"
+        dependsOn("detektFixAll", "detektCheckAll")
+    }
+
     dependencies {
         detektPlugins(detektFormatting)
         detektPlugins(detektRulesCompose)

@@ -38,7 +38,28 @@ Less complexity, faster development, total visibility. That's Kick.
 
 ## Usage
 
-Kick is initialized once with a platform context and a list of modules. Add every module dependency in `shared/build.gradle.kts` and choose real or stub implementations using the `isRelease` flag:
+### Gradle plugin (recommended)
+
+You can use the **Kick Gradle plugin** (`ru.bartwell.kick`) to add Kick dependencies and configure Kotlin/Native framework exports automatically:
+
+```kotlin
+plugins {
+    id("org.jetbrains.kotlin.multiplatform") version "2.1.21"
+    id("ru.bartwell.kick") version "1.0.0"
+}
+
+kick {
+    enabled = KickEnabled.Auto
+    modules(KickModule.FileExplorer, KickModule.Ktor3)
+}
+// Optional: enableKick(false) or -Pkick.enabled=true|false for override
+```
+
+The plugin adds `main-core`, `main-runtime`/`main-runtime-stub` and the chosen module artifacts to `commonMain`, and sets framework `export(...)` for all Kotlin/Native targets. Order of `plugins` does not matter; Kotlin Multiplatform is required.
+
+### Manual setup
+
+Alternatively, add every module dependency in `shared/build.gradle.kts` and choose real or stub implementations using the `isRelease` flag:
 
 ```kotlin
 val isRelease = /* your logic to determine release vs. debug */
