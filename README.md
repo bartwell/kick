@@ -17,6 +17,7 @@ Less complexity, faster development, total visibility. That's Kick.
     - [SQLite](#sqlite)
     - [Logging](#logging)
     - [Firebase Cloud Messaging](#firebase-cloud-messaging)
+    - [Firebase Analytics](#firebase-analytics)
     - [Multiplatform Settings](#multiplatform-settings)
     - [Control Panel](#control-panel)
     - [File Explorer](#file-explorer)
@@ -97,6 +98,7 @@ kotlin {
                 implementation("ru.bartwell.kick:file-explorer-stub:1.0.0")
                 implementation("ru.bartwell.kick:layout-stub:1.0.0")
                 implementation("ru.bartwell.kick:firebase-cloud-messaging-stub:1.0.0")
+                implementation("ru.bartwell.kick:firebase-analytics-stub:1.0.0")
             } else {
                 implementation("ru.bartwell.kick:main-runtime:1.0.0")
                 implementation("ru.bartwell.kick:ktor3:1.0.0")
@@ -109,6 +111,7 @@ kotlin {
                 implementation("ru.bartwell.kick:file-explorer:1.0.0")
                 implementation("ru.bartwell.kick:layout:1.0.0")
                 implementation("ru.bartwell.kick:firebase-cloud-messaging:1.0.0")
+                implementation("ru.bartwell.kick:firebase-analytics:1.0.0")
             }
         }
     }
@@ -133,6 +136,7 @@ Kick.init(context) {
     module(FileExplorerModule())
     module(LayoutModule(context))
     module(FirebaseCloudMessagingModule(context))
+    module(FirebaseAnalyticsModule(context))
 }
 ```
 
@@ -288,6 +292,89 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     ) {
         KickCompanion.shared.firebaseCloudMessaging.handleApnsNotification(notification: response.notification)
         completionHandler()
+    }
+}
+```
+
+### Firebase Analytics
+
+Capture analytics calls made by your app and inspect them inside Kick (events, user id, user properties).
+
+**Enable the module:** add `FirebaseAnalyticsModule(context)` to your `Kick.init { ... }` module list.
+
+**Platforms:** supported on Android and iOS. Not supported on JVM and Web.
+
+**Important:** this module does not auto-hook Firebase SDK calls.  
+Call `Kick.firebaseAnalytics.*` in the same places where your app already sends analytics to Firebase.
+
+#### Where to call it
+
+Use a single analytics wrapper/service in your app and call both:
+- Firebase SDK (`FirebaseAnalytics` / `Analytics`)
+- Kick accessor (`Kick.firebaseAnalytics`)
+
+This keeps instrumentation in one place and prevents missing events.
+
+#### Methods reference
+
+`Kick.firebaseAnalytics.logEvent(name, params)`
+- Logs an event for the Kick viewer.
+- Android signature: `logEvent(name: String, params: Bundle?)`
+- iOS signatures:
+  - `logEvent(name: String, params: NSDictionary?)`
+  - `logEvent(name: String, params: Map<Any?, *>?)`
+
+`Kick.firebaseAnalytics.setUserId(id)`
+- Sets or clears current user id in Kick viewer (`null` clears).
+- Android/iOS signature: `setUserId(id: String?)`
+
+`Kick.firebaseAnalytics.setUserProperty(name, value)`
+- Logs user property update in Kick viewer.
+- Android/iOS signature: `setUserProperty(name: String, value: String)`
+
+#### Android integration example
+
+```kotlin
+class AnalyticsReporter(
+    private val firebaseAnalytics: FirebaseAnalytics,
+) {
+    fun logEvent(name: String, params: Bundle?) {
+        firebaseAnalytics.logEvent(name, params)
+        Kick.firebaseAnalytics.logEvent(name, params)
+    }
+
+    fun setUserId(id: String?) {
+        firebaseAnalytics.setUserId(id)
+        Kick.firebaseAnalytics.setUserId(id)
+    }
+
+    fun setUserProperty(name: String, value: String) {
+        firebaseAnalytics.setUserProperty(name, value)
+        Kick.firebaseAnalytics.setUserProperty(name, value)
+    }
+}
+```
+
+#### iOS integration example (Swift)
+
+```swift
+import FirebaseAnalytics
+import shared
+
+final class AnalyticsReporter {
+    func logEvent(name: String, params: [String: Any]?) {
+        Analytics.logEvent(name, parameters: params)
+        KickCompanion.shared.firebaseAnalytics.logEvent(name: name, params: params)
+    }
+
+    func setUserId(_ id: String?) {
+        Analytics.setUserID(id)
+        KickCompanion.shared.firebaseAnalytics.setUserId(id: id)
+    }
+
+    func setUserProperty(name: String, value: String) {
+        Analytics.setUserProperty(value, forName: name)
+        KickCompanion.shared.firebaseAnalytics.setUserProperty(name: name, value: value)
     }
 }
 ```
