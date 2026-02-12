@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseAnalyticsDatabase
+import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
 
 internal class DefaultFirebaseAnalyticsPropertiesComponent(
     componentContext: ComponentContext,
@@ -36,9 +37,8 @@ internal class DefaultFirebaseAnalyticsPropertiesComponent(
     }
 
     private fun subscribeUserId() {
-        database.getUserIdDao()
-            .getLatestAsFlow()
-            .onEach { updateState { copy(userId = it?.value) } }
+        FirebaseFloatingWindowSettings.observeUserId()
+            .onEach { updateState { copy(userId = it) } }
             .catch { updateState { copy(error = it.toString()) } }
             .launchIn(uiScope)
     }

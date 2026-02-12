@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import ru.bartwell.kick.core.util.DateUtils
 import ru.bartwell.kick.module.firebase.analytics.core.data.AnalyticsEvent
-import ru.bartwell.kick.module.firebase.analytics.core.data.UserId
 import ru.bartwell.kick.module.firebase.analytics.core.data.UserProperty
+import ru.bartwell.kick.module.firebase.analytics.core.persist.FirebaseFloatingWindowSettings
 import ru.bartwell.kick.module.firebase.analytics.core.persist.toEntity
 
 private const val MAX_BUFFER = 1_000
@@ -19,12 +19,6 @@ internal object FirebaseAnalyticsLogger {
     private val loggerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val eventFlow = MutableSharedFlow<AnalyticsEvent>(
-        replay = 0,
-        extraBufferCapacity = MAX_BUFFER,
-        onBufferOverflow = BufferOverflow.SUSPEND,
-    )
-
-    private val userIdFlow = MutableSharedFlow<UserId>(
         replay = 0,
         extraBufferCapacity = MAX_BUFFER,
         onBufferOverflow = BufferOverflow.SUSPEND,
@@ -42,15 +36,6 @@ internal object FirebaseAnalyticsLogger {
                 runCatching {
                     DatabaseHolder.database
                         ?.getEventDao()
-                        ?.insert(entry.toEntity())
-                }.onFailure { it.printStackTrace() }
-            }
-        }
-        loggerScope.launch {
-            userIdFlow.collect { entry ->
-                runCatching {
-                    DatabaseHolder.database
-                        ?.getUserIdDao()
                         ?.insert(entry.toEntity())
                 }.onFailure { it.printStackTrace() }
             }
@@ -78,12 +63,8 @@ internal object FirebaseAnalyticsLogger {
     }
 
     fun setUserId(id: String?) {
-        val userId = UserId(
-            value = id,
-            timestamp = DateUtils.currentTimeMillis(),
-        )
         FirebaseFloatingWindowState.append(buildUserIdLine(id))
-        loggerScope.launch { userIdFlow.emit(userId) }
+        loggerScope.launch { FirebaseFloatingWindowSettings.setUserId(id) }
     }
 
     fun setUserProperty(name: String, value: String) {

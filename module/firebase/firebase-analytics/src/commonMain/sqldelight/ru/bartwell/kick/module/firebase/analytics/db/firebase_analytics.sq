@@ -31,15 +31,3 @@ INSERT OR REPLACE INTO userProperty (name, value, timestamp) VALUES (?, ?, ?);
 
 deleteProperties:
 DELETE FROM userProperty;
-
-CREATE TABLE userId (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  value TEXT,
-  timestamp INTEGER NOT NULL
-);
-
-selectLatestUserId:
-SELECT * FROM userId ORDER BY timestamp DESC LIMIT 1;
-
-insertUserId:
-INSERT INTO userId (value, timestamp) VALUES (?, ?);
