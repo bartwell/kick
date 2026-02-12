@@ -22,6 +22,7 @@ Less complexity, faster development, total visibility. That's Kick.
     - [File Explorer](#file-explorer)
     - [Layout (Beta)](#layout)
     - [Overlay](#overlay)
+    - [Runner](#runner)
 - [Advanced Module Configuration](#advanced-module-configuration)
 - [Shortcuts](#shortcuts)
 - [Launching Kick](#launching-kick)
@@ -38,7 +39,28 @@ Less complexity, faster development, total visibility. That's Kick.
 
 ## Usage
 
-Kick is initialized once with a platform context and a list of modules. Add every module dependency in `shared/build.gradle.kts` and choose real or stub implementations using the `isRelease` flag:
+### Gradle plugin (recommended)
+
+You can use the **Kick Gradle plugin** (`ru.bartwell.kick`) to add Kick dependencies and configure Kotlin/Native framework exports automatically:
+
+```kotlin
+plugins {
+    id("org.jetbrains.kotlin.multiplatform") version "2.1.21"
+    id("ru.bartwell.kick") version "1.0.0"
+}
+
+kick {
+    enabled = KickEnabled.Auto
+    modules(KickModule.FileExplorer, KickModule.Ktor3)
+}
+// Optional: enableKick(false) or -Pkick.enabled=true|false for override
+```
+
+The plugin adds `main-core`, `main-runtime`/`main-runtime-stub` and the chosen module artifacts to `commonMain`, and sets framework `export(...)` for all Kotlin/Native targets. Order of `plugins` does not matter; Kotlin Multiplatform is required.
+
+### Manual setup
+
+Alternatively, add every module dependency in `shared/build.gradle.kts` and choose real or stub implementations using the `isRelease` flag:
 
 ```kotlin
 val isRelease = /* your logic to determine release vs. debug */
@@ -432,6 +454,46 @@ Kick.init(context) {
 ```
 
 Implement `OverlayProvider` to decide when your provider should run, which categories it contributes to, and how it updates values via `Kick.overlay.set` inside the supplied coroutine scope.
+
+### Runner
+
+Run ad‑hoc debug actions from inside Kick and render their results with pluggable renderers.
+
+Built-in renderers:
+- `JsonRunnerRenderer` — pretty-prints `String?` JSON (lenient, indented).
+- `ImageRunnerRenderer` — shows `PlatformImage?` (Bitmap/UIImage/BufferedImage/ImageBitmap wrapper).
+- `ObjectRunnerRenderer` — displays `Any?` via `toString()`.
+You can plug in your own renderer by implementing `RunnerRenderer<T>` (with `setResult(T)` and `@Composable fun RenderContent(...)`) and passing it to `addCall` with the matching `T`.
+
+Add dependencies:
+```kotlin
+// debug
+implementation("ru.bartwell.kick:runner:1.0.0")
+// release (no-op)
+implementation("ru.bartwell.kick:runner-stub:1.0.0")
+```
+
+Initialize:
+```kotlin
+Kick.init(context) {
+    module(RunnerModule())
+}
+```
+
+Register actions:
+```kotlin
+Kick.runner.addCall(
+    title = "Show JSON",
+    description = "Pretty print payload",
+    renderer = JsonRunnerRenderer()
+) {
+    """{"status":"ok","ts":${System.currentTimeMillis()}}"""
+}
+```
+
+Platform images:
+- Create with `PlatformImage.fromImageBitmap(imageBitmap)` or `PlatformImage.fromNative(native)` (Bitmap/UIImage/BufferedImage).
+- Render via `ImageRunnerRenderer`.
 
 ### Advanced Module Configuration
 

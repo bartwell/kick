@@ -1,5 +1,6 @@
 [versions]
 agp = "8.12.2"
+junitJupiter = "5.10.2"
 kotlinx-coroutines = "1.10.2"
 kotlinx-serialization-json = "1.7.3"
 sqldelight = "2.1.0"
@@ -29,6 +30,7 @@ datetime = "0.6.1"
 androidx-core-ktx = "1.15.0"
 
 [libraries]
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }

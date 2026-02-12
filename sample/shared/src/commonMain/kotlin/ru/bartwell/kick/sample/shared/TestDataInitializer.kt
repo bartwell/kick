@@ -26,11 +26,13 @@ import ru.bartwell.kick.module.logging.log
 import ru.bartwell.kick.module.multiplatformsettings.MultiplatformSettingsModule
 import ru.bartwell.kick.module.overlay.OverlayModule
 import ru.bartwell.kick.module.overlay.overlay
+import ru.bartwell.kick.module.runner.RunnerModule
 import ru.bartwell.kick.module.sqlite.adapter.sqldelight.SqlDelightWrapper
 import ru.bartwell.kick.module.sqlite.runtime.SqliteModule
 import ru.bartwell.kick.runtime.init
 import ru.bartwell.kick.sample.shared.database.sqldelight.DriverFactory
 import ru.bartwell.kick.sample.shared.network.SampleHttpClient
+import ru.bartwell.kick.sample.shared.runner.registerRunnerSamples
 import ru.bartwell.kick.sample.shared.setting.CustomSettings
 import ru.bartwell.kick.sample.shared.setting.DefaultSettings
 import kotlin.time.Duration.Companion.seconds
@@ -93,10 +95,12 @@ class TestDataInitializer(context: PlatformContext) {
             createLayoutModule(context)?.let { module(it) }
             module(ControlPanelModule(context, createControlPanelItems()))
             module(OverlayModule(context))
+            module(RunnerModule())
             createFirebaseCloudMessagingModule(context)?.let { module(it) }
             createFirebaseAnalyticsModule(context)?.let { module(it) }
         }
 
+        registerRunnerSamples()
         startTestLogging()
         makeTestHttpRequest()
         startOverlayUpdater()

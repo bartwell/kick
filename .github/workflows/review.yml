@@ -41,6 +41,18 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Run Gradle plugin tests
+        run: ./gradlew :gradle-plugin:test
+
+      - name: Publish plugin and Kick artifacts to Maven local
+        run: ./gradlew :gradle-plugin:publishToMavenLocal :main-core:publishToMavenLocal :main-runtime:publishToMavenLocal :main-runtime-stub:publishToMavenLocal :file-explorer:publishToMavenLocal :file-explorer-stub:publishToMavenLocal
+        env:
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          SIGNING_SECRET_KEY: ${{ secrets.SIGNING_SECRET_KEY }}
+
+      - name: Build plugin sample
+        run: ./gradlew :samplePluginApp:compileKotlinJvm :samplePluginApp:compileKotlinIosSimulatorArm64 -PincludePluginSample=true
+
       - name: Assemble debug build
         run: ./gradlew clean assembleDebug
 

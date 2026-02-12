@@ -48,4 +48,8 @@ public enum class ModuleDescription(
         title = "Firebase Analytics",
         description = "Watch Firebase Analytics events, user ids, and properties as they happen."
     ),
+    RUNNER(
+        title = "Runner",
+        description = "Register debug actions and view their rendered results."
+    ),
 }
