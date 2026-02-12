@@ -44,4 +44,8 @@ public enum class ModuleDescription(
         title = "Firebase Cloud Messaging",
         description = "Inspect FCM tokens, installation id, and delivered pushes."
     ),
+    RUNNER(
+        title = "Runner",
+        description = "Register debug actions and view their rendered results."
+    ),
 }

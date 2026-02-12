@@ -48,10 +48,12 @@ kotlin {
                 export(projects.mainRuntimeStub)
                 export(projects.controlPanelStub)
                 export(projects.firebaseCloudMessagingStub)
+                export(projects.runnerStub)
             } else {
                 export(projects.mainRuntime)
                 export(projects.controlPanel)
                 export(projects.firebaseCloudMessaging)
+                export(projects.runner)
             }
         }
     }
@@ -92,6 +94,7 @@ kotlin {
                 api(projects.controlPanelStub)
                 api(projects.overlayStub)
                 api(projects.ktor3Stub)
+                api(projects.runnerStub)
                 api(projects.sqliteRuntimeStub)
                 api(projects.sqliteSqldelightAdapterStub)
                 api(projects.fileExplorerStub)
@@ -104,6 +107,7 @@ kotlin {
                 api(projects.multiplatformSettings)
                 api(projects.controlPanel)
                 api(projects.overlay)
+                api(projects.runner)
                 api(projects.fileExplorer)
             }
             implementation(compose.runtime)

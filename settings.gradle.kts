@@ -92,6 +92,11 @@ include(":overlay")
 project(":overlay").projectDir = file("module/logging/overlay")
 include(":overlay-stub")
 project(":overlay-stub").projectDir = file("module/logging/overlay-stub")
+// Runner
+include(":runner")
+project(":runner").projectDir = file("module/logging/runner")
+include(":runner-stub")
+project(":runner-stub").projectDir = file("module/logging/runner-stub")
 // Firebase Cloud Messaging
 include(":firebase-cloud-messaging")
 project(":firebase-cloud-messaging").projectDir = file("module/firebase/firebase-cloud-messaging")
