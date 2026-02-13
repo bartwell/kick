@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Kick integration wizard">
+  <title>Kick Integration Wizard</title>
+  <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">K</div>
+        <div class="brand-text">
+          <strong>Kick</strong>
+          <span data-i18n="app.wizardTitle"></span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <label class="field-inline" for="language-select">
+          <span data-i18n="language.label"></span>
+          <select id="language-select" data-i18n-aria-label="language.label"></select>
+        </label>
+        <button id="reset-button" class="ghost-button" type="button" data-i18n="nav.reset"></button>
+      </div>
+    </header>
+
+    <main id="app" class="content" aria-live="polite"></main>
+
+    <footer class="wizard-footer">
+      <div id="step-progress" class="step-progress"></div>
+      <div class="wizard-actions">
+        <button id="skip-module-button" type="button" class="danger-button hidden"></button>
+        <button id="back-button" type="button" class="ghost-button" data-i18n="nav.back"></button>
+        <button id="next-button" type="button" class="primary-button" data-i18n="nav.next"></button>
+      </div>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

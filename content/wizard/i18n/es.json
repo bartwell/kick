@@ -1,0 +1,274 @@
+{
+  "app": {
+    "pageTitle": "Asistente de Integración de Kick",
+    "wizardTitle": "Asistente de integración"
+  },
+  "language": {
+    "label": "Idioma",
+    "en": "Inglés",
+    "ru": "Ruso",
+    "es": "Español",
+    "pt": "Portugués",
+    "zh-Hans": "Chino simplificado",
+    "ja": "Japonés"
+  },
+  "nav": {
+    "back": "Atrás",
+    "next": "Siguiente",
+    "nextModule": "Siguiente",
+    "done": "Listo",
+    "reset": "Restablecer",
+    "resetConfirm": "¿Restablecer el estado del asistente y borrar las selecciones guardadas?"
+  },
+  "progress": {
+    "step": "Paso {current} de {total}"
+  },
+  "summary": {
+    "platforms": "Plataformas",
+    "modules": "Módulos",
+    "version": "Versión de Kick",
+    "count": "{count} seleccionados"
+  },
+  "step": {
+    "welcome": {
+      "title": "Genera la integración de Kick en minutos",
+      "subtitle": "Elige idioma, plataformas y módulos, y obtén snippets de Gradle + Kotlin listos para pegar.",
+      "checklistTitle": "Flujo del asistente",
+      "checklistSubtitle": "La página de salida combina todas las decisiones en un solo borrador de integración.",
+      "itemLanguage": "Selecciona el idioma de la interfaz",
+      "itemPlatforms": "Selecciona las plataformas de la app",
+      "itemModules": "Selecciona módulos y configura cada módulo seleccionado",
+      "itemOutput": "Copia Gradle, Common Kotlin y Platform glue opcional"
+    },
+    "platforms": {
+      "title": "Seleccionar plataformas",
+      "subtitle": "Elige todas las plataformas presentes actualmente en tu app."
+    },
+    "modules": {
+      "title": "Seleccionar módulos",
+      "subtitle": "Elige módulos para incluir en la inicialización de Kick.",
+      "selectedCount": "Módulos seleccionados: {count}"
+    },
+    "moduleConfig": {
+      "title": "Configurar: {module}"
+    },
+    "output": {
+      "title": "Salida de integración",
+      "subtitle": "Copia los snippets y pégalos en tu proyecto."
+    }
+  },
+  "platform": {
+    "android": "Android",
+    "ios": "iOS",
+    "jvm": "JVM (Desktop)",
+    "wasm": "WasmJS",
+    "androidDescription": "Target de aplicación Android",
+    "iosDescription": "Target de aplicación iOS",
+    "jvmDescription": "Target JVM de escritorio",
+    "wasmDescription": "Target WebAssembly JS"
+  },
+  "validation": {
+    "platformRequired": "Selecciona al menos una plataforma antes de continuar.",
+    "moduleRequired": "Selecciona al menos un módulo antes de continuar."
+  },
+  "modules": {
+    "unsupportedWarning": "No compatible con: {platforms}",
+    "unsupportedFallback": "Fallback sugerido: {fallback}"
+  },
+  "badge": {
+    "highConfiguration": "Configuración alta"
+  },
+  "config": {
+    "advanced": "Avanzado",
+    "noQuestions": "No hay preguntas adicionales para este módulo en el flujo por defecto.",
+    "databaseCount": "Cantidad de bases de datos",
+    "databaseNameLabel": "Nombre visible #{index}",
+    "displayName": "Nombre visible",
+    "storageItem": "Storage #{index}",
+    "storageDefaultName": "Storage",
+    "logging": {
+      "integrateNapier": "Integrar con Napier",
+      "labelExtractorBracket": "Usar BracketLabelExtractor",
+      "labelExtractorCustom": "Usar stub de extractor de etiquetas personalizado"
+    },
+    "ktor3": {
+      "showBodies": "Mostrar cuerpos de request/response",
+      "redactionKeys": "Claves de redacción (coma o nuevas líneas)"
+    },
+    "overlay": {
+      "enablePerformanceProvider": "Habilitar provider de rendimiento",
+      "customProviders": "Providers personalizados (coma o nuevas líneas)"
+    },
+    "runner": {
+      "generateSampleCalls": "Generar llamadas de ejemplo"
+    },
+    "controlPanel": {
+      "item": "Elemento #{index}",
+      "name": "Nombre",
+      "typeLabel": "Tipo",
+      "category": "Categoría (opcional)",
+      "editorLabel": "Editor",
+      "listValues": "Valores de lista (separados por coma)",
+      "type": {
+        "bool": "Bool",
+        "int": "Int",
+        "string": "String",
+        "list": "Lista",
+        "button": "Botón"
+      },
+      "editor": {
+        "none": "Ninguno",
+        "input_number": "Entrada numérica",
+        "input_string": "Entrada de texto",
+        "list": "Editor de lista"
+      }
+    }
+  },
+  "actions": {
+    "copy": "Copiar",
+    "remove": "Eliminar",
+    "skipModule": "No agregar módulo",
+    "addStorage": "Agregar storage",
+    "addItem": "Agregar elemento",
+    "addExampleItems": "Agregar elementos de ejemplo"
+  },
+  "output": {
+    "steps": {
+      "gradle": "Agrega el plugin de Kick en tu shared build.gradle.kts:",
+      "file": "Crea el archivo {path} con este contenido:",
+      "ktorExampleTitle": "Ejemplo de integración Ktor3",
+      "ktorExampleDescription": "Agrega esto al crear tu HttpClient.",
+      "fcmExampleTitle": "Ejemplo de Firebase Cloud Messaging",
+      "fcmExampleDescription": "Reenvía payloads push a Kick en callbacks de plataforma.",
+      "analyticsExampleTitle": "Ejemplo de Firebase Analytics",
+      "analyticsExampleDescription": "Llama a los métodos de analytics de Kick en el mismo wrapper donde llamas al SDK de Firebase.",
+      "controlPanelExampleTitle": "Ejemplo de uso de Control Panel",
+      "controlPanelExampleDescription": "Lee valores de Control Panel y ejecuta lógica de negocio con ellos.",
+      "overlayExampleTitle": "Ejemplo de actualizaciones de Overlay",
+      "overlayExampleDescription": "Envía valores en vivo a Overlay desde cualquier parte de tu app.",
+      "runnerExampleTitle": "Ejemplo de llamada Runner",
+      "runnerExampleDescription": "Registra una acción de debug y devuelve JSON para inspección."
+    },
+    "gradle": {
+      "title": "Gradle",
+      "description": "Configuración del plugin Kick con módulos seleccionados y overrides."
+    },
+    "common": {
+      "title": "Common Kotlin",
+      "description": "Crea shared/src/commonMain/kotlin/KickBootstrap.kt y pega este código."
+    },
+    "platformGlue": {
+      "title": "Platform glue",
+      "description": "Sigue esta checklist y agrega los archivos de plataforma abajo cuando se generen.",
+      "pathLabel": "Coloca este archivo en:",
+      "noFiles": "No se requieren archivos platform glue para la selección actual."
+    }
+  },
+  "glue": {
+    "init": {
+      "android": "Llama a KickBootstrap.init(...) durante el inicio de la app (Application.onCreate o equivalente).",
+      "ios": "Llama a KickBootstrap.init(...) desde la ruta de arranque compartida usada por el ciclo de vida de iOS.",
+      "jvm": "Llama a KickBootstrap.init(...) antes de mostrar la ventana de escritorio.",
+      "wasm": "Llama a KickBootstrap.init(...) al principio del arranque de tu app Wasm."
+    },
+    "hook": {
+      "firebaseCloudMessagingAndroid": "En FirebaseMessagingService.onMessageReceived(...) llama a Kick.firebaseCloudMessaging.handleFcm(message).",
+      "firebaseCloudMessagingIos": "Cuando se reciba una notificación APNS, llama a uno de los handlers Kick.firebaseCloudMessaging.handleApns... desde el bridge de Kotlin compartido.",
+      "firebaseAnalytics": "Duplica las llamadas del wrapper de analytics en Kick.firebaseAnalytics.logEvent / setUserId / setUserProperty."
+    },
+    "unsupportedModule": "{module}: no compatible en esta plataforma.",
+    "analytics": {
+      "title": "Configuración rápida de Firebase Analytics",
+      "subtitle": "Sigue estos pasos en orden. Hazlo tal cual y la integración será consistente.",
+      "step1": "Crea un wrapper compartido: shared/src/commonMain/kotlin/AnalyticsReporter.kt.",
+      "step2": "En logEvent(...), llama primero al SDK de Firebase y luego a Kick.firebaseAnalytics.logEvent(name, params).",
+      "step3": "En setUserId(...), llama primero al SDK de Firebase y luego a Kick.firebaseAnalytics.setUserId(id).",
+      "step4": "En setUserProperty(...), llama primero al SDK de Firebase y luego a Kick.firebaseAnalytics.setUserProperty(name, value).",
+      "step5": "Reemplaza las llamadas directas a Firebase por este wrapper en toda la app."
+    },
+    "guide": {
+      "title": "Qué conectar en el código de tu app",
+      "subtitle": "Sigue estos pasos. Solo se muestran los puntos relevantes para los módulos seleccionados.",
+      "logging": "Para enviar logs al módulo Logging, llama a Kick.log(level, message) en los lugares que quieras registrar.",
+      "loggingWithNapier": "Para enviar logs al módulo Logging, llama a Kick.log(level, message) donde haga falta, o redirige todos los logs de Napier con installNapierBridge() desde KickBootstrap.",
+      "ktor3": "Para registrar actividad de red de Ktor3, agrega install(KickKtor3Plugin) al crear HttpClient.",
+      "firebaseCloudMessagingBoth": "Para Firebase Cloud Messaging: en Android llama a Kick.firebaseCloudMessaging.handleFcm(message) dentro de FirebaseMessagingService.onMessageReceived(...). En iOS llama a KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) en AppDelegate cuando recibas payload APNS.",
+      "firebaseCloudMessagingAndroid": "Para Firebase Cloud Messaging en Android: llama a Kick.firebaseCloudMessaging.handleFcm(message) dentro de FirebaseMessagingService.onMessageReceived(...).",
+      "firebaseCloudMessagingIos": "Para Firebase Cloud Messaging en iOS: llama a KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) en AppDelegate cuando recibas payload APNS.",
+      "firebaseCloudMessagingGeneric": "Para Firebase Cloud Messaging, reenvía payloads push a los handlers de Kick en el ciclo de vida de la plataforma.",
+      "firebaseAnalytics": "Para Firebase Analytics, agrega Kick.firebaseAnalytics.logEvent(...), Kick.firebaseAnalytics.setUserId(...), y Kick.firebaseAnalytics.setUserProperty(...) en los mismos puntos de tu wrapper de analytics.",
+      "controlPanel": "Lee valores de ControlPanel en tu código con Kick.controlPanel.getBoolean(...), Kick.controlPanel.getString(...), etc. Si agregaste botones, escucha clics con Kick.controlPanel.events.collect { event -> ... }.",
+      "overlay": "Muestra valores runtime en la ventana flotante Overlay con Kick.overlay.set(\"key\", value).",
+      "runner": "Registra acciones de debug útiles donde lo necesites con Kick.runner.addCall(...)."
+    }
+  },
+  "toast": {
+    "copied": "Copiado",
+    "copyFailed": "Error al copiar"
+  },
+  "errors": {
+    "loadFailed": "No se pudieron cargar los recursos del asistente."
+  },
+  "module": {
+    "sqldelight": {
+      "title": "SQLDelight",
+      "description": "Ver y editar bases de datos SQLDelight.",
+      "fallback": "mantén SQLDelight solo en targets compatibles o usa stub/no-op en builds no compatibles"
+    },
+    "room": {
+      "title": "Room",
+      "description": "Inspeccionar tablas y valores de Room.",
+      "fallback": "usa SQLDelight en targets Web o proporciona fallback no-op para Room"
+    },
+    "logging": {
+      "title": "Logging",
+      "description": "Visor de logs en vivo con soporte de filtrado.",
+      "fallback": "desactiva el módulo en targets no compatibles o usa stub/no-op"
+    },
+    "ktor3": {
+      "title": "Ktor3",
+      "description": "Monitor de red para requests y responses de Ktor.",
+      "fallback": "desactiva el módulo en targets no compatibles o usa stub/no-op"
+    },
+    "control_panel": {
+      "title": "Control Panel",
+      "description": "Toggles runtime de funciones y valores debug editables.",
+      "fallback": "desactiva el módulo en targets no compatibles o usa control-panel-stub"
+    },
+    "multiplatform_settings": {
+      "title": "Settings",
+      "description": "Inspeccionar y editar storages de Multiplatform Settings.",
+      "fallback": "desactiva el módulo en targets no compatibles o usa multiplatform-settings-stub"
+    },
+    "file_explorer": {
+      "title": "File Explorer",
+      "description": "Navegar e inspeccionar archivos de la app.",
+      "fallback": "desactiva el módulo en targets no compatibles o usa file-explorer-stub"
+    },
+    "layout": {
+      "title": "Layout (Beta)",
+      "description": "Inspeccionar jerarquía de UI y propiedades de nodos.",
+      "fallback": "omite Layout en plataformas no compatibles (por ejemplo WasmJS)"
+    },
+    "overlay": {
+      "title": "Overlay",
+      "description": "Panel flotante de métricas en vivo sobre la UI de la app.",
+      "fallback": "desactiva overlay en targets no compatibles o usa overlay-stub"
+    },
+    "firebase_cloud_messaging": {
+      "title": "Firebase Cloud Messaging",
+      "description": "Inspeccionar notificaciones push y datos de token.",
+      "fallback": "mantén el módulo solo en Android/iOS; usa stub/no-op en JVM/Wasm"
+    },
+    "firebase_analytics": {
+      "title": "Firebase Analytics",
+      "description": "Inspeccionar eventos de analytics, user id y propiedades.",
+      "fallback": "mantén el módulo solo en Android/iOS; usa stub/no-op en JVM/Wasm"
+    },
+    "runner": {
+      "title": "Runner",
+      "description": "Ejecutar acciones de debug e inspeccionar resultados renderizados.",
+      "fallback": "desactiva el módulo en targets no compatibles o usa runner-stub"
+    }
+  }
+}
