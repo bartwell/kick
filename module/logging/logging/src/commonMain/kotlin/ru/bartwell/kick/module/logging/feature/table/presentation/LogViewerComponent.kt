@@ -8,6 +8,7 @@ public interface LogViewerComponent : Component {
     public val model: Value<LogViewerState>
 
     public fun onBackPressed()
+    public fun onAutoScrollToggleClick()
     public fun onClearAllClick()
     public fun onFilterClick()
     public fun onFilterDialogDismiss()

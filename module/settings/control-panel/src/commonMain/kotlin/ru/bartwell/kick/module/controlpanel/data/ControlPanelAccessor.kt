@@ -10,19 +10,37 @@ public class ControlPanelAccessor internal constructor() {
 
     public fun getBoolean(key: String): Boolean = ControlPanelSettings.get<InputType.Boolean>(key).value
     public fun getBooleanOrNull(key: String): Boolean? = ControlPanelSettings.getOrNull<InputType.Boolean>(key)?.value
+    public fun setBoolean(key: String, value: Boolean) {
+        ControlPanelSettings.put(key, InputType.Boolean(value))
+    }
 
     public fun getInt(key: String): Int = ControlPanelSettings.get<InputType.Int>(key).value
     public fun getIntOrNull(key: String): Int? = ControlPanelSettings.getOrNull<InputType.Int>(key)?.value
+    public fun setInt(key: String, value: Int) {
+        ControlPanelSettings.put(key, InputType.Int(value))
+    }
 
     public fun getLong(key: String): Long = ControlPanelSettings.get<InputType.Long>(key).value
     public fun getLongOrNull(key: String): Long? = ControlPanelSettings.getOrNull<InputType.Long>(key)?.value
+    public fun setLong(key: String, value: Long) {
+        ControlPanelSettings.put(key, InputType.Long(value))
+    }
 
     public fun getFloat(key: String): Float = ControlPanelSettings.get<InputType.Float>(key).value
     public fun getFloatOrNull(key: String): Float? = ControlPanelSettings.getOrNull<InputType.Float>(key)?.value
+    public fun setFloat(key: String, value: Float) {
+        ControlPanelSettings.put(key, InputType.Float(value))
+    }
 
     public fun getDouble(key: String): Double = ControlPanelSettings.get<InputType.Double>(key).value
     public fun getDoubleOrNull(key: String): Double? = ControlPanelSettings.getOrNull<InputType.Double>(key)?.value
+    public fun setDouble(key: String, value: Double) {
+        ControlPanelSettings.put(key, InputType.Double(value))
+    }
 
     public fun getString(key: String): String = ControlPanelSettings.get<InputType.String>(key).value
     public fun getStringOrNull(key: String): String? = ControlPanelSettings.getOrNull<InputType.String>(key)?.value
+    public fun setString(key: String, value: String) {
+        ControlPanelSettings.put(key, InputType.String(value))
+    }
 }

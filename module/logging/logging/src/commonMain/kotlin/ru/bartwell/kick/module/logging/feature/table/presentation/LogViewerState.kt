@@ -5,6 +5,7 @@ import ru.bartwell.kick.module.logging.core.persist.LogEntity
 public data class LogViewerState(
     val log: List<LogEntity> = emptyList(),
     val error: String? = null,
+    val isAutoScrollEnabled: Boolean = true,
     val filterQuery: String = "",
     val isFilterActive: Boolean = false,
     val isFilterDialogVisible: Boolean = false,

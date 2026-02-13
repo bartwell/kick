@@ -36,6 +36,10 @@ internal class DefaultLogViewerComponent(
 
     override fun onBackPressed() = onFinished()
 
+    override fun onAutoScrollToggleClick() {
+        _model.value = model.value.copy(isAutoScrollEnabled = !model.value.isAutoScrollEnabled)
+    }
+
     override fun onClearAllClick() {
         uiScope.launch { database.getLogDao().deleteAll() }
     }

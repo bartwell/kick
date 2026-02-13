@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ClearAll
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.FileDownloadOff
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.FilterListOff
 import androidx.compose.material.icons.filled.Share
@@ -24,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +50,13 @@ internal fun LogViewerContent(
 ) {
     val state by component.model.subscribeAsState()
     val context = platformContext()
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(state.isAutoScrollEnabled, state.log.lastOrNull()?.id) {
+        if (state.isAutoScrollEnabled && state.log.isNotEmpty()) {
+            listState.animateScrollToItem(state.log.lastIndex)
+        }
+    }
 
     Column(modifier = modifier) {
         TopAppBar(
@@ -60,6 +70,17 @@ internal fun LogViewerContent(
                         Icons.Default.FilterListOff to "Disable filter"
                     } else {
                         Icons.Default.FilterList to "Filter logs"
+                    }
+                    Icon(imageVector = icon, contentDescription = description)
+                }
+                IconButton(
+                    onClick = component::onAutoScrollToggleClick,
+                    modifier = Modifier.testTag("auto_scroll_toggle")
+                ) {
+                    val (icon, description) = if (state.isAutoScrollEnabled) {
+                        Icons.Filled.FileDownload to "Disable auto-scroll"
+                    } else {
+                        Icons.Filled.FileDownloadOff to "Enable auto-scroll"
                     }
                     Icon(imageVector = icon, contentDescription = description)
                 }
@@ -86,7 +107,7 @@ internal fun LogViewerContent(
         }
         ErrorBox(modifier = Modifier.fillMaxSize(), error = state.error) {
             LazyColumn(
-                state = rememberLazyListState(),
+                state = listState,
                 modifier = Modifier.fillMaxSize().testTag("log_list"),
             ) {
                 items(state.log) { item ->

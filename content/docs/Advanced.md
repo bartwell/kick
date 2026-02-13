@@ -429,6 +429,17 @@ Kick.controlPanel.getString("endpoint")
 Kick.controlPanel.getString("list")
 ```
 
+You can also set values programmatically via `Kick.controlPanel.set*()` methods:
+
+```kotlin
+Kick.controlPanel.setBoolean("featureEnabled", true)
+Kick.controlPanel.setInt("maxItems", 8)
+Kick.controlPanel.setLong("timeoutMs", 15_000L)
+Kick.controlPanel.setFloat("ratio", 0.75f)
+Kick.controlPanel.setDouble("threshold", 0.95)
+Kick.controlPanel.setString("endpoint", "https://staging.example.com")
+```
+
 #### Actions
 
 You can also add action buttons to trigger code in your app. Collect control panel events and handle button IDs you defined in `ControlPanelItem(type = ActionType.Button("id"))`:
@@ -646,4 +657,3 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 ```
 
 Desktop (Windows/macOS/Linux): when supported by the OS, Kick also adds a System Tray icon with the label "Inspect with Kick". Clicking the tray icon launches the viewer. The icon is removed automatically when the host app exits. This tray shortcut respects the same `enableShortcut` flag — set it to `false` to disable the icon.
-
