@@ -1,0 +1,274 @@
+{
+  "app": {
+    "pageTitle": "Kick 統合ウィザード",
+    "wizardTitle": "統合ウィザード"
+  },
+  "language": {
+    "label": "言語",
+    "en": "英語",
+    "ru": "ロシア語",
+    "es": "スペイン語",
+    "pt": "ポルトガル語",
+    "zh-Hans": "中国語（簡体字）",
+    "ja": "日本語"
+  },
+  "nav": {
+    "back": "戻る",
+    "next": "次へ",
+    "nextModule": "次へ",
+    "done": "完了",
+    "reset": "リセット",
+    "resetConfirm": "ウィザードの状態をリセットし、保存済みの選択を削除しますか？"
+  },
+  "progress": {
+    "step": "ステップ {current} / {total}"
+  },
+  "summary": {
+    "platforms": "プラットフォーム",
+    "modules": "モジュール",
+    "version": "Kick バージョン",
+    "count": "{count} 件選択"
+  },
+  "step": {
+    "welcome": {
+      "title": "数分で Kick 統合を生成",
+      "subtitle": "言語・プラットフォーム・モジュールを選択し、貼り付け可能な Gradle + Kotlin スニペットを生成します。",
+      "checklistTitle": "ウィザードの流れ",
+      "checklistSubtitle": "出力ページですべての選択を 1 つの統合ドラフトにまとめます。",
+      "itemLanguage": "UI 言語を選択",
+      "itemPlatforms": "アプリのプラットフォームを選択",
+      "itemModules": "モジュールを選択し、選んだ各モジュールを設定",
+      "itemOutput": "Gradle、Common Kotlin、必要に応じて Platform glue をコピー"
+    },
+    "platforms": {
+      "title": "プラットフォームを選択",
+      "subtitle": "現在アプリで使用しているすべてのプラットフォームを選択してください。"
+    },
+    "modules": {
+      "title": "モジュールを選択",
+      "subtitle": "Kick 初期化に含めるモジュールを選びます。",
+      "selectedCount": "選択したモジュール: {count}"
+    },
+    "moduleConfig": {
+      "title": "設定: {module}"
+    },
+    "output": {
+      "title": "統合出力",
+      "subtitle": "スニペットをコピーしてプロジェクトに貼り付けてください。"
+    }
+  },
+  "platform": {
+    "android": "Android",
+    "ios": "iOS",
+    "jvm": "JVM（Desktop）",
+    "wasm": "WasmJS",
+    "androidDescription": "Android アプリターゲット",
+    "iosDescription": "iOS アプリターゲット",
+    "jvmDescription": "デスクトップ JVM ターゲット",
+    "wasmDescription": "WebAssembly JS ターゲット"
+  },
+  "validation": {
+    "platformRequired": "先に進むには少なくとも 1 つのプラットフォームを選択してください。",
+    "moduleRequired": "先に進むには少なくとも 1 つのモジュールを選択してください。"
+  },
+  "modules": {
+    "unsupportedWarning": "未対応: {platforms}",
+    "unsupportedFallback": "推奨フォールバック: {fallback}"
+  },
+  "badge": {
+    "highConfiguration": "高い設定難易度"
+  },
+  "config": {
+    "advanced": "詳細設定",
+    "noQuestions": "このモジュールはデフォルトフローでは追加の質問がありません。",
+    "databaseCount": "データベース数",
+    "databaseNameLabel": "表示名 #{index}",
+    "displayName": "表示名",
+    "storageItem": "Storage #{index}",
+    "storageDefaultName": "Storage",
+    "logging": {
+      "integrateNapier": "Napier と連携",
+      "labelExtractorBracket": "BracketLabelExtractor を使用",
+      "labelExtractorCustom": "カスタム label extractor のスタブを使用"
+    },
+    "ktor3": {
+      "showBodies": "リクエスト/レスポンス body を表示",
+      "redactionKeys": "マスキングキー（カンマまたは改行区切り）"
+    },
+    "overlay": {
+      "enablePerformanceProvider": "パフォーマンス provider を有効化",
+      "customProviders": "カスタム provider（カンマまたは改行区切り）"
+    },
+    "runner": {
+      "generateSampleCalls": "サンプル呼び出しを生成"
+    },
+    "controlPanel": {
+      "item": "項目 #{index}",
+      "name": "名前",
+      "typeLabel": "タイプ",
+      "category": "カテゴリ（任意）",
+      "editorLabel": "エディタ",
+      "listValues": "リスト値（カンマ区切り）",
+      "type": {
+        "bool": "Bool",
+        "int": "Int",
+        "string": "String",
+        "list": "List",
+        "button": "Button"
+      },
+      "editor": {
+        "none": "なし",
+        "input_number": "数値入力",
+        "input_string": "文字列入力",
+        "list": "リストエディタ"
+      }
+    }
+  },
+  "actions": {
+    "copy": "コピー",
+    "remove": "削除",
+    "skipModule": "モジュールを追加しない",
+    "addStorage": "Storage を追加",
+    "addItem": "項目を追加",
+    "addExampleItems": "サンプル項目を追加"
+  },
+  "output": {
+    "steps": {
+      "gradle": "shared build.gradle.kts に Kick プラグインを追加:",
+      "file": "{path} を作成し、以下の内容を貼り付け:",
+      "ktorExampleTitle": "Ktor3 統合例",
+      "ktorExampleDescription": "HttpClient 作成時にこれを追加してください。",
+      "fcmExampleTitle": "Firebase Cloud Messaging 例",
+      "fcmExampleDescription": "プラットフォームのコールバックで push payload を Kick に渡します。",
+      "analyticsExampleTitle": "Firebase Analytics 例",
+      "analyticsExampleDescription": "Firebase SDK を呼ぶ同じ wrapper 内で Kick analytics メソッドも呼びます。",
+      "controlPanelExampleTitle": "Control Panel 利用例",
+      "controlPanelExampleDescription": "Control Panel の値を読み取り、業務ロジックに利用します。",
+      "overlayExampleTitle": "Overlay 更新例",
+      "overlayExampleDescription": "アプリ内の任意箇所から Overlay にライブ値を送ります。",
+      "runnerExampleTitle": "Runner 呼び出し例",
+      "runnerExampleDescription": "デバッグアクションを登録し、確認用 JSON を返します。"
+    },
+    "gradle": {
+      "title": "Gradle",
+      "description": "選択したモジュールと override を含む Kick プラグイン設定。"
+    },
+    "common": {
+      "title": "Common Kotlin",
+      "description": "shared/src/commonMain/kotlin/KickBootstrap.kt を作成してこのコードを貼り付けます。"
+    },
+    "platformGlue": {
+      "title": "Platform glue",
+      "description": "このチェックリストに従い、生成された場合のみ下記プラットフォームファイルを追加してください。",
+      "pathLabel": "このパスに配置:",
+      "noFiles": "現在の選択では追加の platform glue ファイルは不要です。"
+    }
+  },
+  "glue": {
+    "init": {
+      "android": "アプリ起動時（Application.onCreate など）に KickBootstrap.init(...) を呼び出します。",
+      "ios": "iOS のライフサイクルで使う共有スタートアップ経路から KickBootstrap.init(...) を呼び出します。",
+      "jvm": "デスクトップのウィンドウ表示前に KickBootstrap.init(...) を呼び出します。",
+      "wasm": "Wasm アプリの起動初期で KickBootstrap.init(...) を呼び出します。"
+    },
+    "hook": {
+      "firebaseCloudMessagingAndroid": "FirebaseMessagingService.onMessageReceived(...) で Kick.firebaseCloudMessaging.handleFcm(message) を呼びます。",
+      "firebaseCloudMessagingIos": "APNS 通知受信時に、共有 Kotlin API bridge から Kick.firebaseCloudMessaging.handleApns... を呼びます。",
+      "firebaseAnalytics": "analytics wrapper の呼び出しを Kick.firebaseAnalytics.logEvent / setUserId / setUserProperty にもミラーします。"
+    },
+    "unsupportedModule": "{module}: このプラットフォームでは未対応です。",
+    "analytics": {
+      "title": "Firebase Analytics クイックセットアップ",
+      "subtitle": "この順番で実行してください。手順通りに行えば統合を一貫して維持できます。",
+      "step1": "共有 wrapper ファイルを 1 つ作成: shared/src/commonMain/kotlin/AnalyticsReporter.kt。",
+      "step2": "logEvent(...) で先に Firebase SDK、次に Kick.firebaseAnalytics.logEvent(name, params) を呼びます。",
+      "step3": "setUserId(...) で先に Firebase SDK、次に Kick.firebaseAnalytics.setUserId(id) を呼びます。",
+      "step4": "setUserProperty(...) で先に Firebase SDK、次に Kick.firebaseAnalytics.setUserProperty(name, value) を呼びます。",
+      "step5": "アプリ全体で Firebase 直接呼び出しをこの wrapper に置き換えます。"
+    },
+    "guide": {
+      "title": "アプリコードで接続する内容",
+      "subtitle": "以下の手順に従ってください。選択したモジュールに関係する項目のみ表示されます。",
+      "logging": "Logging モジュールにログを送るには、必要な箇所で Kick.log(level, message) を呼び出します。",
+      "loggingWithNapier": "Logging モジュールにログを送るには、必要箇所で Kick.log(level, message) を呼ぶか、KickBootstrap の installNapierBridge() で Napier ログをすべて転送します。",
+      "ktor3": "Ktor3 のネットワーク活動を記録するには、HttpClient 作成時に install(KickKtor3Plugin) を追加します。",
+      "firebaseCloudMessagingBoth": "Firebase Cloud Messaging: Android では FirebaseMessagingService.onMessageReceived(...) 内で Kick.firebaseCloudMessaging.handleFcm(message) を呼びます。iOS では APNS payload 受信時に AppDelegate で KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) を呼びます。",
+      "firebaseCloudMessagingAndroid": "Android の Firebase Cloud Messaging: FirebaseMessagingService.onMessageReceived(...) 内で Kick.firebaseCloudMessaging.handleFcm(message) を呼びます。",
+      "firebaseCloudMessagingIos": "iOS の Firebase Cloud Messaging: APNS payload 受信時に AppDelegate で KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) を呼びます。",
+      "firebaseCloudMessagingGeneric": "Firebase Cloud Messaging では、プッシュ payload をプラットフォームのライフサイクルコードから Kick ハンドラに転送してください。",
+      "firebaseAnalytics": "Firebase Analytics では、analytics wrapper の対応箇所で Kick.firebaseAnalytics.logEvent(...)、Kick.firebaseAnalytics.setUserId(...)、Kick.firebaseAnalytics.setUserProperty(...) を呼び出します。",
+      "controlPanel": "コード中で Kick.controlPanel.getBoolean(...)、Kick.controlPanel.getString(...) などを使って ControlPanel の値を取得します。ボタンを追加した場合は Kick.controlPanel.events.collect { event -> ... } でクリックを監視します。",
+      "overlay": "Kick.overlay.set(\"key\", value) を使って Overlay のフローティングウィンドウに必要な値を表示します。",
+      "runner": "必要な箇所で Kick.runner.addCall(...) を使ってデバッグアクションを登録します。"
+    }
+  },
+  "toast": {
+    "copied": "コピーしました",
+    "copyFailed": "コピーに失敗しました"
+  },
+  "errors": {
+    "loadFailed": "ウィザードリソースの読み込みに失敗しました。"
+  },
+  "module": {
+    "sqldelight": {
+      "title": "SQLDelight",
+      "description": "SQLDelight データベースを表示・編集します。",
+      "fallback": "SQLDelight は対応ターゲットのみに限定するか、非対応ビルドでは stub/no-op を使用"
+    },
+    "room": {
+      "title": "Room",
+      "description": "Room データベースのテーブルと値を確認します。",
+      "fallback": "Web ターゲットでは SQLDelight を使うか、Room 用に no-op fallback を用意"
+    },
+    "logging": {
+      "title": "Logging",
+      "description": "フィルタ対応のライブログビューア。",
+      "fallback": "非対応ターゲットでは無効化するか stub/no-op を使用"
+    },
+    "ktor3": {
+      "title": "Ktor3",
+      "description": "Ktor リクエスト/レスポンス用ネットワークモニタ。",
+      "fallback": "非対応ターゲットでは無効化するか stub/no-op を使用"
+    },
+    "control_panel": {
+      "title": "Control Panel",
+      "description": "ランタイム機能トグルと編集可能なデバッグ値。",
+      "fallback": "非対応ターゲットでは無効化するか control-panel-stub を使用"
+    },
+    "multiplatform_settings": {
+      "title": "Settings",
+      "description": "Multiplatform Settings のストレージを表示・編集します。",
+      "fallback": "非対応ターゲットでは無効化するか multiplatform-settings-stub を使用"
+    },
+    "file_explorer": {
+      "title": "File Explorer",
+      "description": "アプリファイルを参照・確認します。",
+      "fallback": "非対応ターゲットでは無効化するか file-explorer-stub を使用"
+    },
+    "layout": {
+      "title": "Layout (Beta)",
+      "description": "UI 階層とノードプロパティを検査します。",
+      "fallback": "非対応プラットフォーム（例: WasmJS）では Layout をスキップ"
+    },
+    "overlay": {
+      "title": "Overlay",
+      "description": "アプリ UI 上に表示するフローティングライブメトリクスパネル。",
+      "fallback": "非対応ターゲットでは overlay を無効化するか overlay-stub を使用"
+    },
+    "firebase_cloud_messaging": {
+      "title": "Firebase Cloud Messaging",
+      "description": "プッシュ通知とトークン情報を確認します。",
+      "fallback": "このモジュールは Android/iOS のみで使用。JVM/Wasm では stub/no-op を使用"
+    },
+    "firebase_analytics": {
+      "title": "Firebase Analytics",
+      "description": "analytics イベント、user id、プロパティを確認します。",
+      "fallback": "このモジュールは Android/iOS のみで使用。JVM/Wasm では stub/no-op を使用"
+    },
+    "runner": {
+      "title": "Runner",
+      "description": "デバッグアクションを実行し、レンダリング結果を確認します。",
+      "fallback": "非対応ターゲットでは無効化するか runner-stub を使用"
+    }
+  }
+}

@@ -1,0 +1,194 @@
+[
+  {
+    "id": "sqldelight",
+    "titleKey": "module.sqldelight.title",
+    "descriptionKey": "module.sqldelight.description",
+    "kickModuleEnum": "KickModule.SqliteRuntime",
+    "extraKickModuleEnums": ["KickModule.SqliteSqlDelightAdapter"],
+    "supportedPlatforms": ["android", "ios", "jvm", "wasm"],
+    "needsPlatformGlue": false,
+    "configComplexity": "medium",
+    "configPages": [],
+    "outputSnippets": ["gradle.sqliteRuntime", "gradle.sqliteSqlDelightAdapter", "common.sqliteSqlDelight"],
+    "manualArtifacts": {
+      "runtime": ["sqlite-core", "sqlite-runtime", "sqlite-sqldelight-adapter"],
+      "stub": ["sqlite-runtime-stub", "sqlite-sqldelight-adapter-stub"]
+    }
+  },
+  {
+    "id": "room",
+    "titleKey": "module.room.title",
+    "descriptionKey": "module.room.description",
+    "kickModuleEnum": "KickModule.SqliteRuntime",
+    "extraKickModuleEnums": ["KickModule.SqliteRoomAdapter"],
+    "supportedPlatforms": ["android", "ios", "jvm"],
+    "needsPlatformGlue": false,
+    "configComplexity": "medium",
+    "configPages": [],
+    "outputSnippets": ["gradle.sqliteRuntime", "gradle.sqliteRoomAdapter", "common.sqliteRoom"],
+    "manualArtifacts": {
+      "runtime": ["sqlite-core", "sqlite-runtime", "sqlite-room-adapter"],
+      "stub": ["sqlite-runtime-stub", "sqlite-room-adapter-stub"]
+    }
+  },
+  {
+    "id": "logging",
+    "titleKey": "module.logging.title",
+    "descriptionKey": "module.logging.description",
+    "kickModuleEnum": "KickModule.Logging",
+    "extraKickModuleEnums": [],
+    "supportedPlatforms": ["android", "ios", "jvm", "wasm"],
+    "needsPlatformGlue": false,
+    "configComplexity": "low",
+    "configPages": ["logging"],
+    "outputSnippets": ["gradle.logging", "common.logging"],
+    "manualArtifacts": {
+      "runtime": ["logging"],
+      "stub": ["logging-stub"]
+    }
+  },
+  {
+    "id": "ktor3",
+    "titleKey": "module.ktor3.title",
+    "descriptionKey": "module.ktor3.description",
+    "kickModuleEnum": "KickModule.Ktor3",
+    "extraKickModuleEnums": [],
+    "supportedPlatforms": ["android", "ios", "jvm", "wasm"],
+    "needsPlatformGlue": false,
+    "configComplexity": "low",
+    "configPages": [],
+    "outputSnippets": ["gradle.ktor3", "common.ktor3"],
+    "manualArtifacts": {
+      "runtime": ["ktor3"],
+      "stub": ["ktor3-stub"]
+    }
+  },
+  {
+    "id": "control_panel",
+    "titleKey": "module.control_panel.title",
+    "descriptionKey": "module.control_panel.description",
+    "kickModuleEnum": null,
+    "extraKickModuleEnums": [],
+    "supportedPlatforms": ["android", "ios", "jvm", "wasm"],
+    "needsPlatformGlue": false,
+    "configComplexity": "high",
+    "configPages": ["control_panel"],
+    "outputSnippets": ["gradle.manualControlPanel", "common.controlPanel"],
+    "manualArtifacts": {
+      "runtime": ["control-panel"],
+      "stub": ["control-panel-stub"]
+    }
+  },
+  {
+    "id": "multiplatform_settings",
+    "titleKey": "module.multiplatform_settings.title",
+    "descriptionKey": "module.multiplatform_settings.description",
+    "kickModuleEnum": "KickModule.MultiplatformSettings",
+    "extraKickModuleEnums": [],
+    "supportedPlatforms": ["android", "ios", "jvm", "wasm"],
+    "needsPlatformGlue": false,
+    "configComplexity": "low",
+    "configPages": ["multiplatform_settings"],
+    "outputSnippets": ["gradle.multiplatformSettings", "common.multiplatformSettings"],
+    "manualArtifacts": {
+      "runtime": ["multiplatform-settings"],
+      "stub": ["multiplatform-settings-stub"]
+    }
+  },
+  {
+    "id": "file_explorer",
+    "titleKey": "module.file_explorer.title",
+    "descriptionKey": "module.file_explorer.description",
+    "kickModuleEnum": "KickModule.FileExplorer",
+    "extraKickModuleEnums": [],
+    "supportedPlatforms": ["android", "ios", "jvm", "wasm"],
+    "needsPlatformGlue": false,
+    "configComplexity": "low",
+    "configPages": [],
+    "outputSnippets": ["gradle.fileExplorer", "common.fileExplorer"],
+    "manualArtifacts": {
+      "runtime": ["file-explorer"],
+      "stub": ["file-explorer-stub"]
+    }
+  },
+  {
+    "id": "layout",
+    "titleKey": "module.layout.title",
+    "descriptionKey": "module.layout.description",
+    "kickModuleEnum": "KickModule.Layout",
+    "extraKickModuleEnums": [],
+    "supportedPlatforms": ["android", "ios", "jvm"],
+    "needsPlatformGlue": false,
+    "configComplexity": "medium",
+    "configPages": [],
+    "outputSnippets": ["gradle.layout", "common.layout"],
+    "manualArtifacts": {
+      "runtime": ["layout"],
+      "stub": ["layout-stub"]
+    }
+  },
+  {
+    "id": "overlay",
+    "titleKey": "module.overlay.title",
+    "descriptionKey": "module.overlay.description",
+    "kickModuleEnum": null,
+    "extraKickModuleEnums": [],
+    "supportedPlatforms": ["android", "ios", "jvm", "wasm"],
+    "needsPlatformGlue": false,
+    "configComplexity": "medium",
+    "configPages": ["overlay"],
+    "outputSnippets": ["gradle.manualOverlay", "common.overlay"],
+    "manualArtifacts": {
+      "runtime": ["overlay"],
+      "stub": ["overlay-stub"]
+    }
+  },
+  {
+    "id": "firebase_cloud_messaging",
+    "titleKey": "module.firebase_cloud_messaging.title",
+    "descriptionKey": "module.firebase_cloud_messaging.description",
+    "kickModuleEnum": "KickModule.FirebaseCloudMessaging",
+    "extraKickModuleEnums": [],
+    "supportedPlatforms": ["android", "ios"],
+    "needsPlatformGlue": true,
+    "configComplexity": "medium",
+    "configPages": [],
+    "outputSnippets": ["gradle.firebaseCloudMessaging", "common.firebaseCloudMessaging", "glue.firebaseCloudMessaging"],
+    "manualArtifacts": {
+      "runtime": ["firebase-cloud-messaging"],
+      "stub": ["firebase-cloud-messaging-stub"]
+    }
+  },
+  {
+    "id": "firebase_analytics",
+    "titleKey": "module.firebase_analytics.title",
+    "descriptionKey": "module.firebase_analytics.description",
+    "kickModuleEnum": null,
+    "extraKickModuleEnums": [],
+    "supportedPlatforms": ["android", "ios"],
+    "needsPlatformGlue": true,
+    "configComplexity": "medium",
+    "configPages": [],
+    "outputSnippets": ["gradle.manualFirebaseAnalytics", "common.firebaseAnalytics", "glue.firebaseAnalytics"],
+    "manualArtifacts": {
+      "runtime": ["firebase-analytics"],
+      "stub": ["firebase-analytics-stub"]
+    }
+  },
+  {
+    "id": "runner",
+    "titleKey": "module.runner.title",
+    "descriptionKey": "module.runner.description",
+    "kickModuleEnum": null,
+    "extraKickModuleEnums": [],
+    "supportedPlatforms": ["android", "ios", "jvm", "wasm"],
+    "needsPlatformGlue": false,
+    "configComplexity": "low",
+    "configPages": ["runner"],
+    "outputSnippets": ["gradle.manualRunner", "common.runner"],
+    "manualArtifacts": {
+      "runtime": ["runner"],
+      "stub": ["runner-stub"]
+    }
+  }
+]

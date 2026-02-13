@@ -1,0 +1,274 @@
+{
+  "app": {
+    "pageTitle": "Kick 集成向导",
+    "wizardTitle": "集成向导"
+  },
+  "language": {
+    "label": "语言",
+    "en": "英语",
+    "ru": "俄语",
+    "es": "西班牙语",
+    "pt": "葡萄牙语",
+    "zh-Hans": "简体中文",
+    "ja": "日语"
+  },
+  "nav": {
+    "back": "返回",
+    "next": "下一步",
+    "nextModule": "下一步",
+    "done": "完成",
+    "reset": "重置",
+    "resetConfirm": "重置向导状态并清除已保存的选择？"
+  },
+  "progress": {
+    "step": "第 {current} 步，共 {total} 步"
+  },
+  "summary": {
+    "platforms": "平台",
+    "modules": "模块",
+    "version": "Kick 版本",
+    "count": "已选择 {count} 项"
+  },
+  "step": {
+    "welcome": {
+      "title": "几分钟生成 Kick 集成",
+      "subtitle": "选择语言、平台和模块，生成可直接粘贴的 Gradle + Kotlin 代码片段。",
+      "checklistTitle": "向导流程",
+      "checklistSubtitle": "输出页会把所有选择整合为一份集成草稿。",
+      "itemLanguage": "选择界面语言",
+      "itemPlatforms": "选择应用平台",
+      "itemModules": "选择模块并配置每个已选模块",
+      "itemOutput": "复制 Gradle、Common Kotlin，以及可选的 Platform glue"
+    },
+    "platforms": {
+      "title": "选择平台",
+      "subtitle": "请选择你应用当前支持的所有平台。"
+    },
+    "modules": {
+      "title": "选择模块",
+      "subtitle": "选择要加入 Kick 初始化的模块。",
+      "selectedCount": "已选模块：{count}"
+    },
+    "moduleConfig": {
+      "title": "配置：{module}"
+    },
+    "output": {
+      "title": "集成输出",
+      "subtitle": "复制代码片段并粘贴到你的项目中。"
+    }
+  },
+  "platform": {
+    "android": "Android",
+    "ios": "iOS",
+    "jvm": "JVM（桌面）",
+    "wasm": "WasmJS",
+    "androidDescription": "Android 应用目标",
+    "iosDescription": "iOS 应用目标",
+    "jvmDescription": "桌面 JVM 目标",
+    "wasmDescription": "WebAssembly JS 目标"
+  },
+  "validation": {
+    "platformRequired": "继续前请至少选择一个平台。",
+    "moduleRequired": "继续前请至少选择一个模块。"
+  },
+  "modules": {
+    "unsupportedWarning": "以下平台不支持：{platforms}",
+    "unsupportedFallback": "建议替代方案：{fallback}"
+  },
+  "badge": {
+    "highConfiguration": "高配置"
+  },
+  "config": {
+    "advanced": "高级",
+    "noQuestions": "该模块在默认流程中没有额外问题。",
+    "databaseCount": "数据库数量",
+    "databaseNameLabel": "显示名称 #{index}",
+    "displayName": "显示名称",
+    "storageItem": "存储 #{index}",
+    "storageDefaultName": "存储",
+    "logging": {
+      "integrateNapier": "集成 Napier",
+      "labelExtractorBracket": "使用 BracketLabelExtractor",
+      "labelExtractorCustom": "使用自定义标签提取器占位实现"
+    },
+    "ktor3": {
+      "showBodies": "显示请求/响应 body",
+      "redactionKeys": "脱敏字段（逗号或换行分隔）"
+    },
+    "overlay": {
+      "enablePerformanceProvider": "启用性能 provider",
+      "customProviders": "自定义 provider（逗号或换行分隔）"
+    },
+    "runner": {
+      "generateSampleCalls": "生成示例调用"
+    },
+    "controlPanel": {
+      "item": "条目 #{index}",
+      "name": "名称",
+      "typeLabel": "类型",
+      "category": "分类（可选）",
+      "editorLabel": "编辑器",
+      "listValues": "列表值（逗号分隔）",
+      "type": {
+        "bool": "Bool",
+        "int": "Int",
+        "string": "String",
+        "list": "List",
+        "button": "Button"
+      },
+      "editor": {
+        "none": "无",
+        "input_number": "数字输入",
+        "input_string": "字符串输入",
+        "list": "列表编辑器"
+      }
+    }
+  },
+  "actions": {
+    "copy": "复制",
+    "remove": "删除",
+    "skipModule": "不添加模块",
+    "addStorage": "添加存储",
+    "addItem": "添加条目",
+    "addExampleItems": "添加示例条目"
+  },
+  "output": {
+    "steps": {
+      "gradle": "在 shared build.gradle.kts 中添加 Kick 插件：",
+      "file": "创建文件 {path}，内容如下：",
+      "ktorExampleTitle": "Ktor3 集成示例",
+      "ktorExampleDescription": "在创建 HttpClient 时添加以下代码。",
+      "fcmExampleTitle": "Firebase Cloud Messaging 示例",
+      "fcmExampleDescription": "在平台回调中把 push payload 转发给 Kick。",
+      "analyticsExampleTitle": "Firebase Analytics 示例",
+      "analyticsExampleDescription": "在调用 Firebase SDK 的同一层 wrapper 中调用 Kick analytics 方法。",
+      "controlPanelExampleTitle": "Control Panel 使用示例",
+      "controlPanelExampleDescription": "读取 Control Panel 的值并据此执行业务逻辑。",
+      "overlayExampleTitle": "Overlay 更新示例",
+      "overlayExampleDescription": "在应用任意位置向 Overlay 推送实时数据。",
+      "runnerExampleTitle": "Runner 调用示例",
+      "runnerExampleDescription": "注册一个调试动作并返回 JSON 供查看。"
+    },
+    "gradle": {
+      "title": "Gradle",
+      "description": "Kick 插件配置（含已选模块和覆盖选项）。"
+    },
+    "common": {
+      "title": "Common Kotlin",
+      "description": "创建 shared/src/commonMain/kotlin/KickBootstrap.kt 并粘贴此代码。"
+    },
+    "platformGlue": {
+      "title": "Platform glue",
+      "description": "按此清单执行；仅在生成时添加下面的平台文件。",
+      "pathLabel": "将此文件放到：",
+      "noFiles": "当前选择不需要额外的 platform glue 文件。"
+    }
+  },
+  "glue": {
+    "init": {
+      "android": "在应用启动阶段调用 KickBootstrap.init(...)（Application.onCreate 或等价位置）。",
+      "ios": "在 iOS 生命周期使用的共享启动路径中调用 KickBootstrap.init(...)。",
+      "jvm": "在显示桌面窗口前调用 KickBootstrap.init(...)。",
+      "wasm": "在 Wasm 应用启动早期调用 KickBootstrap.init(...)。"
+    },
+    "hook": {
+      "firebaseCloudMessagingAndroid": "在 FirebaseMessagingService.onMessageReceived(...) 中调用 Kick.firebaseCloudMessaging.handleFcm(message)。",
+      "firebaseCloudMessagingIos": "收到 APNS 通知时，通过共享 Kotlin bridge 调用 Kick.firebaseCloudMessaging.handleApns... 处理方法。",
+      "firebaseAnalytics": "在 analytics wrapper 中同步调用 Kick.firebaseAnalytics.logEvent / setUserId / setUserProperty。"
+    },
+    "unsupportedModule": "{module}：该平台不支持。",
+    "analytics": {
+      "title": "Firebase Analytics 快速配置",
+      "subtitle": "按顺序执行这些步骤，照做即可保持集成一致性。",
+      "step1": "创建一个共享 wrapper 文件：shared/src/commonMain/kotlin/AnalyticsReporter.kt。",
+      "step2": "在 logEvent(...) 中先调用 Firebase SDK，再调用 Kick.firebaseAnalytics.logEvent(name, params)。",
+      "step3": "在 setUserId(...) 中先调用 Firebase SDK，再调用 Kick.firebaseAnalytics.setUserId(id)。",
+      "step4": "在 setUserProperty(...) 中先调用 Firebase SDK，再调用 Kick.firebaseAnalytics.setUserProperty(name, value)。",
+      "step5": "在整个应用中使用该 wrapper，替换直接调用 Firebase 的代码。"
+    },
+    "guide": {
+      "title": "应用代码中需要接入的内容",
+      "subtitle": "按以下步骤操作。仅显示与你所选模块相关的条目。",
+      "logging": "如需将日志发送到 Logging 模块，请在需要的位置调用 Kick.log(level, message)。",
+      "loggingWithNapier": "如需将日志发送到 Logging 模块，请在需要位置调用 Kick.log(level, message)，或在 KickBootstrap 中通过 installNapierBridge() 转发全部 Napier 日志。",
+      "ktor3": "要记录 Ktor3 网络活动，请在创建 HttpClient 时添加 install(KickKtor3Plugin)。",
+      "firebaseCloudMessagingBoth": "Firebase Cloud Messaging：Android 在 FirebaseMessagingService.onMessageReceived(...) 中调用 Kick.firebaseCloudMessaging.handleFcm(message)。iOS 在收到 APNS payload 时于 AppDelegate 调用 KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo)。",
+      "firebaseCloudMessagingAndroid": "Android 上的 Firebase Cloud Messaging：在 FirebaseMessagingService.onMessageReceived(...) 中调用 Kick.firebaseCloudMessaging.handleFcm(message)。",
+      "firebaseCloudMessagingIos": "iOS 上的 Firebase Cloud Messaging：在 AppDelegate 收到 APNS payload 时调用 KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo)。",
+      "firebaseCloudMessagingGeneric": "对于 Firebase Cloud Messaging，请在平台生命周期代码中把 push payload 转发给 Kick 处理器。",
+      "firebaseAnalytics": "对于 Firebase Analytics，请在你的 analytics wrapper 对应位置添加 Kick.firebaseAnalytics.logEvent(...)、Kick.firebaseAnalytics.setUserId(...) 和 Kick.firebaseAnalytics.setUserProperty(...)。",
+      "controlPanel": "在代码中通过 Kick.controlPanel.getBoolean(...)、Kick.controlPanel.getString(...) 等读取 ControlPanel 值。如添加了按钮，请通过 Kick.controlPanel.events.collect { event -> ... } 监听点击。",
+      "overlay": "通过 Kick.overlay.set(\"key\", value) 在 Overlay 浮窗显示所需运行时数据。",
+      "runner": "在需要的位置通过 Kick.runner.addCall(...) 注册调试动作。"
+    }
+  },
+  "toast": {
+    "copied": "已复制",
+    "copyFailed": "复制失败"
+  },
+  "errors": {
+    "loadFailed": "加载向导资源失败。"
+  },
+  "module": {
+    "sqldelight": {
+      "title": "SQLDelight",
+      "description": "查看和编辑 SQLDelight 数据库。",
+      "fallback": "仅在受支持目标启用 SQLDelight，或在不受支持构建中使用 stub/no-op"
+    },
+    "room": {
+      "title": "Room",
+      "description": "查看 Room 数据表和数据。",
+      "fallback": "在 Web 目标使用 SQLDelight，或为 Room 提供 no-op 回退"
+    },
+    "logging": {
+      "title": "Logging",
+      "description": "支持过滤的实时日志查看器。",
+      "fallback": "在不支持目标禁用模块，或使用 stub/no-op"
+    },
+    "ktor3": {
+      "title": "Ktor3",
+      "description": "监控 Ktor 请求与响应的网络模块。",
+      "fallback": "在不支持目标禁用模块，或使用 stub/no-op"
+    },
+    "control_panel": {
+      "title": "Control Panel",
+      "description": "运行时功能开关与可编辑调试值。",
+      "fallback": "在不支持目标禁用模块，或使用 control-panel-stub"
+    },
+    "multiplatform_settings": {
+      "title": "Settings",
+      "description": "查看和编辑 Multiplatform Settings 存储。",
+      "fallback": "在不支持目标禁用模块，或使用 multiplatform-settings-stub"
+    },
+    "file_explorer": {
+      "title": "File Explorer",
+      "description": "浏览并查看应用文件。",
+      "fallback": "在不支持目标禁用模块，或使用 file-explorer-stub"
+    },
+    "layout": {
+      "title": "Layout (Beta)",
+      "description": "检查 UI 层级与节点属性。",
+      "fallback": "在不受支持平台跳过 Layout（例如 WasmJS）"
+    },
+    "overlay": {
+      "title": "Overlay",
+      "description": "悬浮显示应用 UI 上的实时指标面板。",
+      "fallback": "在不支持目标禁用 overlay，或使用 overlay-stub"
+    },
+    "firebase_cloud_messaging": {
+      "title": "Firebase Cloud Messaging",
+      "description": "查看推送通知和 token 数据。",
+      "fallback": "仅在 Android/iOS 启用该模块；在 JVM/Wasm 使用 stub/no-op"
+    },
+    "firebase_analytics": {
+      "title": "Firebase Analytics",
+      "description": "查看 analytics 事件、user id 和属性。",
+      "fallback": "仅在 Android/iOS 启用该模块；在 JVM/Wasm 使用 stub/no-op"
+    },
+    "runner": {
+      "title": "Runner",
+      "description": "执行调试动作并查看渲染结果。",
+      "fallback": "在不支持目标禁用模块，或使用 runner-stub"
+    }
+  }
+}
