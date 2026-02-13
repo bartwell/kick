@@ -83,7 +83,7 @@ enableKick(false)
 
 ### Wizard
 
-Use [Integration Wizard](content/wizard/index.html) to generate ready-to-paste plugin configuration and initialization snippets for selected modules and platforms.
+Use [Integration Wizard](https://bartwell.github.io/kick/index.html) to generate ready-to-paste plugin configuration and initialization snippets for selected modules and platforms.
 
 For full setup details (manual integration, advanced configuration, shortcuts, launching, and full module docs), see [Advanced](content/docs/Advanced.md).
 

@@ -7,13 +7,13 @@ CREATE TABLE log (
   message TEXT NOT NULL
 );
 
--- Select all logs ordered by time desc
+-- Select all logs ordered by time asc
 selectAll:
-SELECT * FROM log ORDER BY time DESC;
+SELECT * FROM log ORDER BY time ASC;
 
 -- Select logs filtered by message pattern
 selectFiltered:
-SELECT * FROM log WHERE message LIKE ? ORDER BY time DESC;
+SELECT * FROM log WHERE message LIKE ? ORDER BY time ASC;
 
 -- Insert a log entry
 insertLog:

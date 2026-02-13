@@ -27,7 +27,7 @@ class LogViewerUiTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun new_messages_are_on_top() {
+    fun new_messages_are_at_bottom() {
         val logs = listOf(
             LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "old"),
             LogEntity(id = 2, time = 3_000L, level = LogLevel.ERROR, message = "new"),
@@ -39,14 +39,27 @@ class LogViewerUiTest {
             LogViewerContent(component = fake)
         }
 
-        // Expect sorted by time DESC: new, mid, old
+        // Expect sorted by time ASC: old, mid, new
         composeTestRule.onAllNodesWithTag("log_list").assertCountEquals(1)
         val items = composeTestRule.onAllNodesWithTag("log_item")
         items.assertCountEquals(3)
         items[0].assertIsDisplayed()
-        items[0].assert(hasTextContains("new"))
+        items[0].assert(hasTextContains("old"))
         items[1].assert(hasTextContains("mid"))
-        items[2].assert(hasTextContains("old"))
+        items[2].assert(hasTextContains("new"))
+    }
+
+    @Test
+    fun auto_scroll_toggle_is_enabled_by_default() {
+        val logs = listOf(
+            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "m1"),
+        )
+        val fake = FakeLogViewerComponent(logs)
+
+        composeTestRule.setContent { LogViewerContent(component = fake) }
+
+        composeTestRule.onNodeWithContentDescription("Disable auto-scroll").performClick()
+        composeTestRule.onNodeWithContentDescription("Enable auto-scroll").assertIsDisplayed()
     }
 
     @Test

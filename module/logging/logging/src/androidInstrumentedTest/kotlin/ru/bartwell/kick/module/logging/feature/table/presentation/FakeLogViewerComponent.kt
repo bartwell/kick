@@ -8,7 +8,7 @@ import ru.bartwell.kick.module.logging.core.persist.LogEntity
 internal class FakeLogViewerComponent(
     initial: List<LogEntity>,
 ) : LogViewerComponent {
-    private val allLogs = initial.sortedByDescending { it.time }
+    private val allLogs = initial.sortedBy { it.time }
     private val regex = Regex("\\[(.*?)]")
     private val _model = MutableValue(
         LogViewerState(
@@ -29,6 +29,10 @@ internal class FakeLogViewerComponent(
         private set
 
     override fun onBackPressed() = Unit
+
+    override fun onAutoScrollToggleClick() {
+        _model.value = model.value.copy(isAutoScrollEnabled = !model.value.isAutoScrollEnabled)
+    }
 
     override fun onClearAllClick() {
         _model.value = model.value.copy(log = emptyList())
