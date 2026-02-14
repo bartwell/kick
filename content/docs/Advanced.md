@@ -30,8 +30,21 @@ plugins {
 }
 
 kick {
-    enabled = KickEnabled.Auto
-    modules(KickModule.FileExplorer, KickModule.Ktor3)
+    enabledAuto()
+    modules {
+        controlPanel()
+        fileExplorer()
+        firebaseAnalytics()
+        firebaseCloudMessaging()
+        ktor3()
+        layout()
+        logging()
+        multiplatformSettings()
+        overlay()
+        room()
+        runner()
+        sqldelight()
+    }
 }
 // Optional: enableKick(false) or -Pkick.enabled=true|false for override
 ```

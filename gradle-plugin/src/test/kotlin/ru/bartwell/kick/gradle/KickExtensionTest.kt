@@ -29,8 +29,8 @@ class KickExtensionTest {
     fun `effectiveEnabled - extension only - Auto`() {
         val p = createProject()
         val ext = createExtension(p)
-        ext.enabled.set(KickEnabled.Auto)
-        ext.modules(KickModule.FileExplorer)
+        ext.enabledAuto()
+        ext.modules { fileExplorer() }
         assertEquals(KickEnabled.Auto, ext.effectiveEnabled())
     }
 
@@ -38,8 +38,8 @@ class KickExtensionTest {
     fun `effectiveEnabled - extension only - Enabled`() {
         val p = createProject()
         val ext = createExtension(p)
-        ext.enabled.set(KickEnabled.Enabled)
-        ext.modules(KickModule.FileExplorer)
+        ext.enabled()
+        ext.modules { fileExplorer() }
         assertEquals(KickEnabled.Enabled, ext.effectiveEnabled())
     }
 
@@ -47,8 +47,8 @@ class KickExtensionTest {
     fun `effectiveEnabled - extension only - Disabled`() {
         val p = createProject()
         val ext = createExtension(p)
-        ext.enabled.set(KickEnabled.Disabled)
-        ext.modules(KickModule.FileExplorer)
+        ext.disabled()
+        ext.modules { fileExplorer() }
         assertEquals(KickEnabled.Disabled, ext.effectiveEnabled())
     }
 
@@ -57,8 +57,8 @@ class KickExtensionTest {
         val p = createProject()
         p.extensions.extraProperties.set(KickExtension.KICK_OVERRIDE_KEY, true)
         val ext = createExtension(p)
-        ext.enabled.set(KickEnabled.Disabled)
-        ext.modules(KickModule.FileExplorer)
+        ext.disabled()
+        ext.modules { fileExplorer() }
         assertEquals(KickEnabled.Enabled, ext.effectiveEnabled())
     }
 
@@ -67,8 +67,8 @@ class KickExtensionTest {
         val p = createProject()
         p.extensions.extraProperties.set(KickExtension.KICK_OVERRIDE_KEY, false)
         val ext = createExtension(p)
-        ext.enabled.set(KickEnabled.Enabled)
-        ext.modules(KickModule.FileExplorer)
+        ext.enabled()
+        ext.modules { fileExplorer() }
         assertEquals(KickEnabled.Disabled, ext.effectiveEnabled())
     }
 
@@ -76,8 +76,8 @@ class KickExtensionTest {
     fun `effectiveEnabled - CLI true wins over enableKick and extension`() {
         val p = createProject()
         val ext = createExtensionWithCliOverride(p, "true")
-        ext.enabled.set(KickEnabled.Disabled)
-        ext.modules(KickModule.FileExplorer)
+        ext.disabled()
+        ext.modules { fileExplorer() }
         assertEquals(KickEnabled.Enabled, ext.effectiveEnabled())
     }
 
@@ -85,8 +85,8 @@ class KickExtensionTest {
     fun `effectiveEnabled - CLI false wins over enableKick and extension`() {
         val p = createProject()
         val ext = createExtensionWithCliOverride(p, "false")
-        ext.enabled.set(KickEnabled.Enabled)
-        ext.modules(KickModule.FileExplorer)
+        ext.enabled()
+        ext.modules { fileExplorer() }
         assertEquals(KickEnabled.Disabled, ext.effectiveEnabled())
     }
 
@@ -95,7 +95,7 @@ class KickExtensionTest {
         val p = createProject()
         p.extensions.extraProperties.set(KickExtension.KICK_OVERRIDE_KEY, true)
         val ext = createExtensionWithCliOverride(p, "false")
-        ext.modules(KickModule.FileExplorer)
+        ext.modules { fileExplorer() }
         assertEquals(KickEnabled.Disabled, ext.effectiveEnabled())
     }
 
@@ -103,7 +103,7 @@ class KickExtensionTest {
     fun `parseCliOverride - invalid value throws`() {
         val p = createProject()
         val ext = createExtensionWithCliOverride(p, "yes")
-        ext.modules(KickModule.FileExplorer)
+        ext.modules { fileExplorer() }
         val ex = assertThrows(GradleException::class.java) { ext.effectiveEnabled() }
         assertEquals("Kick: invalid -Pkick.enabled value. Use true or false.", ex.message)
     }
@@ -112,12 +112,12 @@ class KickExtensionTest {
     fun `parseCliOverride - true and false case insensitive`() {
         val pTrue = createProject()
         val extTrue = createExtensionWithCliOverride(pTrue, "TRUE")
-        extTrue.modules(KickModule.FileExplorer)
+        extTrue.modules { fileExplorer() }
         assertEquals(KickEnabled.Enabled, extTrue.effectiveEnabled())
 
         val pFalse = createProject()
         val extFalse = createExtensionWithCliOverride(pFalse, "FALSE")
-        extFalse.modules(KickModule.FileExplorer)
+        extFalse.modules { fileExplorer() }
         assertEquals(KickEnabled.Disabled, extFalse.effectiveEnabled())
     }
 
@@ -127,7 +127,7 @@ class KickExtensionTest {
         val ext = createExtension(p)
         val ex = assertThrows(GradleException::class.java) { ext.validate() }
         assertEquals(
-            "Kick: modules(...) is required. Example: kick { modules(KickModule.FileExplorer) }",
+            "Kick: modules { ... } is required. Example: kick { modules { fileExplorer(); ktor3() } }",
             ex.message
         )
     }
@@ -136,7 +136,7 @@ class KickExtensionTest {
     fun `validate - at least one module passes`() {
         val p = createProject()
         val ext = createExtension(p)
-        ext.modules(KickModule.FileExplorer)
+        ext.modules { fileExplorer() }
         assertDoesNotThrow { ext.validate() }
     }
 
@@ -145,8 +145,8 @@ class KickExtensionTest {
         val p = createProject()
         p.extensions.extraProperties.set(KickExtension.KICK_OVERRIDE_KEY, true)
         val ext = createExtension(p)
-        ext.enabled.set(KickEnabled.Disabled)
-        ext.modules(KickModule.FileExplorer)
+        ext.disabled()
+        ext.modules { fileExplorer() }
         assertEquals(KickEnabled.Enabled, ext.effectiveEnabled())
     }
 
@@ -155,8 +155,8 @@ class KickExtensionTest {
         val p = createProject()
         p.gradle.startParameter.setTaskNames(listOf("assembleRelease"))
         val ext = createExtension(p)
-        ext.enabled.set(KickEnabled.Auto)
-        ext.modules(KickModule.FileExplorer)
+        ext.enabledAuto()
+        ext.modules { fileExplorer() }
         assertEquals(true, ext.isRelease())
     }
 
@@ -165,8 +165,8 @@ class KickExtensionTest {
         val p = createProject()
         p.gradle.startParameter.setTaskNames(listOf("linkReleaseFrameworkIosArm64"))
         val ext = createExtension(p)
-        ext.enabled.set(KickEnabled.Auto)
-        ext.modules(KickModule.FileExplorer)
+        ext.enabledAuto()
+        ext.modules { fileExplorer() }
         assertEquals(true, ext.isRelease())
     }
 
@@ -175,8 +175,8 @@ class KickExtensionTest {
         val p = createProject()
         p.gradle.startParameter.setTaskNames(listOf("bundleProductionFramework"))
         val ext = createExtension(p)
-        ext.enabled.set(KickEnabled.Auto)
-        ext.modules(KickModule.FileExplorer)
+        ext.enabledAuto()
+        ext.modules { fileExplorer() }
         assertEquals(true, ext.isRelease())
     }
 
@@ -185,8 +185,8 @@ class KickExtensionTest {
         val p = createProject()
         p.gradle.startParameter.setTaskNames(listOf("assembleDebug"))
         val ext = createExtension(p)
-        ext.enabled.set(KickEnabled.Auto)
-        ext.modules(KickModule.FileExplorer)
+        ext.enabledAuto()
+        ext.modules { fileExplorer() }
         assertEquals(false, ext.isRelease())
     }
 }

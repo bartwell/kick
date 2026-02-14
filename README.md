@@ -57,8 +57,10 @@ plugins {
 }
 
 kick {
-    enabled = KickEnabled.Auto
-    modules(KickModule.FileExplorer)
+    enabledAuto()
+    modules {
+        fileExplorer()
+    }
 }
 ```
 
@@ -79,7 +81,7 @@ Kick.init(context) {
 enableKick(false)
 ```
 
-`-Pkick.enabled=true|false` has highest priority and overrides both `enableKick(...)` and `kick { enabled = ... }`.
+`-Pkick.enabled=true|false` has highest priority and overrides both `enableKick(...)` and `kick { enabledAuto() / enabled() / disabled() }`.
 
 ### Wizard
 

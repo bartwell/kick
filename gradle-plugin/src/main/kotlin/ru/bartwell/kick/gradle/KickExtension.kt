@@ -8,14 +8,14 @@ import org.gradle.api.provider.SetProperty
 
 /**
  * Extension name: `kick`
- * DSL: kick { enabled = KickEnabled.Auto; modules(KickModule.FileExplorer) }
+ * DSL: kick { enabledAuto(); modules { fileExplorer(); ktor3() } }
  */
 abstract class KickExtension(
     private val project: Project
 ) {
-    abstract val enabled: Property<KickEnabled>
+    internal abstract val enabled: Property<KickEnabled>
     abstract val version: Property<String>
-    abstract val modules: SetProperty<KickModule>
+    internal abstract val modules: SetProperty<KickModule>
 
     /**
      * For tests only: if set, used instead of gradleProperty("kick.enabled") so CLI tests can run without a real Gradle property.
@@ -34,10 +34,20 @@ abstract class KickExtension(
         return project.plugins.findPlugin("ru.bartwell.kick")?.javaClass?.`package`?.implementationVersion ?: "1.0.0"
     }
 
-    fun modules(vararg m: KickModule) = modules.addAll(m.asList())
+    /** Auto: use task names to decide (release/production/prod → stub). */
+    fun enabledAuto() = enabled.set(KickEnabled.Auto)
+
+    /** Always use full runtime (debug). */
+    fun enabled() = enabled.set(KickEnabled.Enabled)
+
+    /** Always use stub (release). */
+    fun disabled() = enabled.set(KickEnabled.Disabled)
+
+    /** Configure modules via type-safe method calls. */
+    fun modules(block: KickModulesScope.() -> Unit) = KickModulesScope(modules).block()
 
     /**
-     * Effective enabled: CLI > enableKick() (extraProperties) > kick { enabled }
+     * Effective enabled: CLI > enableKick() (extraProperties) > kick { enabledAuto() / enabled() / disabled() }
      */
     fun effectiveEnabled(): KickEnabled {
         val cli = parseCliOverride()
@@ -103,7 +113,7 @@ abstract class KickExtension(
         val mods = modules.getOrElse(emptySet())
         if (mods.isEmpty()) {
             throw GradleException(
-                "Kick: modules(...) is required. Example: kick { modules(KickModule.FileExplorer) }"
+                "Kick: modules { ... } is required. Example: kick { modules { fileExplorer(); ktor3() } }"
             )
         }
     }
