@@ -515,9 +515,7 @@ function getGlueGuideText(item) {
 function buildKtor3ExampleSnippet() {
   return [
     "val httpClient = HttpClient {",
-    "    install(KickKtor3Plugin) {",
-    "        maxBodySizeBytes = 1024 * 1024L",
-    "    }",
+    "    install(KickKtor3Plugin)",
     "}",
   ].join("\n");
 }
@@ -542,10 +540,19 @@ function buildFirebaseCloudMessagingExampleSnippet(item) {
   if (item.includeIos) {
     parts.push(
       [
-        "// Shared Kotlin bridge for iOS push callbacks",
-        "object IosPushBridge {",
-        "    fun onApnsPayload(userInfo: Map<Any?, *>) {",
-        "        Kick.firebaseCloudMessaging.handleApnsPayload(userInfo)",
+        "// iOS (Swift)",
+        "import UIKit",
+        "import shared",
+        "",
+        "class AppDelegate: UIResponder, UIApplicationDelegate {",
+        "    func application(",
+        "        _ application: UIApplication,",
+        "        didReceiveRemoteNotification userInfo: [AnyHashable: Any],",
+        "        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void",
+        "    ) {",
+        "        // your app logic...",
+        "        KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo)",
+        "        completionHandler(.noData)",
         "    }",
         "}",
       ].join("\n")
@@ -592,6 +599,14 @@ function buildControlPanelExampleSnippet() {
   return [
     "if (Kick.controlPanel.getBoolean(\"enableSomeRequest\")) {",
     "    makeRequest(Kick.controlPanel.getString(\"someRequestUrl\"))",
+    "}",
+    "",
+    "appScope.launch {",
+    "    Kick.controlPanel.events.collect { event ->",
+    "        if (event is ControlPanelEvent.ButtonClicked && event.id == \"refresh_cache\") {",
+    "            refreshCache()",
+    "        }",
+    "    }",
     "}",
   ].join("\n");
 }

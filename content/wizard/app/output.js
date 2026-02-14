@@ -278,9 +278,7 @@ function buildCommonSnippet(state, selectedModules, hasPlatformBridge) {
       imports.add("ru.bartwell.kick.module.ktor3.Ktor3Module");
       moduleLines.push("            module(Ktor3Module(context))");
       moduleLines.push("            // Ktor client integration (outside Kick.init):");
-      moduleLines.push("            // install(KickKtor3Plugin) {");
-      moduleLines.push("            //     maxBodySizeBytes = 1024 * 1024L");
-      moduleLines.push("            // }");
+      moduleLines.push("            // install(KickKtor3Plugin)");
       return;
     }
 
