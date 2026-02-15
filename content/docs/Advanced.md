@@ -30,7 +30,7 @@ plugins {
 }
 
 kick {
-    enabledAuto()
+    enabledAuto() // or enabled() / disabled()
     modules {
         controlPanel()
         fileExplorer()

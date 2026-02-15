@@ -8,7 +8,11 @@ import org.gradle.api.provider.SetProperty
 
 /**
  * Extension name: `kick`
- * DSL: kick { enabledAuto(); modules { fileExplorer(); ktor3() } }
+ * DSL:
+ * kick {
+ *     enabledAuto() // or enabled() / disabled()
+ *     modules { fileExplorer(); ktor3() }
+ * }
  */
 abstract class KickExtension(
     private val project: Project

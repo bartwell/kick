@@ -57,7 +57,7 @@ plugins {
 }
 
 kick {
-    enabledAuto()
+    enabledAuto() // or enabled() / disabled()
     modules {
         fileExplorer()
     }

@@ -191,7 +191,7 @@ function buildGradleSnippet(selectedModules, kickVersion) {
   lines.push("}");
   lines.push("");
   lines.push("kick {");
-  lines.push("    enabledAuto()");
+  lines.push("    enabledAuto() // or enabled() / disabled()");
   lines.push("    modules {");
   if (methods.length > 0) {
     methods.forEach((method) => {
