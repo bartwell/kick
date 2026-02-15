@@ -195,7 +195,7 @@ function buildGradleSnippet(selectedModules, kickVersion) {
   lines.push("    modules {");
   if (methods.length > 0) {
     methods.forEach((method) => {
-      lines.push(`        ${method}();`);
+      lines.push(`        ${method}()`);
     });
   } else {
     lines.push("        // Select at least one module, e.g. fileExplorer(), ktor3()");
@@ -274,8 +274,6 @@ function buildCommonSnippet(state, selectedModules, hasPlatformBridge) {
     if (module.id === "ktor3") {
       imports.add("ru.bartwell.kick.module.ktor3.Ktor3Module");
       moduleLines.push("            module(Ktor3Module(context))");
-      moduleLines.push("            // Ktor client integration (outside Kick.init):");
-      moduleLines.push("            // install(KickKtor3Plugin)");
       return;
     }
 
