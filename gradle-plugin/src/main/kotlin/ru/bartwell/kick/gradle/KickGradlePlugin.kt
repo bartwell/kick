@@ -34,37 +34,33 @@ class KickGradlePlugin : Plugin<Project> {
         val version = kickExt.kickVersion()
         val isRelease = kickExt.isRelease()
         val mods = kickExt.modules.getOrElse(emptySet())
+        val runtimeArtifact =
+            if (isRelease) ModuleArtifacts.mainRuntimeStub(version) else ModuleArtifacts.mainRuntime(version)
+        val moduleArtifacts = mods.flatMap { module ->
+            if (isRelease) {
+                ModuleArtifacts.stubArtifacts(module, version)
+            } else {
+                ModuleArtifacts.runtimeArtifacts(module, version)
+            }
+        }
 
-        // Dependencies in commonMain
         val commonMain = kotlin.sourceSets.findByName("commonMain")
             ?: throw GradleException(
                 "Kick: commonMain source set not found. " +
                     "Ensure Kotlin Multiplatform targets are configured."
             )
         commonMain.dependencies {
-            implementation(ModuleArtifacts.mainCore(version))
-            if (isRelease) {
-                implementation(ModuleArtifacts.mainRuntimeStub(version))
-                mods.forEach { m ->
-                    ModuleArtifacts.stubArtifacts(m, version).forEach { implementation(it) }
-                }
-            } else {
-                implementation(ModuleArtifacts.mainRuntime(version))
-                mods.forEach { m ->
-                    ModuleArtifacts.runtimeArtifacts(m, version).forEach { implementation(it) }
-                }
-            }
+            api(ModuleArtifacts.mainCore(version))
+            api(runtimeArtifact)
+            moduleArtifacts.forEach { api(it) }
         }
 
-        // Framework export for all Kotlin/Native framework binaries
-        val mainCoreDep = project.dependencies.create(ModuleArtifacts.mainCore(version))
-        val runtimeDep = project.dependencies.create(
-            if (isRelease) ModuleArtifacts.mainRuntimeStub(version) else ModuleArtifacts.mainRuntime(version)
-        )
+        val exportDeps = (listOf(ModuleArtifacts.mainCore(version), runtimeArtifact) + moduleArtifacts)
+            .distinct()
+            .map(project.dependencies::create)
         kotlin.targets.withType(KotlinNativeTarget::class.java).configureEach { target ->
             target.binaries.withType(Framework::class.java).configureEach { framework ->
-                framework.export(mainCoreDep)
-                framework.export(runtimeDep)
+                exportDeps.forEach(framework::export)
             }
         }
     }
