@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import ru.bartwell.kick.core.presentation.BackOrCloseButton
 import ru.bartwell.kick.core.presentation.ErrorBox
+import ru.bartwell.kick.core.ui.ExposedDropdownMenuBox
 import ru.bartwell.kick.module.runner.core.params.RunnerParameter
 import ru.bartwell.kick.module.runner.core.params.RunnerParameterType
 
@@ -248,7 +248,11 @@ private fun SingleChoiceParam(
     var expanded by remember { mutableStateOf(false) }
     val items = type.options
     val selected = value ?: param.defaultValue ?: items.firstOrNull()
-    Column {
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = Modifier.fillMaxWidth(),
+    ) {
         OutlinedTextField(
             value = selected?.toString() ?: "",
             onValueChange = { },
@@ -264,8 +268,7 @@ private fun SingleChoiceParam(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 4.dp)
-                .clickable { expanded = true },
+                .menuAnchor(),
             trailingIcon = {
                 Icon(Icons.Outlined.Check, contentDescription = null)
             }
