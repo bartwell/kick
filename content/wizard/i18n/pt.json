@@ -173,7 +173,7 @@
     },
     "hook": {
       "firebaseCloudMessagingAndroid": "Em FirebaseMessagingService.onMessageReceived(...) chame Kick.firebaseCloudMessaging.handleFcm(message).",
-      "firebaseCloudMessagingIos": "Quando uma notificação APNS for recebida, chame um dos handlers Kick.firebaseCloudMessaging.handleApns... a partir da bridge Kotlin compartilhada.",
+      "firebaseCloudMessagingIos": "Quando uma notificação APNS for recebida, chame um dos handlers Kick.firebaseCloudMessaging.handleApns... a partir da bridge Kotlin compartilhada. Além disso, passe o token FCM e o Firebase Installation ID por meio de KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) e setFirebaseInstallationId(...).",
       "firebaseAnalytics": "Espelhe as chamadas do wrapper de analytics em Kick.firebaseAnalytics.logEvent / setUserId / setUserProperty."
     },
     "unsupportedModule": "{module}: não suportado nesta plataforma.",
@@ -192,10 +192,10 @@
       "logging": "Para enviar logs ao módulo Logging, chame Kick.log(level, message) nos pontos que você deseja logar.",
       "loggingWithNapier": "Para enviar logs ao módulo Logging, chame Kick.log(level, message) onde necessário ou redirecione todos os logs do Napier com installNapierBridge() a partir do KickBootstrap.",
       "ktor3": "Para logar atividade de rede do Ktor3, adicione install(KickKtor3Plugin) ao criar o HttpClient.",
-      "firebaseCloudMessagingBoth": "Para Firebase Cloud Messaging: no Android, chame Kick.firebaseCloudMessaging.handleFcm(message) dentro de FirebaseMessagingService.onMessageReceived(...). No iOS, chame KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) no AppDelegate quando um payload APNS for recebido.",
+      "firebaseCloudMessagingBoth": "Para Firebase Cloud Messaging: no Android, chame Kick.firebaseCloudMessaging.handleFcm(message) dentro de FirebaseMessagingService.onMessageReceived(...). No iOS, chame KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) no AppDelegate quando um payload APNS for recebido. Além disso, no iOS passe o token FCM e o Firebase Installation ID por meio de KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) e setFirebaseInstallationId(...).",
       "firebaseCloudMessagingAndroid": "Para Firebase Cloud Messaging no Android: chame Kick.firebaseCloudMessaging.handleFcm(message) dentro de FirebaseMessagingService.onMessageReceived(...).",
-      "firebaseCloudMessagingIos": "Para Firebase Cloud Messaging no iOS: chame KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) no AppDelegate quando um payload APNS for recebido.",
-      "firebaseCloudMessagingGeneric": "Para Firebase Cloud Messaging, encaminhe payloads push para os handlers do Kick no código de ciclo de vida da plataforma.",
+      "firebaseCloudMessagingIos": "Para Firebase Cloud Messaging no iOS: chame KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) no AppDelegate quando um payload APNS for recebido. Além disso, passe o token FCM e o Firebase Installation ID por meio de KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) e setFirebaseInstallationId(...).",
+      "firebaseCloudMessagingGeneric": "Para Firebase Cloud Messaging, encaminhe payloads push para os handlers do Kick no código de ciclo de vida da plataforma. No iOS também passe o token FCM e o Firebase Installation ID por meio de KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) e setFirebaseInstallationId(...).",
       "firebaseAnalytics": "Para Firebase Analytics, adicione Kick.firebaseAnalytics.logEvent(...), Kick.firebaseAnalytics.setUserId(...), e Kick.firebaseAnalytics.setUserProperty(...) nos mesmos pontos do seu wrapper de analytics.",
       "controlPanel": "Leia valores do ControlPanel no seu código com Kick.controlPanel.getBoolean(...), Kick.controlPanel.getString(...), etc. Se você adicionou botões, escute cliques com Kick.controlPanel.events.collect { event -> ... }.",
       "overlay": "Mostre valores runtime na janela flutuante do Overlay com Kick.overlay.set(\"key\", value).",

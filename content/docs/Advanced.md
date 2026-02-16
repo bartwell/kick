@@ -30,8 +30,21 @@ plugins {
 }
 
 kick {
-    enabled = KickEnabled.Auto
-    modules(KickModule.FileExplorer, KickModule.Ktor3)
+    enabledAuto() // or enabled() / disabled()
+    modules {
+        controlPanel()
+        fileExplorer()
+        firebaseAnalytics()
+        firebaseCloudMessaging()
+        ktor3()
+        layout()
+        logging()
+        multiplatformSettings()
+        overlay()
+        room()
+        runner()
+        sqldelight()
+    }
 }
 // Optional: enableKick(false) or -Pkick.enabled=true|false for override
 ```
@@ -274,6 +287,27 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     }
 }
 ```
+
+**iOS (Token/FID):** the module does not link Firebase SDK on iOS.  
+Pass values from your existing Firebase integration (CocoaPods, SPM, manual).
+
+```swift
+import FirebaseMessaging
+import FirebaseInstallations
+import shared
+
+// FCM token
+Messaging.messaging().token { token, _ in
+    KickCompanion.shared.firebaseCloudMessaging.setFcmToken(token: token)
+}
+
+// Firebase Installation ID
+Installations.installations().installationID { id, _ in
+    KickCompanion.shared.firebaseCloudMessaging.setFirebaseInstallationId(id: id)
+}
+```
+
+If the token or installation ID changes, call the same setters again — Kick updates the UI automatically.
 
 ### Firebase Analytics
 

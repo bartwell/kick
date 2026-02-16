@@ -1,7 +1,7 @@
 package ru.bartwell.kick.module.firebase.cloudmessaging.core.data
 
-import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
+import ru.bartwell.kick.core.util.DateUtils
 
 @Serializable
 internal data class FirebaseMessage(
@@ -23,5 +23,5 @@ internal data class FirebaseMessage(
     val priority: String? = null,
     val ttlSeconds: Long? = null,
     val raw: Map<String, String> = emptyMap(),
-    val receivedAtMillis: Long = Clock.System.now().toEpochMilliseconds(),
+    val receivedAtMillis: Long = DateUtils.currentTimeMillis(),
 )

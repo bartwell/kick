@@ -1,16 +1,20 @@
 package ru.bartwell.kick.gradle
 
 /**
- * Kick feature modules. Add the ones you need via `kick { modules(...) }`.
+ * Kick feature modules. Add the ones you need via `kick { modules { fileExplorer(); ktor3() } }`.
+ * Room and Sqldelight pull in sqlite-runtime (and sqlite-core) under the hood.
  */
 enum class KickModule {
+    ControlPanel,
+    FileExplorer,
+    FirebaseAnalytics,
+    FirebaseCloudMessaging,
     Ktor3,
-    SqliteRuntime,
-    SqliteSqlDelightAdapter,
-    SqliteRoomAdapter,
+    Layout,
     Logging,
     MultiplatformSettings,
-    FileExplorer,
-    Layout,
-    FirebaseCloudMessaging
+    Overlay,
+    Room,
+    Runner,
+    Sqldelight,
 }

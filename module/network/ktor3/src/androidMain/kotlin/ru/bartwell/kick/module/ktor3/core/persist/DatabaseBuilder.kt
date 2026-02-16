@@ -17,9 +17,6 @@ internal actual class DatabaseBuilder {
             context = appContext,
             name = "kick_ktor3.db"
         )
-        try {
-            Ktor3Db.Schema.synchronous().create(driver)
-        } catch (_: RuntimeException) {}
         val db = Ktor3Db(
             driver = driver,
             requestAdapter = Request.Adapter(

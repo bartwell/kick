@@ -17,9 +17,6 @@ internal actual class DatabaseBuilder {
             context = appContext,
             name = "kick_firebase_analytics.db"
         )
-        try {
-            FirebaseAnalyticsDb.Schema.synchronous().create(driver)
-        } catch (_: RuntimeException) {}
         val db = FirebaseAnalyticsDb(
             driver = driver,
             analyticsEventAdapter = AnalyticsEvent.Adapter(

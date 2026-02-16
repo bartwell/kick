@@ -17,9 +17,6 @@ internal actual class DatabaseBuilder {
             context = appContext,
             name = "kick_logging.db"
         )
-        try {
-            LoggingDb.Schema.synchronous().create(driver)
-        } catch (_: RuntimeException) {}
         val db = LoggingDb(
             driver = driver,
             logAdapter = Log.Adapter(levelAdapter = logLevelAdapter)

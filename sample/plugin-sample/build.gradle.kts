@@ -12,8 +12,10 @@ plugins {
 }
 
 kick {
-    enabled = ru.bartwell.kick.gradle.KickEnabled.Auto
-    modules(ru.bartwell.kick.gradle.KickModule.FileExplorer)
+    enabledAuto() // or enabled() / disabled()
+    modules {
+        fileExplorer()
+    }
 }
 
 kotlin {

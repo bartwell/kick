@@ -173,7 +173,7 @@
     },
     "hook": {
       "firebaseCloudMessagingAndroid": "FirebaseMessagingService.onMessageReceived(...) で Kick.firebaseCloudMessaging.handleFcm(message) を呼びます。",
-      "firebaseCloudMessagingIos": "APNS 通知受信時に、共有 Kotlin API bridge から Kick.firebaseCloudMessaging.handleApns... を呼びます。",
+      "firebaseCloudMessagingIos": "APNS 通知受信時に、共有 Kotlin API bridge から Kick.firebaseCloudMessaging.handleApns... を呼びます。さらに、FCM トークンと Firebase Installation ID を KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) と setFirebaseInstallationId(...) で渡してください。",
       "firebaseAnalytics": "analytics wrapper の呼び出しを Kick.firebaseAnalytics.logEvent / setUserId / setUserProperty にもミラーします。"
     },
     "unsupportedModule": "{module}: このプラットフォームでは未対応です。",
@@ -192,10 +192,10 @@
       "logging": "Logging モジュールにログを送るには、必要な箇所で Kick.log(level, message) を呼び出します。",
       "loggingWithNapier": "Logging モジュールにログを送るには、必要箇所で Kick.log(level, message) を呼ぶか、KickBootstrap の installNapierBridge() で Napier ログをすべて転送します。",
       "ktor3": "Ktor3 のネットワーク活動を記録するには、HttpClient 作成時に install(KickKtor3Plugin) を追加します。",
-      "firebaseCloudMessagingBoth": "Firebase Cloud Messaging: Android では FirebaseMessagingService.onMessageReceived(...) 内で Kick.firebaseCloudMessaging.handleFcm(message) を呼びます。iOS では APNS payload 受信時に AppDelegate で KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) を呼びます。",
+      "firebaseCloudMessagingBoth": "Firebase Cloud Messaging: Android では FirebaseMessagingService.onMessageReceived(...) 内で Kick.firebaseCloudMessaging.handleFcm(message) を呼びます。iOS では APNS payload 受信時に AppDelegate で KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) を呼びます。さらに iOS では FCM トークンと Firebase Installation ID を KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) と setFirebaseInstallationId(...) で渡します。",
       "firebaseCloudMessagingAndroid": "Android の Firebase Cloud Messaging: FirebaseMessagingService.onMessageReceived(...) 内で Kick.firebaseCloudMessaging.handleFcm(message) を呼びます。",
-      "firebaseCloudMessagingIos": "iOS の Firebase Cloud Messaging: APNS payload 受信時に AppDelegate で KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) を呼びます。",
-      "firebaseCloudMessagingGeneric": "Firebase Cloud Messaging では、プッシュ payload をプラットフォームのライフサイクルコードから Kick ハンドラに転送してください。",
+      "firebaseCloudMessagingIos": "iOS の Firebase Cloud Messaging: APNS payload 受信時に AppDelegate で KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) を呼びます。さらに、FCM トークンと Firebase Installation ID を KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) と setFirebaseInstallationId(...) で渡します。",
+      "firebaseCloudMessagingGeneric": "Firebase Cloud Messaging では、プッシュ payload をプラットフォームのライフサイクルコードから Kick ハンドラに転送してください。iOS では FCM トークンと Firebase Installation ID を KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) と setFirebaseInstallationId(...) で渡してください。",
       "firebaseAnalytics": "Firebase Analytics では、analytics wrapper の対応箇所で Kick.firebaseAnalytics.logEvent(...)、Kick.firebaseAnalytics.setUserId(...)、Kick.firebaseAnalytics.setUserProperty(...) を呼び出します。",
       "controlPanel": "コード中で Kick.controlPanel.getBoolean(...)、Kick.controlPanel.getString(...) などを使って ControlPanel の値を取得します。ボタンを追加した場合は Kick.controlPanel.events.collect { event -> ... } でクリックを監視します。",
       "overlay": "Kick.overlay.set(\"key\", value) を使って Overlay のフローティングウィンドウに必要な値を表示します。",

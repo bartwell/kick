@@ -1,4 +1,4 @@
-name: Publish Library to Maven Central
+name: Publish Artifacts to Maven Central
 
 on:
   push:

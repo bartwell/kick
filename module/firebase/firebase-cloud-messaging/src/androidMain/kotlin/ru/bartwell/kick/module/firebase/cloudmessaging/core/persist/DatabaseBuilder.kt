@@ -17,9 +17,6 @@ internal actual class DatabaseBuilder {
             context = appContext,
             name = "kick_firebase_cloud_messaging.db",
         )
-        try {
-            FirebaseCloudMessagingDb.Schema.synchronous().create(driver)
-        } catch (_: RuntimeException) {}
         val db = FirebaseCloudMessagingDb(
             driver = driver,
             fcmMessageAdapter = FcmMessage.Adapter(

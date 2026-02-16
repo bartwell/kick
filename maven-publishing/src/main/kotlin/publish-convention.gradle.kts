@@ -1,3 +1,4 @@
+import com.vanniktech.maven.publish.GradlePlugin
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
@@ -8,19 +9,33 @@ configure<MavenPublishBaseExtension> {
 
     coordinates("ru.bartwell.kick", project.name, extra["libraryVersionName"] as String)
 
-    configure(
-        KotlinMultiplatform(
-            javadocJar = JavadocJar.Empty(),
-            sourcesJar = true,
-            androidVariantsToPublish = listOf("release")
+    if (project.plugins.hasPlugin("java-gradle-plugin")) {
+        configure(
+            GradlePlugin(
+                javadocJar = JavadocJar.Empty(),
+                sourcesJar = true
+            )
         )
-    )
+    } else {
+        configure(
+            KotlinMultiplatform(
+                javadocJar = JavadocJar.Empty(),
+                sourcesJar = true,
+                androidVariantsToPublish = listOf("release")
+            )
+        )
+    }
 
+    val isGradlePlugin = project.plugins.hasPlugin("java-gradle-plugin")
     pom {
-        name = "Kick"
-        description = "Kick: Kotlin Inspection & Control Kit. " +
-                "A modular Compose Multiplatform toolkit for unified in-app " +
-                "inspection and control of logs, network, databases and more."
+        name = if (isGradlePlugin) "Kick Gradle Plugin" else "Kick"
+        description = if (isGradlePlugin) {
+            "Kick Gradle plugin for Kotlin Multiplatform"
+        } else {
+            "Kick: Kotlin Inspection & Control Kit. " +
+                    "A modular Compose Multiplatform toolkit for unified in-app " +
+                    "inspection and control of logs, network, databases and more."
+        }
         inceptionYear = "2025"
         url = "https://github.com/bartwell/kick"
         licenses {

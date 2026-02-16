@@ -1,19 +1,13 @@
-import java.util.Properties
-
 plugins {
     kotlin("jvm")
     id("java-gradle-plugin")
     id("maven-publish")
+    alias(libs.plugins.publish.plugin)
+    id("publish-convention")
 }
 
 group = "ru.bartwell.kick"
-
-val versionProperties = Properties().apply {
-    file("${rootProject.projectDir}/version.properties").inputStream().use { load(it) }
-}
-val pluginVersion: String = versionProperties["libraryVersionName"]?.toString() ?: "1.0.0"
-
-version = pluginVersion
+version = extra["libraryVersionName"] as String
 
 gradlePlugin {
     plugins {
@@ -41,13 +35,7 @@ dependencies {
 }
 
 tasks.jar {
-    manifest.attributes["Implementation-Version"] = pluginVersion
-}
-
-publishing {
-    repositories {
-        mavenLocal()
-    }
+    manifest.attributes["Implementation-Version"] = version
 }
 
 tasks.test {

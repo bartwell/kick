@@ -61,13 +61,21 @@ internal fun registerRunnerSamples() {
                 type = RunnerParameterType.MultiChoice(options = listOf("A", "B", "C")),
                 defaultValue = setOf("A"),
             ),
+            RunnerParameter(
+                id = "option",
+                title = "Option",
+                description = "Select one",
+                type = RunnerParameterType.SingleChoice(options = listOf("One", "Two", "Three")),
+                defaultValue = "One",
+            ),
         ),
         renderer = ObjectRunnerRenderer(),
     ) { args ->
         val count: Int = args.get("count") ?: 0
         val label: String = args.get("label") ?: ""
         val flags: Set<String> = args.get("flags") ?: emptySet()
-        "label=$label count=$count flags=${flags.joinToString()}"
+        val option: String = args.get("option") ?: ""
+        "label=$label count=$count flags=${flags.joinToString()} option=$option"
     }
 }
 

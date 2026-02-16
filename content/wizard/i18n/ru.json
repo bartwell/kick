@@ -173,7 +173,7 @@
     },
     "hook": {
       "firebaseCloudMessagingAndroid": "В FirebaseMessagingService.onMessageReceived(...) вызывайте Kick.firebaseCloudMessaging.handleFcm(message).",
-      "firebaseCloudMessagingIos": "При получении APNS вызывать один из обработчиков Kick.firebaseCloudMessaging.handleApns... через bridge к Kotlin API.",
+      "firebaseCloudMessagingIos": "При получении APNS вызывать один из обработчиков Kick.firebaseCloudMessaging.handleApns... через bridge к Kotlin API. Также передайте FCM-токен и Firebase Installation ID через KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) и setFirebaseInstallationId(...).",
       "firebaseAnalytics": "Дублируйте вызовы analytics-wrapper в Kick.firebaseAnalytics.logEvent / setUserId / setUserProperty."
     },
     "unsupportedModule": "{module}: модуль не поддерживается на этой платформе.",
@@ -192,10 +192,10 @@
       "logging": "Чтобы отправлять логи в модуль Logging, вызывайте Kick.log(level, message) в нужных местах.",
       "loggingWithNapier": "Чтобы отправлять логи в модуль Logging, вызывайте Kick.log(level, message) в нужных местах или перенаправьте все логи Napier через installNapierBridge() из KickBootstrap.",
       "ktor3": "Чтобы логировать сетевую активность Ktor3, добавьте install(KickKtor3Plugin) при создании HttpClient.",
-      "firebaseCloudMessagingBoth": "Для Firebase Cloud Messaging: на Android вызовите Kick.firebaseCloudMessaging.handleFcm(message) внутри FirebaseMessagingService.onMessageReceived(...). На iOS вызовите KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) в AppDelegate при получении APNS payload.",
+      "firebaseCloudMessagingBoth": "Для Firebase Cloud Messaging: на Android вызовите Kick.firebaseCloudMessaging.handleFcm(message) внутри FirebaseMessagingService.onMessageReceived(...). На iOS вызовите KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) в AppDelegate при получении APNS payload. Также на iOS передайте FCM-токен и Firebase Installation ID через KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) и setFirebaseInstallationId(...).",
       "firebaseCloudMessagingAndroid": "Для Firebase Cloud Messaging на Android: вызовите Kick.firebaseCloudMessaging.handleFcm(message) внутри FirebaseMessagingService.onMessageReceived(...).",
-      "firebaseCloudMessagingIos": "Для Firebase Cloud Messaging на iOS: вызовите KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) в AppDelegate при получении APNS payload.",
-      "firebaseCloudMessagingGeneric": "Для Firebase Cloud Messaging пробрасывайте push payload в Kick-обработчики в platform lifecycle коде.",
+      "firebaseCloudMessagingIos": "Для Firebase Cloud Messaging на iOS: вызовите KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) в AppDelegate при получении APNS payload. Также передайте FCM-токен и Firebase Installation ID через KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) и setFirebaseInstallationId(...).",
+      "firebaseCloudMessagingGeneric": "Для Firebase Cloud Messaging пробрасывайте push payload в Kick-обработчики в platform lifecycle коде. На iOS также передайте FCM-токен и Firebase Installation ID через KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) и setFirebaseInstallationId(...).",
       "firebaseAnalytics": "Для Firebase Analytics добавьте вызовы Kick.firebaseAnalytics.logEvent(...), Kick.firebaseAnalytics.setUserId(...), Kick.firebaseAnalytics.setUserProperty(...) в соответствующие места вашего analytics-wrapper.",
       "controlPanel": "Получайте значения ControlPanel в коде через Kick.controlPanel.getBoolean(...), Kick.controlPanel.getString(...) и т.д. Если добавили кнопки, отслеживайте клики через Kick.controlPanel.events.collect { event -> ... }.",
       "overlay": "Показывайте нужные runtime-значения в плавающем окне Overlay через Kick.overlay.set(\"key\", value).",

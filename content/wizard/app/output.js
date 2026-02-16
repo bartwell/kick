@@ -165,45 +165,42 @@ export function getUnsupportedPlatforms(moduleDescription, selectedPlatforms) {
   return selectedPlatforms.filter((platform) => !moduleDescription.supportedPlatforms.includes(platform));
 }
 
-function collectKickModuleEnums(selectedModules) {
-  const enums = [];
+function collectKickModuleMethods(selectedModules) {
+  const methods = [];
   selectedModules.forEach((module) => {
-    if (module.kickModuleEnum) {
-      enums.push(module.kickModuleEnum);
+    if (module.kickModuleMethod) {
+      methods.push(module.kickModuleMethod);
     }
-    if (Array.isArray(module.extraKickModuleEnums)) {
-      module.extraKickModuleEnums.forEach((entry) => {
+    if (Array.isArray(module.extraKickModuleMethods)) {
+      module.extraKickModuleMethods.forEach((entry) => {
         if (entry) {
-          enums.push(entry);
+          methods.push(entry);
         }
       });
     }
   });
-  return unique(enums);
+  return unique(methods);
 }
 
 function buildGradleSnippet(selectedModules, kickVersion) {
-  const enums = collectKickModuleEnums(selectedModules);
+  const methods = collectKickModuleMethods(selectedModules);
 
   const lines = [];
-  lines.push("import ru.bartwell.kick.gradle.KickEnabled");
-  lines.push("import ru.bartwell.kick.gradle.KickModule");
-  lines.push("");
   lines.push("plugins {");
   lines.push(`    id(\"ru.bartwell.kick\") version \"${kickVersion}\"`);
   lines.push("}");
   lines.push("");
   lines.push("kick {");
-  lines.push("    enabled = KickEnabled.Auto");
-  lines.push("    modules(");
-  if (enums.length > 0) {
-    enums.forEach((entry) => {
-      lines.push(`        ${entry},`);
+  lines.push("    enabledAuto() // or enabled() / disabled()");
+  lines.push("    modules {");
+  if (methods.length > 0) {
+    methods.forEach((method) => {
+      lines.push(`        ${method}()`);
     });
   } else {
-    lines.push("        // Select at least one module supported by KickModule enum.");
+    lines.push("        // Select at least one module, e.g. fileExplorer(), ktor3()");
   }
-  lines.push("    )");
+  lines.push("    }");
   lines.push("}");
   lines.push("");
   lines.push("// Enable/disable strategy:");
@@ -277,10 +274,6 @@ function buildCommonSnippet(state, selectedModules, hasPlatformBridge) {
     if (module.id === "ktor3") {
       imports.add("ru.bartwell.kick.module.ktor3.Ktor3Module");
       moduleLines.push("            module(Ktor3Module(context))");
-      moduleLines.push("            // Ktor client integration (outside Kick.init):");
-      moduleLines.push("            // install(KickKtor3Plugin) {");
-      moduleLines.push("            //     maxBodySizeBytes = 1024 * 1024L");
-      moduleLines.push("            // }");
       return;
     }
 
