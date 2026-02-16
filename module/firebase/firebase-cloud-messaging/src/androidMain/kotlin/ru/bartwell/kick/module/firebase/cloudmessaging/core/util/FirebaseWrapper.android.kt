@@ -12,6 +12,8 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 internal actual object FirebaseWrapper {
+    actual val supportsAutoFetch: Boolean = true
+
     actual fun isFirebaseInitialized(
         context: PlatformContext,
     ): Boolean {

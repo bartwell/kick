@@ -22,9 +22,17 @@ internal object ModuleArtifacts {
             KickModule.Logging -> listOf("$GROUP:logging:$version")
             KickModule.MultiplatformSettings -> listOf("$GROUP:multiplatform-settings:$version")
             KickModule.Overlay -> listOf("$GROUP:overlay:$version")
-            KickModule.Room -> listOf("$GROUP:sqlite-core:$version", "$GROUP:sqlite-runtime:$version", "$GROUP:sqlite-room-adapter:$version")
+            KickModule.Room -> listOf(
+                "$GROUP:sqlite-core:$version",
+                "$GROUP:sqlite-runtime:$version",
+                "$GROUP:sqlite-room-adapter:$version"
+            )
             KickModule.Runner -> listOf("$GROUP:runner:$version")
-            KickModule.Sqldelight -> listOf("$GROUP:sqlite-core:$version", "$GROUP:sqlite-runtime:$version", "$GROUP:sqlite-sqldelight-adapter:$version")
+            KickModule.Sqldelight -> listOf(
+                "$GROUP:sqlite-core:$version",
+                "$GROUP:sqlite-runtime:$version",
+                "$GROUP:sqlite-sqldelight-adapter:$version"
+            )
         }
     }
 
@@ -41,7 +49,10 @@ internal object ModuleArtifacts {
             KickModule.Overlay -> listOf("$GROUP:overlay-stub:$version")
             KickModule.Room -> listOf("$GROUP:sqlite-runtime-stub:$version", "$GROUP:sqlite-room-adapter-stub:$version")
             KickModule.Runner -> listOf("$GROUP:runner-stub:$version")
-            KickModule.Sqldelight -> listOf("$GROUP:sqlite-runtime-stub:$version", "$GROUP:sqlite-sqldelight-adapter-stub:$version")
+            KickModule.Sqldelight -> listOf(
+                "$GROUP:sqlite-runtime-stub:$version",
+                "$GROUP:sqlite-sqldelight-adapter-stub:$version"
+            )
         }
     }
 }

@@ -7,6 +7,7 @@ import org.gradle.api.provider.SetProperty
  * so build scripts don't need plugin types on classpath.
  * room() and sqldelight() pull in sqlite-runtime (and sqlite-core) under the hood.
  */
+@Suppress("TooManyFunctions")
 class KickModulesScope(
     private val modules: SetProperty<KickModule>
 ) {

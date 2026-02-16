@@ -542,6 +542,8 @@ function buildFirebaseCloudMessagingExampleSnippet(item) {
       [
         "// iOS (Swift)",
         "import UIKit",
+        "import FirebaseMessaging",
+        "import FirebaseInstallations",
         "import shared",
         "",
         "class AppDelegate: UIResponder, UIApplicationDelegate {",
@@ -554,6 +556,15 @@ function buildFirebaseCloudMessagingExampleSnippet(item) {
         "        KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo)",
         "        completionHandler(.noData)",
         "    }",
+        "}",
+        "",
+        "// After FirebaseApp.configure() (or when values become available)",
+        "Messaging.messaging().token { token, _ in",
+        "    KickCompanion.shared.firebaseCloudMessaging.setFcmToken(token: token)",
+        "}",
+        "",
+        "Installations.installations().installationID { id, _ in",
+        "    KickCompanion.shared.firebaseCloudMessaging.setFirebaseInstallationId(id: id)",
         "}",
       ].join("\n")
     );

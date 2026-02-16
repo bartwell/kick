@@ -173,7 +173,7 @@
     },
     "hook": {
       "firebaseCloudMessagingAndroid": "在 FirebaseMessagingService.onMessageReceived(...) 中调用 Kick.firebaseCloudMessaging.handleFcm(message)。",
-      "firebaseCloudMessagingIos": "收到 APNS 通知时，通过共享 Kotlin bridge 调用 Kick.firebaseCloudMessaging.handleApns... 处理方法。",
+      "firebaseCloudMessagingIos": "收到 APNS 通知时，通过共享 Kotlin bridge 调用 Kick.firebaseCloudMessaging.handleApns... 处理方法。同时将 FCM token 和 Firebase Installation ID 通过 KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) 和 setFirebaseInstallationId(...) 传入。",
       "firebaseAnalytics": "在 analytics wrapper 中同步调用 Kick.firebaseAnalytics.logEvent / setUserId / setUserProperty。"
     },
     "unsupportedModule": "{module}：该平台不支持。",
@@ -192,10 +192,10 @@
       "logging": "如需将日志发送到 Logging 模块，请在需要的位置调用 Kick.log(level, message)。",
       "loggingWithNapier": "如需将日志发送到 Logging 模块，请在需要位置调用 Kick.log(level, message)，或在 KickBootstrap 中通过 installNapierBridge() 转发全部 Napier 日志。",
       "ktor3": "要记录 Ktor3 网络活动，请在创建 HttpClient 时添加 install(KickKtor3Plugin)。",
-      "firebaseCloudMessagingBoth": "Firebase Cloud Messaging：Android 在 FirebaseMessagingService.onMessageReceived(...) 中调用 Kick.firebaseCloudMessaging.handleFcm(message)。iOS 在收到 APNS payload 时于 AppDelegate 调用 KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo)。",
+      "firebaseCloudMessagingBoth": "Firebase Cloud Messaging：Android 在 FirebaseMessagingService.onMessageReceived(...) 中调用 Kick.firebaseCloudMessaging.handleFcm(message)。iOS 在收到 APNS payload 时于 AppDelegate 调用 KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo)。同时在 iOS 通过 KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) 和 setFirebaseInstallationId(...) 传入 FCM token 和 Firebase Installation ID。",
       "firebaseCloudMessagingAndroid": "Android 上的 Firebase Cloud Messaging：在 FirebaseMessagingService.onMessageReceived(...) 中调用 Kick.firebaseCloudMessaging.handleFcm(message)。",
-      "firebaseCloudMessagingIos": "iOS 上的 Firebase Cloud Messaging：在 AppDelegate 收到 APNS payload 时调用 KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo)。",
-      "firebaseCloudMessagingGeneric": "对于 Firebase Cloud Messaging，请在平台生命周期代码中把 push payload 转发给 Kick 处理器。",
+      "firebaseCloudMessagingIos": "iOS 上的 Firebase Cloud Messaging：在 AppDelegate 收到 APNS payload 时调用 KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo)。同时通过 KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) 和 setFirebaseInstallationId(...) 传入 FCM token 和 Firebase Installation ID。",
+      "firebaseCloudMessagingGeneric": "对于 Firebase Cloud Messaging，请在平台生命周期代码中把 push payload 转发给 Kick 处理器。在 iOS 还需要通过 KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) 和 setFirebaseInstallationId(...) 传入 FCM token 和 Firebase Installation ID。",
       "firebaseAnalytics": "对于 Firebase Analytics，请在你的 analytics wrapper 对应位置添加 Kick.firebaseAnalytics.logEvent(...)、Kick.firebaseAnalytics.setUserId(...) 和 Kick.firebaseAnalytics.setUserProperty(...)。",
       "controlPanel": "在代码中通过 Kick.controlPanel.getBoolean(...)、Kick.controlPanel.getString(...) 等读取 ControlPanel 值。如添加了按钮，请通过 Kick.controlPanel.events.collect { event -> ... } 监听点击。",
       "overlay": "通过 Kick.overlay.set(\"key\", value) 在 Overlay 浮窗显示所需运行时数据。",

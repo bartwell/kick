@@ -173,7 +173,7 @@
     },
     "hook": {
       "firebaseCloudMessagingAndroid": "En FirebaseMessagingService.onMessageReceived(...) llama a Kick.firebaseCloudMessaging.handleFcm(message).",
-      "firebaseCloudMessagingIos": "Cuando se reciba una notificación APNS, llama a uno de los handlers Kick.firebaseCloudMessaging.handleApns... desde el bridge de Kotlin compartido.",
+      "firebaseCloudMessagingIos": "Cuando se reciba una notificación APNS, llama a uno de los handlers Kick.firebaseCloudMessaging.handleApns... desde el bridge de Kotlin compartido. Además, pasa el token FCM y el Firebase Installation ID mediante KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) y setFirebaseInstallationId(...).",
       "firebaseAnalytics": "Duplica las llamadas del wrapper de analytics en Kick.firebaseAnalytics.logEvent / setUserId / setUserProperty."
     },
     "unsupportedModule": "{module}: no compatible en esta plataforma.",
@@ -192,10 +192,10 @@
       "logging": "Para enviar logs al módulo Logging, llama a Kick.log(level, message) en los lugares que quieras registrar.",
       "loggingWithNapier": "Para enviar logs al módulo Logging, llama a Kick.log(level, message) donde haga falta, o redirige todos los logs de Napier con installNapierBridge() desde KickBootstrap.",
       "ktor3": "Para registrar actividad de red de Ktor3, agrega install(KickKtor3Plugin) al crear HttpClient.",
-      "firebaseCloudMessagingBoth": "Para Firebase Cloud Messaging: en Android llama a Kick.firebaseCloudMessaging.handleFcm(message) dentro de FirebaseMessagingService.onMessageReceived(...). En iOS llama a KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) en AppDelegate cuando recibas payload APNS.",
+      "firebaseCloudMessagingBoth": "Para Firebase Cloud Messaging: en Android llama a Kick.firebaseCloudMessaging.handleFcm(message) dentro de FirebaseMessagingService.onMessageReceived(...). En iOS llama a KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) en AppDelegate cuando recibas payload APNS. Además en iOS pasa el token FCM y el Firebase Installation ID mediante KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) y setFirebaseInstallationId(...).",
       "firebaseCloudMessagingAndroid": "Para Firebase Cloud Messaging en Android: llama a Kick.firebaseCloudMessaging.handleFcm(message) dentro de FirebaseMessagingService.onMessageReceived(...).",
-      "firebaseCloudMessagingIos": "Para Firebase Cloud Messaging en iOS: llama a KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) en AppDelegate cuando recibas payload APNS.",
-      "firebaseCloudMessagingGeneric": "Para Firebase Cloud Messaging, reenvía payloads push a los handlers de Kick en el ciclo de vida de la plataforma.",
+      "firebaseCloudMessagingIos": "Para Firebase Cloud Messaging en iOS: llama a KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) en AppDelegate cuando recibas payload APNS. Además pasa el token FCM y el Firebase Installation ID mediante KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) y setFirebaseInstallationId(...).",
+      "firebaseCloudMessagingGeneric": "Para Firebase Cloud Messaging, reenvía payloads push a los handlers de Kick en el ciclo de vida de la plataforma. En iOS también pasa el token FCM y el Firebase Installation ID mediante KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) y setFirebaseInstallationId(...).",
       "firebaseAnalytics": "Para Firebase Analytics, agrega Kick.firebaseAnalytics.logEvent(...), Kick.firebaseAnalytics.setUserId(...), y Kick.firebaseAnalytics.setUserProperty(...) en los mismos puntos de tu wrapper de analytics.",
       "controlPanel": "Lee valores de ControlPanel en tu código con Kick.controlPanel.getBoolean(...), Kick.controlPanel.getString(...), etc. Si agregaste botones, escucha clics con Kick.controlPanel.events.collect { event -> ... }.",
       "overlay": "Muestra valores runtime en la ventana flotante Overlay con Kick.overlay.set(\"key\", value).",

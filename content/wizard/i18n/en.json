@@ -173,7 +173,7 @@
     },
     "hook": {
       "firebaseCloudMessagingAndroid": "In FirebaseMessagingService.onMessageReceived(...) call Kick.firebaseCloudMessaging.handleFcm(message).",
-      "firebaseCloudMessagingIos": "When APNS notification is received, call one of Kick.firebaseCloudMessaging.handleApns... handlers from shared Kotlin API bridge.",
+      "firebaseCloudMessagingIos": "When APNS notification is received, call one of Kick.firebaseCloudMessaging.handleApns... handlers from shared Kotlin API bridge. Also pass FCM token and Firebase Installation ID via KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) and setFirebaseInstallationId(...).",
       "firebaseAnalytics": "Mirror analytics wrapper calls to Kick.firebaseAnalytics.logEvent / setUserId / setUserProperty."
     },
     "unsupportedModule": "{module}: unsupported on this platform.",
@@ -192,10 +192,10 @@
       "logging": "To send logs to Logging module, call Kick.log(level, message) in the places you want to log.",
       "loggingWithNapier": "To send logs to Logging module, call Kick.log(level, message) where needed, or route all Napier logs with installNapierBridge() from KickBootstrap.",
       "ktor3": "To log Ktor3 network activity, add install(KickKtor3Plugin) when you create HttpClient.",
-      "firebaseCloudMessagingBoth": "For Firebase Cloud Messaging: on Android call Kick.firebaseCloudMessaging.handleFcm(message) inside FirebaseMessagingService.onMessageReceived(...). On iOS call KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) in AppDelegate when APNS payload is received.",
+      "firebaseCloudMessagingBoth": "For Firebase Cloud Messaging: on Android call Kick.firebaseCloudMessaging.handleFcm(message) inside FirebaseMessagingService.onMessageReceived(...). On iOS call KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) in AppDelegate when APNS payload is received. Also on iOS pass FCM token and Firebase Installation ID via KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) and setFirebaseInstallationId(...).",
       "firebaseCloudMessagingAndroid": "For Firebase Cloud Messaging on Android: call Kick.firebaseCloudMessaging.handleFcm(message) inside FirebaseMessagingService.onMessageReceived(...).",
-      "firebaseCloudMessagingIos": "For Firebase Cloud Messaging on iOS: call KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) in AppDelegate when APNS payload is received.",
-      "firebaseCloudMessagingGeneric": "For Firebase Cloud Messaging, forward push payloads to Kick handlers in your platform lifecycle code.",
+      "firebaseCloudMessagingIos": "For Firebase Cloud Messaging on iOS: call KickCompanion.shared.firebaseCloudMessaging.handleApnsPayload(userInfo: userInfo) in AppDelegate when APNS payload is received. Also pass FCM token and Firebase Installation ID via KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) and setFirebaseInstallationId(...).",
+      "firebaseCloudMessagingGeneric": "For Firebase Cloud Messaging, forward push payloads to Kick handlers in your platform lifecycle code. On iOS also pass FCM token and Firebase Installation ID via KickCompanion.shared.firebaseCloudMessaging.setFcmToken(...) and setFirebaseInstallationId(...).",
       "firebaseAnalytics": "For Firebase Analytics, add Kick.firebaseAnalytics.logEvent(...), Kick.firebaseAnalytics.setUserId(...), and Kick.firebaseAnalytics.setUserProperty(...) in matching places in your analytics wrapper.",
       "controlPanel": "Read ControlPanel values in your code with Kick.controlPanel.getBoolean(...), Kick.controlPanel.getString(...), etc. If you added buttons, listen for clicks with Kick.controlPanel.events.collect { event -> ... }.",
       "overlay": "Show required runtime values in Overlay floating window with Kick.overlay.set(\"key\", value).",

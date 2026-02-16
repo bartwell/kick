@@ -47,7 +47,6 @@ kotlin {
             implementation(libs.decompose.extensions.compose)
             implementation(libs.decompose.essenty.lifecycle.coroutines)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.sqldelight.async.extensions)
         }
