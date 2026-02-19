@@ -109,7 +109,7 @@ class LogViewerUiTest {
     }
 
     @Test
-    fun share_or_copy_action_invoked() {
+    fun copy_action_invoked() {
         val logs = listOf(
             LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "m1"),
         )
@@ -117,9 +117,27 @@ class LogViewerUiTest {
 
         composeTestRule.setContent { LogViewerContent(component = fake) }
 
-        // On JVM platform the description is "Share logs"
-        composeTestRule.onNodeWithContentDescription("Share logs").performClick()
-        assertTrue(fake.shareInvoked)
+        composeTestRule.onNodeWithContentDescription("Menu").performClick()
+        composeTestRule.onNodeWithText("Copy").performClick()
+        assertTrue(fake.copyInvoked)
+    }
+
+    @Test
+    fun save_to_file_action_invoked() {
+        val logs = listOf(
+            LogEntity(id = 1, time = 1_000L, level = LogLevel.INFO, message = "m1"),
+        )
+        val fake = FakeLogViewerComponent(logs)
+
+        composeTestRule.setContent { LogViewerContent(component = fake) }
+
+        composeTestRule.onNodeWithContentDescription("Menu").performClick()
+        composeTestRule.onNodeWithText("Save to file").performClick()
+        assertTrue(fake.saveInvoked)
+
+        composeTestRule.onNodeWithContentDescription("Menu").performClick()
+        composeTestRule.onNodeWithText("Share as text").assertDoesNotExist()
+        composeTestRule.onNodeWithText("Share as file").assertDoesNotExist()
     }
 
     @Test

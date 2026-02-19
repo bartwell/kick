@@ -25,7 +25,7 @@ private const val LABEL_B = "B"
 private const val CD_FILTER = "Filter logs"
 private const val CD_DISABLE_FILTER = "Disable filter"
 private const val CD_CLEAR_ALL = "Clear all"
-private const val CD_COPY_LOGS = "Copy logs"
+private const val CD_COPY_LOGS = "Copy"
 private const val TEXT_FILTER = "Filter"
 private const val COUNT_ZERO = 0
 private const val COUNT_TWO = 2
@@ -59,9 +59,9 @@ class LogViewerWasmUiTest {
         onNodeWithContentDescription(CD_CLEAR_ALL).performClick()
         onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_ZERO)
 
-        // On Web platform compose.uiTest uses same contentDescription
-        onNodeWithContentDescription(CD_COPY_LOGS).performClick()
-        assertTrue(fake.shareInvoked)
+        onNodeWithContentDescription("Menu").performClick()
+        onNodeWithText(CD_COPY_LOGS).performClick()
+        assertTrue(fake.copyInvoked)
     }
 
     @Test

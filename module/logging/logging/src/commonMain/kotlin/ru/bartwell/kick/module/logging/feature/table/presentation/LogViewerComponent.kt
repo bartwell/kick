@@ -14,6 +14,9 @@ public interface LogViewerComponent : Component {
     public fun onFilterDialogDismiss()
     public fun onFilterApply()
     public fun onFilterTextChange(text: String)
-    public fun onShareClick(context: PlatformContext)
+    public fun onCopyClick(context: PlatformContext)
+    public fun onSaveToFileClick(context: PlatformContext)
+    public fun onShareAsTextClick(context: PlatformContext)
+    public fun onShareAsFileClick(context: PlatformContext)
     public fun onLabelClick(label: String)
 }

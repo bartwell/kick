@@ -9,13 +9,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ClearAll
-import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileDownloadOff
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.FilterListOff
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -28,19 +29,21 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import ru.bartwell.kick.core.data.Platform
 import ru.bartwell.kick.core.data.platformContext
 import ru.bartwell.kick.core.presentation.BackOrCloseButton
 import ru.bartwell.kick.core.presentation.ErrorBox
-import ru.bartwell.kick.core.util.PlatformUtils
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.core.persist.LogEntity
 import ru.bartwell.kick.module.logging.feature.table.extension.toLogString
+import ru.bartwell.kick.module.logging.feature.table.util.LaunchUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +54,7 @@ internal fun LogViewerContent(
     val state by component.model.subscribeAsState()
     val context = platformContext()
     val listState = rememberLazyListState()
+    var isMenuExpanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.isAutoScrollEnabled, state.log.lastOrNull()?.id) {
         if (state.isAutoScrollEnabled && state.log.isNotEmpty()) {
@@ -87,15 +91,50 @@ internal fun LogViewerContent(
                 IconButton(onClick = component::onClearAllClick, modifier = Modifier.testTag("clear_all")) {
                     Icon(imageVector = Icons.Default.ClearAll, contentDescription = "Clear all")
                 }
-                IconButton(onClick = { component.onShareClick(context) }, modifier = Modifier.testTag("share_copy")) {
-                    val shouldCopy = PlatformUtils.getPlatform() == Platform.IOS ||
-                        PlatformUtils.getPlatform() == Platform.WEB
-                    val (icon, contentDescription) = if (shouldCopy) {
-                        Icons.Default.ContentCopy to "Copy logs"
-                    } else {
-                        Icons.Default.Share to "Share logs"
+                IconButton(onClick = { isMenuExpanded = true }, modifier = Modifier.testTag("overflow_menu")) {
+                    Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Menu")
+                }
+                DropdownMenu(expanded = isMenuExpanded, onDismissRequest = { isMenuExpanded = false }) {
+                    if (LaunchUtils.canCopyLogs()) {
+                        DropdownMenuItem(
+                            text = { Text("Copy") },
+                            onClick = {
+                                isMenuExpanded = false
+                                component.onCopyClick(context)
+                            },
+                            modifier = Modifier.testTag("copy_logs")
+                        )
                     }
-                    Icon(imageVector = icon, contentDescription = contentDescription)
+                    if (LaunchUtils.canSaveLogsToFile()) {
+                        DropdownMenuItem(
+                            text = { Text("Save to file") },
+                            onClick = {
+                                isMenuExpanded = false
+                                component.onSaveToFileClick(context)
+                            },
+                            modifier = Modifier.testTag("save_to_file")
+                        )
+                    }
+                    if (LaunchUtils.canShareLogsAsText()) {
+                        DropdownMenuItem(
+                            text = { Text("Share as text") },
+                            onClick = {
+                                isMenuExpanded = false
+                                component.onShareAsTextClick(context)
+                            },
+                            modifier = Modifier.testTag("share_as_text")
+                        )
+                    }
+                    if (LaunchUtils.canShareLogsAsFile()) {
+                        DropdownMenuItem(
+                            text = { Text("Share as file") },
+                            onClick = {
+                                isMenuExpanded = false
+                                component.onShareAsFileClick(context)
+                            },
+                            modifier = Modifier.testTag("share_as_file")
+                        )
+                    }
                 }
             }
         )

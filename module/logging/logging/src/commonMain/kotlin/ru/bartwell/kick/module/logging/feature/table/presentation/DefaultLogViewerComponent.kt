@@ -67,8 +67,20 @@ internal class DefaultLogViewerComponent(
         filterAndUpdateLog()
     }
 
-    override fun onShareClick(context: PlatformContext) {
-        LaunchUtils.shareLogs(context = context, logs = model.value.log)
+    override fun onCopyClick(context: PlatformContext) {
+        LaunchUtils.copyLogs(context = context, logs = model.value.log)
+    }
+
+    override fun onSaveToFileClick(context: PlatformContext) {
+        LaunchUtils.saveLogsToFile(context = context, logs = model.value.log)
+    }
+
+    override fun onShareAsTextClick(context: PlatformContext) {
+        LaunchUtils.shareLogsAsText(context = context, logs = model.value.log)
+    }
+
+    override fun onShareAsFileClick(context: PlatformContext) {
+        LaunchUtils.shareLogsAsFile(context = context, logs = model.value.log)
     }
 
     override fun onLabelClick(label: String) {
