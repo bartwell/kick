@@ -10,6 +10,14 @@ internal object ModuleArtifacts {
     fun mainCore(version: String) = "$GROUP:main-core:$version"
     fun mainRuntime(version: String) = "$GROUP:main-runtime:$version"
     fun mainRuntimeStub(version: String) = "$GROUP:main-runtime-stub:$version"
+    private fun sqliteCore(version: String) = "$GROUP:sqlite-core:$version"
+    private fun sqliteRuntime(version: String) = "$GROUP:sqlite-runtime:$version"
+    private fun sqliteRuntimeStub(version: String) = "$GROUP:sqlite-runtime-stub:$version"
+    private fun sqliteRoomAdapter(version: String) = "$GROUP:sqlite-room-adapter:$version"
+    private fun sqliteRoomAdapterStub(version: String) = "$GROUP:sqlite-room-adapter-stub:$version"
+    private fun sqliteSqldelightAdapter(version: String) = "$GROUP:sqlite-sqldelight-adapter:$version"
+    private fun sqliteSqldelightAdapterStub(version: String) =
+        "$GROUP:sqlite-sqldelight-adapter-stub:$version"
 
     fun runtimeArtifacts(module: KickModule, version: String): List<String> {
         return when (module) {
@@ -23,15 +31,15 @@ internal object ModuleArtifacts {
             KickModule.MultiplatformSettings -> listOf("$GROUP:multiplatform-settings:$version")
             KickModule.Overlay -> listOf("$GROUP:overlay:$version")
             KickModule.Room -> listOf(
-                "$GROUP:sqlite-core:$version",
-                "$GROUP:sqlite-runtime:$version",
-                "$GROUP:sqlite-room-adapter:$version"
+                sqliteCore(version),
+                sqliteRuntime(version),
+                sqliteRoomAdapter(version),
             )
             KickModule.Runner -> listOf("$GROUP:runner:$version")
             KickModule.Sqldelight -> listOf(
-                "$GROUP:sqlite-core:$version",
-                "$GROUP:sqlite-runtime:$version",
-                "$GROUP:sqlite-sqldelight-adapter:$version"
+                sqliteCore(version),
+                sqliteRuntime(version),
+                sqliteSqldelightAdapter(version),
             )
         }
     }
@@ -48,15 +56,15 @@ internal object ModuleArtifacts {
             KickModule.MultiplatformSettings -> listOf("$GROUP:multiplatform-settings-stub:$version")
             KickModule.Overlay -> listOf("$GROUP:overlay-stub:$version")
             KickModule.Room -> listOf(
-                "$GROUP:sqlite-core:$version",
-                "$GROUP:sqlite-runtime-stub:$version",
-                "$GROUP:sqlite-room-adapter-stub:$version"
+                sqliteCore(version),
+                sqliteRuntimeStub(version),
+                sqliteRoomAdapterStub(version),
             )
             KickModule.Runner -> listOf("$GROUP:runner-stub:$version")
             KickModule.Sqldelight -> listOf(
-                "$GROUP:sqlite-core:$version",
-                "$GROUP:sqlite-runtime-stub:$version",
-                "$GROUP:sqlite-sqldelight-adapter-stub:$version"
+                sqliteCore(version),
+                sqliteRuntimeStub(version),
+                sqliteSqldelightAdapterStub(version),
             )
         }
     }

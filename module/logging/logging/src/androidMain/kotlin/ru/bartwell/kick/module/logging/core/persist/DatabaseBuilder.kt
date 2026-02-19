@@ -7,6 +7,7 @@ import ru.bartwell.kick.core.data.get
 import ru.bartwell.kick.module.logging.core.persist.adapter.logLevelAdapter
 import ru.bartwell.kick.module.logging.db.Log
 import ru.bartwell.kick.module.logging.db.LoggingDb
+import android.util.Log as AndroidLog
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 internal actual class DatabaseBuilder {
@@ -17,6 +18,11 @@ internal actual class DatabaseBuilder {
             context = appContext,
             name = "kick_logging.db"
         )
+        runCatching {
+            LoggingDb.Schema.synchronous().create(driver)
+        }.onFailure { throwable ->
+            AndroidLog.e("KickLoggingDb", "Failed to create logging schema", throwable)
+        }
         val db = LoggingDb(
             driver = driver,
             logAdapter = Log.Adapter(levelAdapter = logLevelAdapter)

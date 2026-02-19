@@ -1,5 +1,6 @@
 package ru.bartwell.kick.module.firebase.analytics.core.persist
 
+import android.util.Log
 import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import ru.bartwell.kick.core.data.PlatformContext
@@ -17,6 +18,11 @@ internal actual class DatabaseBuilder {
             context = appContext,
             name = "kick_firebase_analytics.db"
         )
+        runCatching {
+            FirebaseAnalyticsDb.Schema.synchronous().create(driver)
+        }.onFailure { throwable ->
+            Log.e("KickFirebaseAnalyticsDb", "Failed to create firebase analytics schema", throwable)
+        }
         val db = FirebaseAnalyticsDb(
             driver = driver,
             analyticsEventAdapter = AnalyticsEvent.Adapter(
