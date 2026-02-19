@@ -25,7 +25,13 @@ internal class FakeLogViewerComponent(
     )
     override val model: Value<LogViewerState> get() = _model
 
-    var shareInvoked: Boolean = false
+    var copyInvoked: Boolean = false
+        private set
+    var saveInvoked: Boolean = false
+        private set
+    var shareAsTextInvoked: Boolean = false
+        private set
+    var shareAsFileInvoked: Boolean = false
         private set
 
     override fun onBackPressed() = Unit
@@ -63,8 +69,20 @@ internal class FakeLogViewerComponent(
         recalc()
     }
 
-    override fun onShareClick(context: PlatformContext) {
-        shareInvoked = true
+    override fun onCopyClick(context: PlatformContext) {
+        copyInvoked = true
+    }
+
+    override fun onSaveToFileClick(context: PlatformContext) {
+        saveInvoked = true
+    }
+
+    override fun onShareAsTextClick(context: PlatformContext) {
+        shareAsTextInvoked = true
+    }
+
+    override fun onShareAsFileClick(context: PlatformContext) {
+        shareAsFileInvoked = true
     }
 
     override fun onLabelClick(label: String) {

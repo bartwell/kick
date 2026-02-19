@@ -48,8 +48,9 @@ class LogViewerIosUiTest {
         onAllNodesWithTag("log_item").assertCountEquals(0)
 
         // Copy on iOS
-        onNodeWithContentDescription("Copy logs").performClick()
-        assertTrue(fake.shareInvoked)
+        onNodeWithContentDescription("Menu").performClick()
+        onNodeWithText("Copy").performClick()
+        assertTrue(fake.copyInvoked)
     }
 
     @Test

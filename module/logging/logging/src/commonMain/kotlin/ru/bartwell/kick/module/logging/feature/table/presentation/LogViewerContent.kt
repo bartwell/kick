@@ -9,13 +9,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ClearAll
-import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileDownloadOff
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.FilterListOff
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -28,19 +29,21 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import ru.bartwell.kick.core.data.Platform
 import ru.bartwell.kick.core.data.platformContext
 import ru.bartwell.kick.core.presentation.BackOrCloseButton
 import ru.bartwell.kick.core.presentation.ErrorBox
-import ru.bartwell.kick.core.util.PlatformUtils
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.core.persist.LogEntity
 import ru.bartwell.kick.module.logging.feature.table.extension.toLogString
+import ru.bartwell.kick.module.logging.feature.table.util.LaunchUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +54,7 @@ internal fun LogViewerContent(
     val state by component.model.subscribeAsState()
     val context = platformContext()
     val listState = rememberLazyListState()
+    var isMenuExpanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.isAutoScrollEnabled, state.log.lastOrNull()?.id) {
         if (state.isAutoScrollEnabled && state.log.isNotEmpty()) {
@@ -65,38 +69,19 @@ internal fun LogViewerContent(
                 BackOrCloseButton(onBack = component::onBackPressed)
             },
             actions = {
-                IconButton(onClick = component::onFilterClick, modifier = Modifier.testTag("filter_toggle")) {
-                    val (icon, description) = if (state.isFilterActive) {
-                        Icons.Default.FilterListOff to "Disable filter"
-                    } else {
-                        Icons.Default.FilterList to "Filter logs"
-                    }
-                    Icon(imageVector = icon, contentDescription = description)
-                }
-                IconButton(
-                    onClick = component::onAutoScrollToggleClick,
-                    modifier = Modifier.testTag("auto_scroll_toggle")
-                ) {
-                    val (icon, description) = if (state.isAutoScrollEnabled) {
-                        Icons.Filled.FileDownload to "Disable auto-scroll"
-                    } else {
-                        Icons.Filled.FileDownloadOff to "Enable auto-scroll"
-                    }
-                    Icon(imageVector = icon, contentDescription = description)
-                }
-                IconButton(onClick = component::onClearAllClick, modifier = Modifier.testTag("clear_all")) {
-                    Icon(imageVector = Icons.Default.ClearAll, contentDescription = "Clear all")
-                }
-                IconButton(onClick = { component.onShareClick(context) }, modifier = Modifier.testTag("share_copy")) {
-                    val shouldCopy = PlatformUtils.getPlatform() == Platform.IOS ||
-                        PlatformUtils.getPlatform() == Platform.WEB
-                    val (icon, contentDescription) = if (shouldCopy) {
-                        Icons.Default.ContentCopy to "Copy logs"
-                    } else {
-                        Icons.Default.Share to "Share logs"
-                    }
-                    Icon(imageVector = icon, contentDescription = contentDescription)
-                }
+                TopBarActions(
+                    state = state,
+                    isMenuExpanded = isMenuExpanded,
+                    onFilterClick = component::onFilterClick,
+                    onAutoScrollToggleClick = component::onAutoScrollToggleClick,
+                    onClearAllClick = component::onClearAllClick,
+                    onMenuOpen = { isMenuExpanded = true },
+                    onMenuDismiss = { isMenuExpanded = false },
+                    onCopyClick = { component.onCopyClick(context) },
+                    onSaveToFileClick = { component.onSaveToFileClick(context) },
+                    onShareAsTextClick = { component.onShareAsTextClick(context) },
+                    onShareAsFileClick = { component.onShareAsFileClick(context) },
+                )
             }
         )
         if (state.isFilterDialogVisible) {
@@ -116,6 +101,115 @@ internal fun LogViewerContent(
             }
         }
     }
+}
+
+@Composable
+private fun TopBarActions(
+    state: LogViewerState,
+    isMenuExpanded: Boolean,
+    onFilterClick: () -> Unit,
+    onAutoScrollToggleClick: () -> Unit,
+    onClearAllClick: () -> Unit,
+    onMenuOpen: () -> Unit,
+    onMenuDismiss: () -> Unit,
+    onCopyClick: () -> Unit,
+    onSaveToFileClick: () -> Unit,
+    onShareAsTextClick: () -> Unit,
+    onShareAsFileClick: () -> Unit,
+) {
+    IconButton(onClick = onFilterClick, modifier = Modifier.testTag("filter_toggle")) {
+        val (icon, description) = if (state.isFilterActive) {
+            Icons.Default.FilterListOff to "Disable filter"
+        } else {
+            Icons.Default.FilterList to "Filter logs"
+        }
+        Icon(imageVector = icon, contentDescription = description)
+    }
+    IconButton(
+        onClick = onAutoScrollToggleClick,
+        modifier = Modifier.testTag("auto_scroll_toggle")
+    ) {
+        val (icon, description) = if (state.isAutoScrollEnabled) {
+            Icons.Filled.FileDownload to "Disable auto-scroll"
+        } else {
+            Icons.Filled.FileDownloadOff to "Enable auto-scroll"
+        }
+        Icon(imageVector = icon, contentDescription = description)
+    }
+    IconButton(onClick = onClearAllClick, modifier = Modifier.testTag("clear_all")) {
+        Icon(imageVector = Icons.Default.ClearAll, contentDescription = "Clear all")
+    }
+    IconButton(onClick = onMenuOpen, modifier = Modifier.testTag("overflow_menu")) {
+        Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Menu")
+    }
+    OverflowMenu(
+        isExpanded = isMenuExpanded,
+        onDismiss = onMenuDismiss,
+        onCopyClick = onCopyClick,
+        onSaveToFileClick = onSaveToFileClick,
+        onShareAsTextClick = onShareAsTextClick,
+        onShareAsFileClick = onShareAsFileClick,
+    )
+}
+
+@Composable
+private fun OverflowMenu(
+    isExpanded: Boolean,
+    onDismiss: () -> Unit,
+    onCopyClick: () -> Unit,
+    onSaveToFileClick: () -> Unit,
+    onShareAsTextClick: () -> Unit,
+    onShareAsFileClick: () -> Unit,
+) {
+    DropdownMenu(expanded = isExpanded, onDismissRequest = onDismiss) {
+        MenuItem(
+            isVisible = LaunchUtils.canCopyLogs(),
+            title = "Copy",
+            tag = "copy_logs",
+            onDismiss = onDismiss,
+            onClick = onCopyClick,
+        )
+        MenuItem(
+            isVisible = LaunchUtils.canSaveLogsToFile(),
+            title = "Save to file",
+            tag = "save_to_file",
+            onDismiss = onDismiss,
+            onClick = onSaveToFileClick,
+        )
+        MenuItem(
+            isVisible = LaunchUtils.canShareLogsAsText(),
+            title = "Share as text",
+            tag = "share_as_text",
+            onDismiss = onDismiss,
+            onClick = onShareAsTextClick,
+        )
+        MenuItem(
+            isVisible = LaunchUtils.canShareLogsAsFile(),
+            title = "Share as file",
+            tag = "share_as_file",
+            onDismiss = onDismiss,
+            onClick = onShareAsFileClick,
+        )
+    }
+}
+
+@Composable
+private fun MenuItem(
+    isVisible: Boolean,
+    title: String,
+    tag: String,
+    onDismiss: () -> Unit,
+    onClick: () -> Unit,
+) {
+    if (!isVisible) return
+    DropdownMenuItem(
+        text = { Text(title) },
+        onClick = {
+            onDismiss()
+            onClick()
+        },
+        modifier = Modifier.testTag(tag),
+    )
 }
 
 @Composable
