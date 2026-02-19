@@ -7,7 +7,13 @@ import platform.UserNotifications.UNNotification
 public fun FirebaseCloudMessagingAccessor.handleApnsPayload(userInfo: NSDictionary) {}
 
 @Suppress("UnusedParameter", "EmptyFunctionBlock", "unused")
-public fun FirebaseCloudMessagingAccessor.handleApnsPayload(userInfo: Map<Any?, *>) {}
+public fun FirebaseCloudMessagingAccessor.handleApnsPayload(userInfo: Map<*, *>) {}
 
 @Suppress("UnusedParameter", "EmptyFunctionBlock", "unused")
 public fun FirebaseCloudMessagingAccessor.handleApnsNotification(notification: UNNotification) {}
+
+@Suppress("UnusedParameter", "EmptyFunctionBlock", "unused")
+public fun FirebaseCloudMessagingAccessor.setFcmToken(token: String?) {}
+
+@Suppress("UnusedParameter", "EmptyFunctionBlock", "unused")
+public fun FirebaseCloudMessagingAccessor.setFirebaseInstallationId(id: String?) {}

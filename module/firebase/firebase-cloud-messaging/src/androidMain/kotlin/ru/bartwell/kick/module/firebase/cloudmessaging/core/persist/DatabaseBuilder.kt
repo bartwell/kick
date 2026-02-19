@@ -1,5 +1,6 @@
 package ru.bartwell.kick.module.firebase.cloudmessaging.core.persist
 
+import android.util.Log
 import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import ru.bartwell.kick.core.data.PlatformContext
@@ -17,6 +18,15 @@ internal actual class DatabaseBuilder {
             context = appContext,
             name = "kick_firebase_cloud_messaging.db",
         )
+        runCatching {
+            FirebaseCloudMessagingDb.Schema.synchronous().create(driver)
+        }.onFailure { throwable ->
+            Log.e(
+                "KickFirebaseCloudMessagingDb",
+                "Failed to create firebase cloud messaging schema",
+                throwable,
+            )
+        }
         val db = FirebaseCloudMessagingDb(
             driver = driver,
             fcmMessageAdapter = FcmMessage.Adapter(

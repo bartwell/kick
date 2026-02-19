@@ -1,6 +1,6 @@
 import ru.bartwell.kick.module.logging.core.data.LogLevel;
 
-CREATE TABLE log (
+CREATE TABLE IF NOT EXISTS log (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   time INTEGER NOT NULL,
   level TEXT AS LogLevel NOT NULL,

@@ -1,5 +1,6 @@
 package ru.bartwell.kick.module.ktor3.core.persist
 
+import android.util.Log
 import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import ru.bartwell.kick.core.data.PlatformContext
@@ -17,6 +18,11 @@ internal actual class DatabaseBuilder {
             context = appContext,
             name = "kick_ktor3.db"
         )
+        runCatching {
+            Ktor3Db.Schema.synchronous().create(driver)
+        }.onFailure { throwable ->
+            Log.e("KickKtor3Db", "Failed to create ktor3 schema", throwable)
+        }
         val db = Ktor3Db(
             driver = driver,
             requestAdapter = Request.Adapter(
