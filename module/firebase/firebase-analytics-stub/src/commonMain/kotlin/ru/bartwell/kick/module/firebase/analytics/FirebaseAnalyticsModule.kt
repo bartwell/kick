@@ -13,7 +13,7 @@ import ru.bartwell.kick.core.data.PlatformContext
 
 @Suppress("EmptyFunctionBlock", "UNUSED_PARAMETER")
 public class FirebaseAnalyticsModule(
-    context: PlatformContext,
+    platformContext: PlatformContext,
 ) : Module {
 
     override val description: ModuleDescription = ModuleDescription.FIREBASE_ANALYTICS
