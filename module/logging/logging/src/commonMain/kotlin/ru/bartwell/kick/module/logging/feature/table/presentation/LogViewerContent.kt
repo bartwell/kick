@@ -69,73 +69,19 @@ internal fun LogViewerContent(
                 BackOrCloseButton(onBack = component::onBackPressed)
             },
             actions = {
-                IconButton(onClick = component::onFilterClick, modifier = Modifier.testTag("filter_toggle")) {
-                    val (icon, description) = if (state.isFilterActive) {
-                        Icons.Default.FilterListOff to "Disable filter"
-                    } else {
-                        Icons.Default.FilterList to "Filter logs"
-                    }
-                    Icon(imageVector = icon, contentDescription = description)
-                }
-                IconButton(
-                    onClick = component::onAutoScrollToggleClick,
-                    modifier = Modifier.testTag("auto_scroll_toggle")
-                ) {
-                    val (icon, description) = if (state.isAutoScrollEnabled) {
-                        Icons.Filled.FileDownload to "Disable auto-scroll"
-                    } else {
-                        Icons.Filled.FileDownloadOff to "Enable auto-scroll"
-                    }
-                    Icon(imageVector = icon, contentDescription = description)
-                }
-                IconButton(onClick = component::onClearAllClick, modifier = Modifier.testTag("clear_all")) {
-                    Icon(imageVector = Icons.Default.ClearAll, contentDescription = "Clear all")
-                }
-                IconButton(onClick = { isMenuExpanded = true }, modifier = Modifier.testTag("overflow_menu")) {
-                    Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Menu")
-                }
-                DropdownMenu(expanded = isMenuExpanded, onDismissRequest = { isMenuExpanded = false }) {
-                    if (LaunchUtils.canCopyLogs()) {
-                        DropdownMenuItem(
-                            text = { Text("Copy") },
-                            onClick = {
-                                isMenuExpanded = false
-                                component.onCopyClick(context)
-                            },
-                            modifier = Modifier.testTag("copy_logs")
-                        )
-                    }
-                    if (LaunchUtils.canSaveLogsToFile()) {
-                        DropdownMenuItem(
-                            text = { Text("Save to file") },
-                            onClick = {
-                                isMenuExpanded = false
-                                component.onSaveToFileClick(context)
-                            },
-                            modifier = Modifier.testTag("save_to_file")
-                        )
-                    }
-                    if (LaunchUtils.canShareLogsAsText()) {
-                        DropdownMenuItem(
-                            text = { Text("Share as text") },
-                            onClick = {
-                                isMenuExpanded = false
-                                component.onShareAsTextClick(context)
-                            },
-                            modifier = Modifier.testTag("share_as_text")
-                        )
-                    }
-                    if (LaunchUtils.canShareLogsAsFile()) {
-                        DropdownMenuItem(
-                            text = { Text("Share as file") },
-                            onClick = {
-                                isMenuExpanded = false
-                                component.onShareAsFileClick(context)
-                            },
-                            modifier = Modifier.testTag("share_as_file")
-                        )
-                    }
-                }
+                TopBarActions(
+                    state = state,
+                    isMenuExpanded = isMenuExpanded,
+                    onFilterClick = component::onFilterClick,
+                    onAutoScrollToggleClick = component::onAutoScrollToggleClick,
+                    onClearAllClick = component::onClearAllClick,
+                    onMenuOpen = { isMenuExpanded = true },
+                    onMenuDismiss = { isMenuExpanded = false },
+                    onCopyClick = { component.onCopyClick(context) },
+                    onSaveToFileClick = { component.onSaveToFileClick(context) },
+                    onShareAsTextClick = { component.onShareAsTextClick(context) },
+                    onShareAsFileClick = { component.onShareAsFileClick(context) },
+                )
             }
         )
         if (state.isFilterDialogVisible) {
@@ -155,6 +101,115 @@ internal fun LogViewerContent(
             }
         }
     }
+}
+
+@Composable
+private fun TopBarActions(
+    state: LogViewerState,
+    isMenuExpanded: Boolean,
+    onFilterClick: () -> Unit,
+    onAutoScrollToggleClick: () -> Unit,
+    onClearAllClick: () -> Unit,
+    onMenuOpen: () -> Unit,
+    onMenuDismiss: () -> Unit,
+    onCopyClick: () -> Unit,
+    onSaveToFileClick: () -> Unit,
+    onShareAsTextClick: () -> Unit,
+    onShareAsFileClick: () -> Unit,
+) {
+    IconButton(onClick = onFilterClick, modifier = Modifier.testTag("filter_toggle")) {
+        val (icon, description) = if (state.isFilterActive) {
+            Icons.Default.FilterListOff to "Disable filter"
+        } else {
+            Icons.Default.FilterList to "Filter logs"
+        }
+        Icon(imageVector = icon, contentDescription = description)
+    }
+    IconButton(
+        onClick = onAutoScrollToggleClick,
+        modifier = Modifier.testTag("auto_scroll_toggle")
+    ) {
+        val (icon, description) = if (state.isAutoScrollEnabled) {
+            Icons.Filled.FileDownload to "Disable auto-scroll"
+        } else {
+            Icons.Filled.FileDownloadOff to "Enable auto-scroll"
+        }
+        Icon(imageVector = icon, contentDescription = description)
+    }
+    IconButton(onClick = onClearAllClick, modifier = Modifier.testTag("clear_all")) {
+        Icon(imageVector = Icons.Default.ClearAll, contentDescription = "Clear all")
+    }
+    IconButton(onClick = onMenuOpen, modifier = Modifier.testTag("overflow_menu")) {
+        Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Menu")
+    }
+    OverflowMenu(
+        isExpanded = isMenuExpanded,
+        onDismiss = onMenuDismiss,
+        onCopyClick = onCopyClick,
+        onSaveToFileClick = onSaveToFileClick,
+        onShareAsTextClick = onShareAsTextClick,
+        onShareAsFileClick = onShareAsFileClick,
+    )
+}
+
+@Composable
+private fun OverflowMenu(
+    isExpanded: Boolean,
+    onDismiss: () -> Unit,
+    onCopyClick: () -> Unit,
+    onSaveToFileClick: () -> Unit,
+    onShareAsTextClick: () -> Unit,
+    onShareAsFileClick: () -> Unit,
+) {
+    DropdownMenu(expanded = isExpanded, onDismissRequest = onDismiss) {
+        MenuItem(
+            isVisible = LaunchUtils.canCopyLogs(),
+            title = "Copy",
+            tag = "copy_logs",
+            onDismiss = onDismiss,
+            onClick = onCopyClick,
+        )
+        MenuItem(
+            isVisible = LaunchUtils.canSaveLogsToFile(),
+            title = "Save to file",
+            tag = "save_to_file",
+            onDismiss = onDismiss,
+            onClick = onSaveToFileClick,
+        )
+        MenuItem(
+            isVisible = LaunchUtils.canShareLogsAsText(),
+            title = "Share as text",
+            tag = "share_as_text",
+            onDismiss = onDismiss,
+            onClick = onShareAsTextClick,
+        )
+        MenuItem(
+            isVisible = LaunchUtils.canShareLogsAsFile(),
+            title = "Share as file",
+            tag = "share_as_file",
+            onDismiss = onDismiss,
+            onClick = onShareAsFileClick,
+        )
+    }
+}
+
+@Composable
+private fun MenuItem(
+    isVisible: Boolean,
+    title: String,
+    tag: String,
+    onDismiss: () -> Unit,
+    onClick: () -> Unit,
+) {
+    if (!isVisible) return
+    DropdownMenuItem(
+        text = { Text(title) },
+        onClick = {
+            onDismiss()
+            onClick()
+        },
+        modifier = Modifier.testTag(tag),
+    )
 }
 
 @Composable

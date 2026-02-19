@@ -4,6 +4,7 @@ import com.arkivanov.decompose.value.Value
 import ru.bartwell.kick.core.component.Component
 import ru.bartwell.kick.core.data.PlatformContext
 
+@Suppress("TooManyFunctions")
 public interface LogViewerComponent : Component {
     public val model: Value<LogViewerState>
 

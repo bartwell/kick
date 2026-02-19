@@ -9,7 +9,7 @@ import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.SwingUtilities
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING", "OptionalUnit")
 internal actual object LaunchUtils {
     internal actual fun canCopyLogs(): Boolean = true
     internal actual fun canSaveLogsToFile(): Boolean = true

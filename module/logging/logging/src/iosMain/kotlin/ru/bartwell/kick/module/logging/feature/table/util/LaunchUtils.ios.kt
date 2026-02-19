@@ -12,7 +12,7 @@ import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.logging.core.persist.LogEntity
 import ru.bartwell.kick.module.logging.feature.table.extension.toLogString
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING", "OptionalUnit")
 internal actual object LaunchUtils {
     internal actual fun canCopyLogs(): Boolean = true
     internal actual fun canSaveLogsToFile(): Boolean = false

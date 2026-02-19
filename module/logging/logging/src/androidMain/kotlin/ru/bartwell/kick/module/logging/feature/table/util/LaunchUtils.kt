@@ -16,6 +16,12 @@ import java.io.File
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 internal actual object LaunchUtils {
+    private const val LOG_MIME_TYPE = "text/plain"
+    private const val LOGS_FILE_NAME = "logs.txt"
+    private const val SHARE_FILE_NAME = "android.log"
+    private const val SHARE_TEXT_TITLE = "Share logs as text"
+    private const val SHARE_FILE_TITLE = "Share logs as file"
+
     internal actual fun canCopyLogs(): Boolean = true
     internal actual fun canSaveLogsToFile(): Boolean = true
     internal actual fun canShareLogsAsText(): Boolean = true
@@ -36,7 +42,7 @@ internal actual object LaunchUtils {
         lateinit var launcher: ActivityResultLauncher<String>
         launcher = activity.activityResultRegistry.register(
             key,
-            ActivityResultContracts.CreateDocument("text/plain")
+            ActivityResultContracts.CreateDocument(LOG_MIME_TYPE)
         ) { uri ->
             uri?.let {
                 activity.contentResolver.openOutputStream(it)?.bufferedWriter()?.use { writer ->
@@ -45,34 +51,34 @@ internal actual object LaunchUtils {
             }
             launcher.unregister()
         }
-        launcher.launch("logs.txt")
+        launcher.launch(LOGS_FILE_NAME)
     }
 
     internal actual fun shareLogsAsText(context: PlatformContext, logs: List<LogEntity>) {
         val androidContext = context.get()
         val text = logs.joinToString(separator = "\n") { it.toLogString() }
         Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
+            type = LOG_MIME_TYPE
             putExtra(Intent.EXTRA_TEXT, text)
         }.also { intent ->
-            androidContext.startActivity(Intent.createChooser(intent, "Share logs as text"))
+            androidContext.startActivity(Intent.createChooser(intent, SHARE_TEXT_TITLE))
         }
     }
 
     internal actual fun shareLogsAsFile(context: PlatformContext, logs: List<LogEntity>) {
         val androidContext = context.get()
-        val file = writeLogsToFile(androidContext.filesDir, "android.log", logs)
+        val file = writeLogsToFile(androidContext.filesDir, SHARE_FILE_NAME, logs)
         val uri = FileProvider.getUriForFile(
             androidContext,
             "${androidContext.packageName}.kickfileprovider",
             file
         )
         Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
+            type = LOG_MIME_TYPE
             putExtra(Intent.EXTRA_STREAM, uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }.also { intent ->
-            androidContext.startActivity(Intent.createChooser(intent, "Share logs as file"))
+            androidContext.startActivity(Intent.createChooser(intent, SHARE_FILE_TITLE))
         }
     }
 
