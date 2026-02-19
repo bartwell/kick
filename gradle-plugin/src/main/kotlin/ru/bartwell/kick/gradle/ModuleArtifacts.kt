@@ -47,9 +47,14 @@ internal object ModuleArtifacts {
             KickModule.Logging -> listOf("$GROUP:logging-stub:$version")
             KickModule.MultiplatformSettings -> listOf("$GROUP:multiplatform-settings-stub:$version")
             KickModule.Overlay -> listOf("$GROUP:overlay-stub:$version")
-            KickModule.Room -> listOf("$GROUP:sqlite-runtime-stub:$version", "$GROUP:sqlite-room-adapter-stub:$version")
+            KickModule.Room -> listOf(
+                "$GROUP:sqlite-core:$version",
+                "$GROUP:sqlite-runtime-stub:$version",
+                "$GROUP:sqlite-room-adapter-stub:$version"
+            )
             KickModule.Runner -> listOf("$GROUP:runner-stub:$version")
             KickModule.Sqldelight -> listOf(
+                "$GROUP:sqlite-core:$version",
                 "$GROUP:sqlite-runtime-stub:$version",
                 "$GROUP:sqlite-sqldelight-adapter-stub:$version"
             )
