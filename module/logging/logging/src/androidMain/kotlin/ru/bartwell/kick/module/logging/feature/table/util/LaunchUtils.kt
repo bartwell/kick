@@ -21,6 +21,7 @@ internal actual object LaunchUtils {
     private const val SHARE_FILE_NAME = "android.log"
     private const val SHARE_TEXT_TITLE = "Share logs as text"
     private const val SHARE_FILE_TITLE = "Share logs as file"
+    private const val MAX_SHARE_TEXT_CHARS = 120_000
 
     internal actual fun canCopyLogs(): Boolean = true
     internal actual fun canSaveLogsToFile(): Boolean = true
@@ -57,6 +58,10 @@ internal actual object LaunchUtils {
     internal actual fun shareLogsAsText(context: PlatformContext, logs: List<LogEntity>) {
         val androidContext = context.get()
         val text = logs.joinToString(separator = "\n") { it.toLogString() }
+        if (text.length > MAX_SHARE_TEXT_CHARS) {
+            shareLogsAsFile(context = context, logs = logs)
+            return
+        }
         Intent(Intent.ACTION_SEND).apply {
             type = LOG_MIME_TYPE
             putExtra(Intent.EXTRA_TEXT, text)
