@@ -66,7 +66,7 @@ kotlin {
 }
 
 android {
-    namespace = "ru.bartwell.kick"
+    namespace = "ru.bartwell.kick.module.ktor3.stub"
     compileSdk = 35
 
     defaultConfig {

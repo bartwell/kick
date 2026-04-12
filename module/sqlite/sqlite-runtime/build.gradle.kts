@@ -98,7 +98,7 @@ kotlin {
 }
 
 android {
-    namespace = "ru.bartwell.kick"
+    namespace = "ru.bartwell.kick.module.sqlite.runtime"
     compileSdk = 35
 
     defaultConfig {

@@ -45,7 +45,7 @@ kotlin {
 }
 
 android {
-    namespace = "ru.bartwell.kick.adapter.room"
+    namespace = "ru.bartwell.kick.adapter.room.stub"
     compileSdk = 35
 
     defaultConfig {

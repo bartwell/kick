@@ -21,7 +21,7 @@ class ControlPanelIosUiTest {
     @Test
     fun interactions() = runComposeUiTest {
         val items = listOf(
-            ControlPanelItem("FeatureFlag", InputType.Boolean(false), null),
+            ControlPanelItem("FeatureFlag", InputType.Boolean(false)),
             ControlPanelItem("MaxItems", InputType.Int(5), Editor.InputNumber(min = 0.0, max = 100.0)),
             ControlPanelItem("Mode", InputType.String("A"), Editor.InputString(singleLine = true))
         )
