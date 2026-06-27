@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ClearAll
 import androidx.compose.material.icons.filled.FileDownload
@@ -91,12 +92,14 @@ internal fun LogViewerContent(
             LabelsBar(component = component, state = state)
         }
         ErrorBox(modifier = Modifier.fillMaxSize(), error = state.error) {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize().testTag("log_list"),
-            ) {
-                items(state.log) { item ->
-                    Item(item)
+            SelectionContainer {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize().testTag("log_list"),
+                ) {
+                    items(state.log) { item ->
+                        Item(item)
+                    }
                 }
             }
         }

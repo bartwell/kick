@@ -14,3 +14,4 @@ xcuserdata
 /module/network/ktor3/schemas/*
 /sample/shared/schemas/*
 /.gradle-home/*
+/.refact/*
