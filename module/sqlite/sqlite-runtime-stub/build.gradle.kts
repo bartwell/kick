@@ -68,7 +68,7 @@ kotlin {
 }
 
 android {
-    namespace = "ru.bartwell.kick"
+    namespace = "ru.bartwell.kick.module.sqlite.runtime.stub"
     compileSdk = 35
 
     defaultConfig {

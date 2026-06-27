@@ -2,7 +2,7 @@
 
     <application>
         <activity
-            android:name=".runtime.KickActivity"
+            android:name="ru.bartwell.kick.runtime.KickActivity"
             android:exported="false" />
     </application>
 </manifest>

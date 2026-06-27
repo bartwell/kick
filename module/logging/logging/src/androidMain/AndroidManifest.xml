@@ -2,7 +2,7 @@
 
     <application>
         <provider
-            android:name=".module.logging.feature.table.util.KickFileProvider"
+            android:name="ru.bartwell.kick.module.logging.feature.table.util.KickFileProvider"
             android:authorities="${applicationId}.kickfileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

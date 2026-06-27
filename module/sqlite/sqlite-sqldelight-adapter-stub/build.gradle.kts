@@ -49,7 +49,7 @@ kotlin {
 }
 
 android {
-    namespace = "ru.bartwell.kick"
+    namespace = "ru.bartwell.kick.module.sqlite.sqldelight.stub"
     compileSdk = 35
 
     defaultConfig {

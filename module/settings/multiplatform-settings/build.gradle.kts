@@ -90,7 +90,7 @@ kotlin {
 }
 
 android {
-    namespace = "ru.bartwell.kick"
+    namespace = "ru.bartwell.kick.module.multiplatformsettings"
     compileSdk = 35
 
     defaultConfig {

@@ -48,7 +48,7 @@ kotlin {
 }
 
 android {
-    namespace = "ru.bartwell.kick"
+    namespace = "ru.bartwell.kick.main.runtime.stub"
     compileSdk = 35
 
     defaultConfig {

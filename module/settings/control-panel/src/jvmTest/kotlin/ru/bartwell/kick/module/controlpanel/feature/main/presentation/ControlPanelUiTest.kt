@@ -25,7 +25,7 @@ class ControlPanelUiTest {
     @Test
     fun back_and_save_and_toggle_and_number_and_string() {
         val items = listOf(
-            ControlPanelItem("FeatureFlag", InputType.Boolean(false), null),
+            ControlPanelItem("FeatureFlag", InputType.Boolean(false)),
             ControlPanelItem("MaxItems", InputType.Int(5), Editor.InputNumber(min = 0.0, max = 100.0)),
             ControlPanelItem("Mode", InputType.String("A"), Editor.InputString(singleLine = true))
         )

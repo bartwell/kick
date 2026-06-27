@@ -70,7 +70,7 @@ kotlin {
 }
 
 android {
-    namespace = "ru.bartwell.kick"
+    namespace = "ru.bartwell.kick.module.controlpanel.stub"
     compileSdk = 35
 
     defaultConfig {
