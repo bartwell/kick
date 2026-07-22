@@ -36,7 +36,6 @@ kotlin {
     }
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
@@ -65,7 +64,6 @@ kotlin {
     sourceSets {
         val commonMain by getting
         val androidMain by getting
-        val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
         val jvmMain by getting
@@ -73,16 +71,13 @@ kotlin {
         val nonWasmMain by creating { dependsOn(commonMain) }
         val nativeMain by creating { dependsOn(nonWasmMain) }
         androidMain.dependsOn(nonWasmMain)
-        iosX64Main.dependsOn(nonWasmMain)
         iosArm64Main.dependsOn(nonWasmMain)
         iosSimulatorArm64Main.dependsOn(nonWasmMain)
         jvmMain.dependsOn(nonWasmMain)
         val iosMain by creating { dependsOn(nonWasmMain) }
-        iosX64Main.dependsOn(nativeMain)
         iosArm64Main.dependsOn(nativeMain)
         iosSimulatorArm64Main.dependsOn(nativeMain)
         iosMain.dependsOn(nativeMain)
-        iosX64Main.dependsOn(iosMain)
         iosArm64Main.dependsOn(iosMain)
         iosSimulatorArm64Main.dependsOn(iosMain)
 
@@ -196,7 +191,6 @@ android {
 dependencies {
     add("kspAndroid", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
-    add("kspIosX64", libs.room.compiler)
     add("kspIosArm64", libs.room.compiler)
     add("kspJvm", libs.room.compiler)
 }

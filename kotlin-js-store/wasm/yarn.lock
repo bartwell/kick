@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@cashapp/sqldelight-sqljs-worker@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@cashapp/sqldelight-sqljs-worker/-/sqldelight-sqljs-worker-2.1.0.tgz#4ab898698aca9487f47fc9a42107c606c3ce81c5"
-  integrity sha512-odvBljb1rUOCk3UUZgjdiAChEohYI4Fy6Tj3NUy3l6u3WV/we+tjDTJ/kC25CJKD4pv0ZlH5AL1sKsZ5clKCew==
+"@cashapp/sqldelight-sqljs-worker@2.3.2":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@cashapp/sqldelight-sqljs-worker/-/sqldelight-sqljs-worker-2.3.2.tgz#605d9799130dbb40c8db77cd732258b29dbc83fa"
+  integrity sha512-j43u8FCiLCz52rI/+NP4sXNviwaKS59eggvqjPRji8l62SYQEps5IlW1/fMm8s9BH4nbfaGX1YPSbbdThkXt4w==
 
 "@js-joda/core@3.2.0":
   version "3.2.0"
@@ -118,11 +118,6 @@ fill-range@^7.1.1:
   integrity sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==
   dependencies:
     to-regex-range "^5.0.1"
-
-format-util@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/format-util/-/format-util-1.0.5.tgz#1ffb450c8a03e7bccffe40643180918cc297d271"
-  integrity sha512-varLbTj0e0yVyRpqQhuWV+8hlePAgaoFRhNFj50BNjEIrw1/DphHSObtqwskVCPWNgzwPoQrZAbfa/SBiicNeg==
 
 glob-parent@^5.1.2:
   version "5.1.2"
@@ -279,7 +274,7 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-ws@8.18.3:
-  version "8.18.3"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-8.18.3.tgz#b56b88abffde62791c639170400c93dcb0c95472"
-  integrity sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==
+ws@8.20.1:
+  version "8.20.1"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-8.20.1.tgz#91a9ae2b312ccf98e0a85ec499b48cef45ab0ddb"
+  integrity sha512-It4dO0K5v//JtTXuPkfEOaI3uUN87iYPnqo/ZzqCoG3g8uhA66QUMs/SrM0YK7/NAu+r4LMh/9dq2A7k+rHs+w==

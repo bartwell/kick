@@ -60,7 +60,6 @@ val isRelease = /* your logic to determine release vs. debug */
 
 kotlin {
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
