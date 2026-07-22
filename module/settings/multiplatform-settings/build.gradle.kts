@@ -91,7 +91,7 @@ kotlin {
 
 android {
     namespace = "ru.bartwell.kick.module.multiplatformsettings"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24

@@ -1,15 +1,19 @@
 package ru.bartwell.kick.module.controlpanel.feature.main.presentation
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
+import ru.bartwell.kick.core.presentation.AppUiEnvironment
+import ru.bartwell.kick.core.presentation.LocalAppUiEnvironment
 import ru.bartwell.kick.module.controlpanel.data.ControlPanelItem
 import ru.bartwell.kick.module.controlpanel.data.Editor
 import ru.bartwell.kick.module.controlpanel.data.InputType
@@ -26,9 +30,18 @@ class ControlPanelIosUiTest {
             ControlPanelItem("Mode", InputType.String("A"), Editor.InputString(singleLine = true))
         )
         val fake = FakeControlPanelComponent(items)
-        setContent { ControlPanelContent(component = fake) }
+        setContent {
+            CompositionLocalProvider(
+                LocalAppUiEnvironment provides AppUiEnvironment(
+                    screenCloser = {},
+                    canNavigateBack = true,
+                )
+            ) {
+                ControlPanelContent(component = fake)
+            }
+        }
 
-        onNodeWithTag("back").performClick()
+        onNodeWithContentDescription("Back").performClick()
         onNodeWithTag("save").performClick()
         assertTrue(fake.backInvoked)
         assertTrue(fake.saveInvoked)

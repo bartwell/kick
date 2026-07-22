@@ -71,7 +71,7 @@ kotlin {
 
 android {
     namespace = "ru.bartwell.kick.module.controlpanel.stub"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24

@@ -1,12 +1,15 @@
+import com.android.build.api.dsl.ApplicationExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.compose.compiler)
 }
 
-android {
+extensions.configure<ApplicationExtension> {
     namespace = "ru.bartwell.kick.sample.android"
-    compileSdk = 35
+    compileSdk = 37
     defaultConfig {
         applicationId = "ru.bartwell.kick.sample.android"
         minSdk = 24
@@ -31,11 +34,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
+        }
     }
     lint {
-        lintConfig = file("config/lint/lint.xml")
+        lintConfig = rootProject.file("config/lint/lint.xml")
     }
 }
 

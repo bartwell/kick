@@ -1,4 +1,5 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import org.gradle.api.tasks.testing.Test
 import java.util.Properties
 
 plugins {
@@ -84,6 +85,11 @@ allprojects {
 // Disable Lint analysis for AndroidTest variants to avoid flaky tool crashes
 subprojects {
     plugins.withId("com.android.library") {
+        tasks.withType<Test>().configureEach {
+            if (name.endsWith("UnitTest")) {
+                failOnNoDiscoveredTests = false
+            }
+        }
         tasks.configureEach {
             val n = name
             if (n.startsWith("lint") && n.contains("AndroidTest")) {
@@ -92,6 +98,11 @@ subprojects {
         }
     }
     plugins.withId("com.android.application") {
+        tasks.withType<Test>().configureEach {
+            if (name.endsWith("UnitTest")) {
+                failOnNoDiscoveredTests = false
+            }
+        }
         tasks.configureEach {
             val n = name
             if (n.startsWith("lint") && n.contains("AndroidTest")) {

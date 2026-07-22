@@ -1,5 +1,7 @@
 package ru.bartwell.kick.module.logging.feature.table.presentation
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
@@ -16,6 +18,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import org.junit.Rule
 import org.junit.Test
+import ru.bartwell.kick.core.presentation.AppUiEnvironment
+import ru.bartwell.kick.core.presentation.LocalAppUiEnvironment
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.core.persist.LogEntity
 import kotlin.test.assertTrue
@@ -36,7 +40,7 @@ class LogViewerUiTest {
         val fake = FakeLogViewerComponent(logs)
 
         composeTestRule.setContent {
-            LogViewerContent(component = fake)
+            LogViewerContentWithEnvironment(fake)
         }
 
         // Expect sorted by time ASC: old, mid, new
@@ -56,7 +60,7 @@ class LogViewerUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        composeTestRule.setContent { LogViewerContentWithEnvironment(fake) }
 
         composeTestRule.onNodeWithContentDescription("Disable auto-scroll").performClick()
         composeTestRule.onNodeWithContentDescription("Enable auto-scroll").assertIsDisplayed()
@@ -71,7 +75,7 @@ class LogViewerUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        composeTestRule.setContent { LogViewerContentWithEnvironment(fake) }
 
         // Open filter dialog
         composeTestRule.onNodeWithContentDescription("Filter logs").performClick()
@@ -101,7 +105,7 @@ class LogViewerUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        composeTestRule.setContent { LogViewerContentWithEnvironment(fake) }
 
         composeTestRule.onAllNodesWithTag("log_item").assertCountEquals(2)
         composeTestRule.onNodeWithContentDescription("Clear all").performClick()
@@ -115,7 +119,7 @@ class LogViewerUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        composeTestRule.setContent { LogViewerContentWithEnvironment(fake) }
 
         composeTestRule.onNodeWithContentDescription("Menu").performClick()
         composeTestRule.onNodeWithText("Copy").performClick()
@@ -129,7 +133,7 @@ class LogViewerUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        composeTestRule.setContent { LogViewerContentWithEnvironment(fake) }
 
         composeTestRule.onNodeWithContentDescription("Menu").performClick()
         composeTestRule.onNodeWithText("Save to file").performClick()
@@ -150,7 +154,7 @@ class LogViewerUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        composeTestRule.setContent { LogViewerContentWithEnvironment(fake) }
 
         // Chips visible with two labels
         composeTestRule.onAllNodesWithTag("label_chips").assertCountEquals(1)
@@ -165,6 +169,9 @@ class LogViewerUiTest {
         composeTestRule.onNode(
             hasAnyAncestor(hasTestTag("label_chips")) and hasText("B", substring = false)
         ).performClick()
+        composeTestRule.waitUntil {
+            fake.model.value.selectedLabels.contains("B")
+        }
         composeTestRule.onAllNodesWithTag("log_item").assertCountEquals(1)
 
         // Deselect A -> only B selected -> two items: [A][B] ab, [B] bbb
@@ -188,7 +195,7 @@ class LogViewerUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        composeTestRule.setContent { LogViewerContentWithEnvironment(fake) }
 
         composeTestRule.onAllNodesWithTag("label_chips").assertCountEquals(0)
     }
@@ -203,7 +210,7 @@ class LogViewerUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        composeTestRule.setContent { LogViewerContent(component = fake) }
+        composeTestRule.setContent { LogViewerContentWithEnvironment(fake) }
 
         // Apply text filter: 'a' -> should leave 2 items (abcd, aaa)
         composeTestRule.onNodeWithContentDescription("Filter logs").performClick()
@@ -224,7 +231,22 @@ class LogViewerUiTest {
         composeTestRule.onNode(
             hasAnyAncestor(hasTestTag("label_chips")) and hasText("B", substring = false)
         ).performClick()
+        composeTestRule.waitUntil {
+            !fake.model.value.selectedLabels.contains("B")
+        }
         composeTestRule.onAllNodesWithTag("log_item").assertCountEquals(2)
+    }
+}
+
+@Composable
+private fun LogViewerContentWithEnvironment(component: FakeLogViewerComponent) {
+    CompositionLocalProvider(
+        LocalAppUiEnvironment provides AppUiEnvironment(
+            screenCloser = {},
+            canNavigateBack = true,
+        )
+    ) {
+        LogViewerContent(component = component)
     }
 }
 

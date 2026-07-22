@@ -1,5 +1,7 @@
 package ru.bartwell.kick.module.ktor3.feature.list.presentation
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasAnyAncestor
@@ -13,6 +15,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import org.junit.Rule
 import org.junit.Test
+import ru.bartwell.kick.core.presentation.AppUiEnvironment
+import ru.bartwell.kick.core.presentation.LocalAppUiEnvironment
 import ru.bartwell.kick.module.ktor3.core.persist.RequestEntity
 import ru.bartwell.kick.module.ktor3.feature.list.data.HttpMethod
 
@@ -36,7 +40,7 @@ class RequestsListUiTest {
             req(3, 2_000L, "https://example.com/mid"),
         )
         val fake = FakeRequestsListComponent(items)
-        composeTestRule.setContent { RequestsListContent(component = fake) }
+        composeTestRule.setContent { RequestsListContentWithEnvironment(fake) }
 
         val nodes = composeTestRule.onAllNodesWithTag(TAG_REQUEST_ITEM)
         nodes.assertCountEquals(3)
@@ -53,7 +57,7 @@ class RequestsListUiTest {
             req(3, 3_000L, "https://example.com/alphabet"),
         )
         val fake = FakeRequestsListComponent(items)
-        composeTestRule.setContent { RequestsListContent(component = fake) }
+        composeTestRule.setContent { RequestsListContentWithEnvironment(fake) }
 
         composeTestRule.onNodeWithContentDescription(CD_SEARCH).performClick()
         composeTestRule.onNode(hasAnyAncestor(isDialog()) and hasSetTextAction()).performTextInput("alpha")
@@ -72,11 +76,23 @@ class RequestsListUiTest {
             req(2, 2_000L, "https://example.com/b"),
         )
         val fake = FakeRequestsListComponent(items)
-        composeTestRule.setContent { RequestsListContent(component = fake) }
+        composeTestRule.setContent { RequestsListContentWithEnvironment(fake) }
 
         composeTestRule.onAllNodesWithTag(TAG_REQUEST_ITEM).assertCountEquals(2)
         composeTestRule.onNodeWithContentDescription(CD_CLEAR_ALL).performClick()
         composeTestRule.onAllNodesWithTag(TAG_REQUEST_ITEM).assertCountEquals(0)
+    }
+}
+
+@Composable
+private fun RequestsListContentWithEnvironment(component: FakeRequestsListComponent) {
+    CompositionLocalProvider(
+        LocalAppUiEnvironment provides AppUiEnvironment(
+            screenCloser = {},
+            canNavigateBack = true,
+        )
+    ) {
+        RequestsListContent(component = component)
     }
 }
 

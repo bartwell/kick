@@ -108,7 +108,7 @@ kotlin {
 
 android {
     namespace = "ru.bartwell.kick.module.ktor3"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24

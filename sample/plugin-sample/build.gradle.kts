@@ -7,7 +7,7 @@
  * so that the plugin and Kick artifacts are available from mavenLocal.
  */
 plugins {
-    id("org.jetbrains.kotlin.multiplatform") version "2.1.21"
+    id("org.jetbrains.kotlin.multiplatform") version "2.4.0"
     id("ru.bartwell.kick") version "1.0.0"
 }
 

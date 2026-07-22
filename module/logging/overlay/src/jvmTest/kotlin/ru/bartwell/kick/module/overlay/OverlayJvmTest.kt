@@ -5,8 +5,10 @@ import org.junit.Test
 import ru.bartwell.kick.core.data.getPlatformContext
 import ru.bartwell.kick.module.overlay.core.overlay.KickOverlay
 import ru.bartwell.kick.module.overlay.core.persists.OverlaySettings
+import java.awt.EventQueue
 import java.awt.GraphicsEnvironment
 import java.awt.Window
+import javax.swing.JWindow
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -25,23 +27,31 @@ class OverlayJvmTest {
         // Show
         KickOverlay.init(ctx)
         KickOverlay.show()
-        // Wait up to 2 seconds for window to appear
-        run {
-            val start = System.currentTimeMillis()
-            while (System.currentTimeMillis() - start < 2000) {
-                val ok = Window.getWindows().any { it.isVisible && it.javaClass.simpleName == "JWindow" }
-                if (ok) break
-                Thread.sleep(50)
-            }
-        }
         assertTrue(OverlaySettings.isEnabled())
 
-        val hasVisibleJWindow = Window.getWindows().any { it.isVisible && it.javaClass.simpleName == "JWindow" }
+        val hasVisibleJWindow = waitForVisibleJWindow()
         assertTrue(hasVisibleJWindow)
 
         // Hide
         KickOverlay.hide()
         Thread.sleep(200)
         assertFalse(OverlaySettings.isEnabled())
+    }
+
+    private fun waitForVisibleJWindow(): Boolean {
+        val start = System.currentTimeMillis()
+        while (System.currentTimeMillis() - start < WINDOW_WAIT_TIMEOUT_MS) {
+            EventQueue.invokeAndWait { }
+            if (Window.getWindows().any { it.isVisible && it is JWindow }) {
+                return true
+            }
+            Thread.sleep(WINDOW_POLL_INTERVAL_MS)
+        }
+        return false
+    }
+
+    private companion object {
+        const val WINDOW_WAIT_TIMEOUT_MS = 5_000L
+        const val WINDOW_POLL_INTERVAL_MS = 50L
     }
 }

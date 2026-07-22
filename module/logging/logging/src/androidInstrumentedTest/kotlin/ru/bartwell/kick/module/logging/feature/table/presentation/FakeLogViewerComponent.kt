@@ -4,12 +4,13 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import ru.bartwell.kick.core.data.PlatformContext
 import ru.bartwell.kick.module.logging.core.persist.LogEntity
+import ru.bartwell.kick.module.logging.feature.table.util.BracketLabelExtractor
 
 internal class FakeLogViewerComponent(
     initial: List<LogEntity>,
 ) : LogViewerComponent {
     private val allLogs = initial.sortedBy { it.time }
-    private val regex = Regex("\\[(.*?)]")
+    private val labelExtractor = BracketLabelExtractor()
     private val _model = MutableValue(
         LogViewerState(
             log = allLogs,
@@ -17,9 +18,7 @@ internal class FakeLogViewerComponent(
             isFilterDialogVisible = false,
             filterQuery = "",
             error = null,
-            labels = initial.flatMap { regex.findAll(it.message).map { m -> m.groupValues[1] } }
-                .distinct()
-                .sorted(),
+            labels = extractLabels(initial),
             selectedLabels = emptySet(),
         )
     )
@@ -99,15 +98,13 @@ internal class FakeLogViewerComponent(
         } else {
             allLogs
         }
-        val labels = textFiltered.flatMap { regex.findAll(it.message).map { m -> m.groupValues[1] } }
-            .distinct()
-            .sorted()
+        val labels = extractLabels(textFiltered)
         val selected = model.value.selectedLabels.filter { it in labels }.toSet()
         val result = if (selected.isEmpty()) {
             textFiltered
         } else {
             textFiltered.filter { log ->
-                val tags = regex.findAll(log.message).map { it.groupValues[1] }.toSet()
+                val tags = labelExtractor.extract(log.message)
                 selected.all { it in tags }
             }
         }
@@ -117,4 +114,9 @@ internal class FakeLogViewerComponent(
             selectedLabels = selected,
         )
     }
+
+    private fun extractLabels(logs: List<LogEntity>): List<String> = logs
+        .flatMap { labelExtractor.extract(it.message) }
+        .distinct()
+        .sorted()
 }

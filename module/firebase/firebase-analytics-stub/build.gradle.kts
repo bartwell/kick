@@ -71,7 +71,7 @@ kotlin {
 
 android {
     namespace = "ru.bartwell.kick.module.firebaseanalytics.stub"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24

@@ -65,7 +65,7 @@ kotlin {
 
 android {
     namespace = "ru.bartwell.kick.module.runner_stub"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24

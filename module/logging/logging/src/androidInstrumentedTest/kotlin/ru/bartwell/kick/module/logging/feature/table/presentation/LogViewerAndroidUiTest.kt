@@ -1,6 +1,8 @@
 package ru.bartwell.kick.module.logging.feature.table.presentation
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasSetTextAction
@@ -16,6 +18,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import ru.bartwell.kick.core.presentation.AppUiEnvironment
+import ru.bartwell.kick.core.presentation.LocalAppUiEnvironment
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.core.persist.LogEntity
 
@@ -43,7 +47,7 @@ class LogViewerAndroidUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        compose.setContent { LogViewerContent(component = fake) }
+        compose.setContent { LogViewerContentWithEnvironment(fake) }
 
         compose.onAllNodesWithTag(TAG_LABEL_CHIPS).assertCountEquals(COUNT_ONE)
 
@@ -76,7 +80,7 @@ class LogViewerAndroidUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        compose.setContent { LogViewerContent(component = fake) }
+        compose.setContent { LogViewerContentWithEnvironment(fake) }
 
         compose.onAllNodesWithTag(TAG_LABEL_CHIPS).assertCountEquals(COUNT_ZERO)
     }
@@ -91,7 +95,7 @@ class LogViewerAndroidUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        compose.setContent { LogViewerContent(component = fake) }
+        compose.setContent { LogViewerContentWithEnvironment(fake) }
 
         compose.onNodeWithContentDescription("Filter logs").performClick()
         compose.onNode(hasAnyAncestor(androidx.compose.ui.test.isDialog()) and hasSetTextAction()).performTextInput("a")
@@ -109,5 +113,17 @@ class LogViewerAndroidUiTest {
             hasAnyAncestor(hasTestTag(TAG_LABEL_CHIPS)) and hasText(LABEL_B, substring = false)
         ).performClick()
         compose.onAllNodesWithTag(TAG_LOG_ITEM).assertCountEquals(COUNT_TWO)
+    }
+}
+
+@Composable
+private fun LogViewerContentWithEnvironment(component: FakeLogViewerComponent) {
+    CompositionLocalProvider(
+        LocalAppUiEnvironment provides AppUiEnvironment(
+            screenCloser = {},
+            canNavigateBack = true,
+        )
+    ) {
+        LogViewerContent(component = component)
     }
 }

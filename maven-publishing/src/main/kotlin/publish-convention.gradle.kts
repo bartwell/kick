@@ -2,6 +2,7 @@ import com.vanniktech.maven.publish.GradlePlugin
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
+import com.vanniktech.maven.publish.SourcesJar
 
 configure<MavenPublishBaseExtension> {
     publishToMavenCentral()
@@ -13,14 +14,14 @@ configure<MavenPublishBaseExtension> {
         configure(
             GradlePlugin(
                 javadocJar = JavadocJar.Empty(),
-                sourcesJar = true
+                sourcesJar = SourcesJar.Sources()
             )
         )
     } else {
         configure(
             KotlinMultiplatform(
                 javadocJar = JavadocJar.Empty(),
-                sourcesJar = true,
+                sourcesJar = SourcesJar.Sources(),
                 androidVariantsToPublish = listOf("release")
             )
         )

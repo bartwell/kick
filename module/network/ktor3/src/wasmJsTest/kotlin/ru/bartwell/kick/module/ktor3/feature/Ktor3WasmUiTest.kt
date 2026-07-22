@@ -1,5 +1,7 @@
 package ru.bartwell.kick.module.ktor3.feature
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasAnyAncestor
@@ -11,6 +13,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
+import ru.bartwell.kick.core.presentation.AppUiEnvironment
+import ru.bartwell.kick.core.presentation.LocalAppUiEnvironment
 import ru.bartwell.kick.module.ktor3.core.persist.RequestEntity
 import ru.bartwell.kick.module.ktor3.feature.detail.presentation.FakeRequestDetailsComponent
 import ru.bartwell.kick.module.ktor3.feature.detail.presentation.RequestDetailsContent
@@ -48,7 +52,7 @@ class Ktor3WasmUiTest {
             req(ID3, TS3, "https://example.com/alphabet"),
         )
         val fakeList = FakeRequestsListComponent(items)
-        setContent { RequestsListContent(component = fakeList) }
+        setContent { RequestsListContentWithEnvironment(fakeList) }
 
         onAllNodesWithTag(TAG_REQUEST_ITEM).assertCountEquals(COUNT_THREE)
         onNodeWithContentDescription(CD_SEARCH).performClick()
@@ -62,6 +66,18 @@ class Ktor3WasmUiTest {
         setContent { RequestDetailsContent(component = fakeDetails) }
         onNodeWithContentDescription(CD_COPY_ALL).performClick()
         assertTrue(fakeDetails.copyInvoked)
+    }
+}
+
+@Composable
+private fun RequestsListContentWithEnvironment(component: FakeRequestsListComponent) {
+    CompositionLocalProvider(
+        LocalAppUiEnvironment provides AppUiEnvironment(
+            screenCloser = {},
+            canNavigateBack = true,
+        )
+    ) {
+        RequestsListContent(component = component)
     }
 }
 

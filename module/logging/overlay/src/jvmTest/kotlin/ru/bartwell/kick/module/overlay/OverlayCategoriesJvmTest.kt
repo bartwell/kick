@@ -66,10 +66,10 @@ class OverlayCategoriesJvmTest {
     }
 
     @Test
-    fun declareCategories_addsThemToCategoriesList() {
+    fun addCategory_addsThemToCategoriesList() {
         val categories = listOf("Performance", "Analytics")
 
-        OverlayStore.declareCategories(categories)
+        categories.forEach(OverlayStore::addCategory)
 
         assertTrue(OverlayStore.categories.value.containsAll(categories + DEFAULT_CATEGORY))
     }

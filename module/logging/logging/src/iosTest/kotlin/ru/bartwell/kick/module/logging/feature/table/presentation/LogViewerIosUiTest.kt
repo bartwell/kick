@@ -1,5 +1,7 @@
 package ru.bartwell.kick.module.logging.feature.table.presentation
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasAnyAncestor
@@ -13,6 +15,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
+import ru.bartwell.kick.core.presentation.AppUiEnvironment
+import ru.bartwell.kick.core.presentation.LocalAppUiEnvironment
 import ru.bartwell.kick.module.logging.core.data.LogLevel
 import ru.bartwell.kick.module.logging.core.persist.LogEntity
 import kotlin.test.Test
@@ -31,7 +35,7 @@ class LogViewerIosUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        setContent { LogViewerContent(component = fake) }
+        setContent { LogViewerContentWithEnvironment(fake) }
 
         // Filter
         onNodeWithContentDescription("Filter logs").performClick()
@@ -63,7 +67,7 @@ class LogViewerIosUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        setContent { LogViewerContent(component = fake) }
+        setContent { LogViewerContentWithEnvironment(fake) }
 
         onAllNodesWithTag("label_chips").assertCountEquals(1)
 
@@ -88,7 +92,7 @@ class LogViewerIosUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        setContent { LogViewerContent(component = fake) }
+        setContent { LogViewerContentWithEnvironment(fake) }
 
         onAllNodesWithTag("label_chips").assertCountEquals(0)
     }
@@ -103,7 +107,7 @@ class LogViewerIosUiTest {
         )
         val fake = FakeLogViewerComponent(logs)
 
-        setContent { LogViewerContent(component = fake) }
+        setContent { LogViewerContentWithEnvironment(fake) }
 
         onNodeWithContentDescription("Filter logs").performClick()
         onNode(hasAnyAncestor(isDialog()) and hasSetTextAction()).performTextInput("a")
@@ -117,5 +121,17 @@ class LogViewerIosUiTest {
 
         onNode(hasAnyAncestor(hasTestTag("label_chips")) and hasText("B", substring = false)).performClick()
         onAllNodesWithTag("log_item").assertCountEquals(2)
+    }
+}
+
+@Composable
+private fun LogViewerContentWithEnvironment(component: FakeLogViewerComponent) {
+    CompositionLocalProvider(
+        LocalAppUiEnvironment provides AppUiEnvironment(
+            screenCloser = {},
+            canNavigateBack = true,
+        )
+    ) {
+        LogViewerContent(component = component)
     }
 }

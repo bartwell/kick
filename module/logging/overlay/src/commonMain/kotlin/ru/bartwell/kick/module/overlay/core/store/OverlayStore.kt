@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.asStateFlow
 
 internal const val DEFAULT_CATEGORY: String = "Default"
 
+private const val EMBEDDED_CATEGORY_SEPARATOR = "::"
+
 internal object OverlayStore {
     private val categoriesMap: LinkedHashMap<String, LinkedHashMap<String, String>> = LinkedHashMap()
 
@@ -24,7 +26,8 @@ internal object OverlayStore {
     }
 
     fun set(key: String, value: String) {
-        set(key = key, value = value, category = DEFAULT_CATEGORY)
+        val (resolvedKey, category) = resolveKeyAndCategory(key)
+        set(key = resolvedKey, value = value, category = category)
     }
 
     fun set(key: String, value: String, category: String) {
@@ -61,5 +64,17 @@ internal object OverlayStore {
         extra?.let { set.add(it) }
         set.add(_selectedCategory.value)
         _categories.value = set.toList()
+    }
+
+    private fun resolveKeyAndCategory(key: String): Pair<String, String> {
+        val separatorIndex = key.indexOf(EMBEDDED_CATEGORY_SEPARATOR)
+        val hasCategoryPrefix = separatorIndex > 0 &&
+            separatorIndex < key.length - EMBEDDED_CATEGORY_SEPARATOR.length
+
+        return if (hasCategoryPrefix) {
+            key.substring(separatorIndex + EMBEDDED_CATEGORY_SEPARATOR.length) to key.substring(0, separatorIndex)
+        } else {
+            key to DEFAULT_CATEGORY
+        }
     }
 }

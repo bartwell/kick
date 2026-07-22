@@ -1,11 +1,13 @@
 package ru.bartwell.kick.module.controlpanel.feature.main.presentation
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -15,6 +17,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import ru.bartwell.kick.core.presentation.AppUiEnvironment
+import ru.bartwell.kick.core.presentation.LocalAppUiEnvironment
 import ru.bartwell.kick.module.controlpanel.data.ControlPanelItem
 import ru.bartwell.kick.module.controlpanel.data.Editor
 import ru.bartwell.kick.module.controlpanel.data.InputType
@@ -53,9 +57,18 @@ class ControlPanelAndroidUiTest {
         )
         val fake = FakeControlPanelComponent(items)
 
-        composeRule.setContent { ControlPanelContent(component = fake) }
+        composeRule.setContent {
+            CompositionLocalProvider(
+                LocalAppUiEnvironment provides AppUiEnvironment(
+                    screenCloser = {},
+                    canNavigateBack = true,
+                )
+            ) {
+                ControlPanelContent(component = fake)
+            }
+        }
 
-        composeRule.onNodeWithTag("back").performClick()
+        composeRule.onNodeWithContentDescription("Back").performClick()
         composeRule.onNodeWithTag("save").performClick()
         assertTrue(fake.backInvoked)
         assertTrue(fake.saveInvoked)
