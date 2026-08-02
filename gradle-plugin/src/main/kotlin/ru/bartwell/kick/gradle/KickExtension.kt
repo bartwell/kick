@@ -25,7 +25,7 @@ abstract class KickExtension(
      * For tests only: if set, used instead of gradleProperty("kick.enabled") so CLI tests can run without a real Gradle property.
      * Production code never sets this.
      */
-    var testCliOverrideProvider: Provider<out String?>? = null
+    var testCliOverrideProvider: Provider<out String>? = null
 
     init {
         enabled.convention(KickEnabled.Auto)
